@@ -1,6 +1,6 @@
-# Codecool Online Shop
+# 4loop Online Shop - Codecool Project
 
-Java SE: 4th TW week, Project skeleton
+Basic webshop to practice Spark, Thymeleaf and advanced Java OOP.
 
 # Install
 

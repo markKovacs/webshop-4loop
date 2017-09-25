@@ -4,9 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.mycompany.app</groupId>
+    <groupId>com.4loop.webshop</groupId>
     <artifactId>my-app</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
+
     <build>
         <plugins>
             <plugin>
@@ -22,6 +23,7 @@
 
     <!-- library dependencies -->
     <dependencies>
+
         <dependency>
             <groupId>com.sparkjava</groupId>
             <artifactId>spark-core</artifactId>
@@ -29,18 +31,32 @@
         </dependency>
         <dependency>
             <groupId>com.sparkjava</groupId>
-            <artifactId>spark-template-thymeleaf</artifactId>
-            <version>2.3</version>
+            <artifactId>spark-debug-tools</artifactId>
+            <version>0.5</version>
         </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
             <version>1.7.21</version>
         </dependency>
+
+        <!-- Thymeleaf imports -->
         <dependency>
-            <groupId>com.sparkjava</groupId>
-            <artifactId>spark-debug-tools</artifactId>
-            <version>0.5</version>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf</artifactId>
+            <version>3.0.5.RELEASE</version>
         </dependency>
+        <dependency>
+            <groupId>nz.net.ultraq.thymeleaf</groupId>
+            <artifactId>thymeleaf-layout-dialect</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.thymeleaf.extras</groupId>
+            <artifactId>thymeleaf-extras-java8time</artifactId>
+            <version>3.0.0.RELEASE</version>
+        </dependency>
+
     </dependencies>
 </project>

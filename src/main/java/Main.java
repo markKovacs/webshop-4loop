@@ -7,35 +7,35 @@ import com.codecool.shop.dao.implementation.*;
 import com.codecool.shop.model.*;
 import spark.Request;
 import spark.Response;
-import spark.template.thymeleaf.ThymeleafTemplateEngine;
 
 public class Main {
 
     public static void main(String[] args) {
 
-        // default server settings
+        // SERVER SETTINGS
         exception(Exception.class, (e, req, res) -> e.printStackTrace());
         staticFileLocation("/public");
         port(8888);
-
-        // populate some data for the memory storage
+        // ENABLE DEBUG SCREEN
+        enableDebugScreen();
+        // POPULATE DATA FOR MEMORY STORAGE
         populateData();
 
-        // Always start with more specific routes
+        // ROUTING (start with specific routes)
+
         get("/hello", (req, res) -> "Hello World");
 
-        // Always add generic routes to the end
         get("/", ProductController::renderProducts, new ThymeleafTemplateEngine());
-        // Equivalent with above
+        // EQUIVALENT WITH ABOVE
         get("/index", (Request req, Response res) -> {
            return new ThymeleafTemplateEngine().render( ProductController.renderProducts(req, res) );
         });
 
-        // Add this line to your project to enable the debug screen
-        enableDebugScreen();
     }
 
+
     public static void populateData() {
+        // This method initializes the data and loads into memory storage.
 
         ProductDao productDataStore = ProductDaoMem.getInstance();
         ProductCategoryDao productCategoryDataStore = ProductCategoryDaoMem.getInstance();
@@ -57,6 +57,5 @@ public class Main {
         productDataStore.add(new Product("Amazon Fire HD 8", 89, "USD", "Amazon's latest Fire HD 8 tablet is a great value for media consumption.", tablet, amazon));
 
     }
-
 
 }
