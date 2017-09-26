@@ -23,6 +23,8 @@ public class Main {
 
         // ROUTING (start with specific routes)
 
+
+
         get("/hello", (req, res) -> "Hello World");
 
         get("/", ProductController::renderProducts, new ThymeleafTemplateEngine());
