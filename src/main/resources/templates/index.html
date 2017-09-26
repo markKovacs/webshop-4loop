@@ -13,7 +13,8 @@
         <div class="well well-sm">
             <strong th:text="${category.name}">Category Title</strong>
         </div>
-
+        <a th:href="@{~/index/prev}">Prev</a>
+        <a th:href="@{~/index/next}">Next</a>
         <div id="products" class="row list-group">
 
             <div class="item col-xs-4 col-lg-4" th:each="prod,iterStat : ${products}">
