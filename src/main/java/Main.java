@@ -70,20 +70,20 @@ public class Main {
 
 
         //setting up products and printing it
-        productDataStore.add(new Product("Luke's Lightsaber", 49.9f, "USD", "Fantastic price. Good ecosystem and controls. Helpful technical support.", movies, lucas));
-        productDataStore.add(new Product("AT-ST", 479, "USD", "Good old vehicle from the dark side.", movies, lucas));
-        productDataStore.add(new Product("Chewbacca's crossbow", 89, "USD", "Dependable weapon from a good guy.", movies, lucas));
-        productDataStore.add(new Product("The dagger, which killed Iulius Caesar", 89, "USD", "This weapon was used by Brutus too.", historical, uffizi));
-        productDataStore.add(new Product("Bud Spencer's pan", 20, "USD", "Old tool from az old friend.", movies, columbia));
-        productDataStore.add(new Product("Death Star", 4000, "USD", "Your new flat.", movies, lucas));
-        productDataStore.add(new Product("The last soap from Fight Club", 25, "USD", "Be clean. Be a fighter", movies, fox));
-        productDataStore.add(new Product("R2D2", 400, "USD", "Faithful personal assistant.", movies, lucas));
-        productDataStore.add(new Product("Millennium Falcon", 1500, "USD", "Good vehicle instead of a dull car.", movies, lucas));
-        productDataStore.add(new Product("The Ring", 3000, "USD", "One Ring to rule them all, One Ring to find them, One Ring to bring them all and in the darkness bind them.", movies, newLineCinema));
-        productDataStore.add(new Product("Terminator's endoskeleton", 2000, "USD", "Your new personal coach and trainer", movies, orion));
-        productDataStore.add(new Product("Titanic Wreck", 10000, "USD", "A sad wreck in the deep sea.", historical, whiteStarLine));
-        productDataStore.add(new Product("Jockey Ewing's whiskey cup", 200, "USD", "A glass cup from the famous oil tycoon.", movies, cbs));
-        productDataStore.add(new Product("The Helmet of Darth Vader", 500, "USD", "Black hat from the dark side.", movies, lucas));
+        productDataStore.add(new Product("Luke's Lightsaber", 49.9f, "USD", "Fantastic price. Good ecosystem and controls. Helpful technical support.", movies, lucas, "lightsaber.jpg"));
+        productDataStore.add(new Product("Bud Spencer's pan", 20, "USD", "Old tool from az old friend. Old tool from az old friend.", movies, columbia, "bud_pan.jpg"));
+        productDataStore.add(new Product("The last soap from Fight Club", 25, "USD", "Be clean. Be a fighter. Be a weapon.", movies, fox, "soap.jpg"));
+        productDataStore.add(new Product("The Ring", 3000, "USD", "One Ring to rule them all, One Ring to find them, One Ring to bring them all and in the darkness bind them.", movies, newLineCinema, "ring.jpg"));
+        productDataStore.add(new Product("AT-ST", 479, "USD", "Good old vehicle from the dark side.", movies, lucas, "atst.jpg"));
+        productDataStore.add(new Product("Jockey Ewing's whiskey cup", 200, "USD", "A glass cup from the famous oil tycoon.", movies, cbs, "whiskeycup.jpg"));
+        productDataStore.add(new Product("Chewbacca's crossbow", 89, "USD", "Dependable weapon from a good guy.", movies, lucas, "chewbaccabow.jpg"));
+        productDataStore.add(new Product("Terminator's endoskeleton", 2000, "USD", "Your new personal coach and trainer", movies, orion, "terminator.jpg"));
+        productDataStore.add(new Product("Death Star", 4000, "USD", "Your new flat. Your new flat. Your new flat. Your new flat.", movies, lucas, "deathstar.jpg"));
+        productDataStore.add(new Product("The Helmet of Darth Vader", 500, "USD", "Black hat from the dark side.", movies, lucas, "vaderhelmet.jpg"));
+        productDataStore.add(new Product("R2D2", 400, "USD", "Faithful personal assistant. Faithful personal assistant.", movies, lucas, "r2d2.jpg"));
+        productDataStore.add(new Product("Millennium Falcon", 1500, "USD", "Good vehicle instead of a dull car.", movies, lucas, "falcon.jpg"));
+        productDataStore.add(new Product("Titanic Wreck", 10000, "USD", "A sad wreck in the deep sea. A sad wreck in the deep sea. A sad wreck in the deep sea.", historical, whiteStarLine, "titanic.jpg"));
+        productDataStore.add(new Product("The dagger, which killed Iulius Caesar", 89, "USD", "This weapon was used by Brutus too. This weapon was used by Brutus too.", historical, uffizi, "dagger.jpg"));
 
 
     }
