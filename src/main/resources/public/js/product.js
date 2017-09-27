@@ -3,19 +3,31 @@ var app = app || {};
 
 app.productLogic = {
 
-    // Only for example, to be deleted.
-    boardDetailsListener: function () {
-        $("#boards").on("click", ".details", function(ev) {
+    addToCartListener: function () {
+        $("#products").on("click", ".add-to-cart", function(ev) {
             ev.stopPropagation();
-            $('.success').remove();
-            $('.error').remove();
-            var boardId = $(this).data("board-id");
-            app.dataHandler.getBoardDetails(boardId);
+            var quantity = $(this).prev().val();
+            if (quantity < 1 || quantity > 99) {
+                app.utils.toastMessage("Wrong quantity. Must be between 1-99.");
+                return;
+            }
+            var productId = $(this).data("product-id");
+            app.dataHandler.addToCart(productId, quantity);
         });
     },
 
-    testFunction: function () {
-        console.log("Called via product.js testFunction()");
+    handleAddToCartSuccess: function (response) {
+        // TODO: DOM manipulation of cart item counter and quantity input reset to 1
+        app.utils.toastMessage("Successfully added to cart.");
+    },
+
+    handleAddToCartError: function (response) {
+        // TODO: quantity input reset to 1
+        app.utils.toastMessage("Failed to add to cart.");
+    },
+
+    resetQuantityInput: function () {
+        // TODO: implement here
     }
 
 };

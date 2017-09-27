@@ -3,7 +3,7 @@ var app = app || {};
 
 app.init = function() {
 
-    app.productLogic.testFunction();
+    app.productLogic.addToCartListener();
 
 };
 

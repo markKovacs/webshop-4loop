@@ -5,6 +5,7 @@ import com.codecool.shop.controller.ProductController;
 import com.codecool.shop.dao.*;
 import com.codecool.shop.dao.implementation.*;
 import com.codecool.shop.model.*;
+import com.google.gson.Gson;
 import spark.Request;
 import spark.Response;
 
@@ -23,9 +24,11 @@ public class Main {
 
         // ROUTING (start with specific routes)
 
+        Gson gson = new Gson();
+
+        post("/api/add-to-cart", (req, res) -> ProductController.addToCart(req, res), gson::toJson);
 
 
-        get("/hello", (req, res) -> "Hello World");
 
         get("/", ProductController::renderProducts, new ThymeleafTemplateEngine());
         // EQUIVALENT WITH ABOVE
@@ -34,7 +37,6 @@ public class Main {
         });
 
     }
-
 
     public static void populateData() {
         // This method initializes the data and loads into memory storage.

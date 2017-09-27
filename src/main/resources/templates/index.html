@@ -27,7 +27,8 @@
                                 <p class="lead" th:text="${prod.getPrice()}">100 USD</p>
                             </div>
                             <div class="col-xs-12 col-md-6">
-                                <a class="btn btn-success" href="#">Add to cart</a>
+                                <input type="number" min="1" max="99" class="quantity" value="1">
+                                <a class="btn btn-success add-to-cart" th:attr="data-product-id=${prod.id}">Add to cart</a>
                             </div>
                         </div>
                     </div>
