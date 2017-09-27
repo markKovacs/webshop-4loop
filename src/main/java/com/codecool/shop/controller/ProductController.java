@@ -52,7 +52,7 @@ public class ProductController {
 
         String statusMessage = order.addToCart(productId, quantity);
         req.session().attribute("order_id", order.getId());
-
+        System.out.println(order);
         return statusMessage;
     }
 

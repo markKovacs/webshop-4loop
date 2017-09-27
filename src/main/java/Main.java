@@ -27,9 +27,7 @@ public class Main {
         Gson gson = new Gson();
 
         post("/api/add-to-cart", (req, res) -> ProductController.addToCart(req, res), gson::toJson);
-
-
-
+        
         get("/", ProductController::renderProducts, new ThymeleafTemplateEngine());
         // EQUIVALENT WITH ABOVE
         get("/index", (Request req, Response res) -> {

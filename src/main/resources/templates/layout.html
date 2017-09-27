@@ -48,7 +48,7 @@
 
         <!-- NAVBAR -->
         <a th:href="@{~/}">Products</a>
-        <a th:href="@{~/cart}">Cart([[${cartItems}]])</a>
+        <a th:href="@{~/cart}">Cart(<span id="cart-item-count">[[${cartItems}]]</span>)</a>
 
     </header>
 

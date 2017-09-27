@@ -39,10 +39,10 @@ app.dataHandler = {
                 quantity: quantity
             },
             success: function(response) {
-                app.productLogic.handleAddToCartSuccess(response);
+                app.productLogic.handleAddToCartSuccess(response, productId);
             },
             error: function() {
-                app.productLogic.handleAddToCartError();
+                app.productLogic.handleAddToCartError(productId);
             }
         });
 

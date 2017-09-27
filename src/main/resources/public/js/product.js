@@ -16,18 +16,22 @@ app.productLogic = {
         });
     },
 
-    handleAddToCartSuccess: function (response) {
-        // TODO: DOM manipulation of cart item counter and quantity input reset to 1
+    handleAddToCartSuccess: function (response, productId) {
         app.utils.toastMessage("Successfully added to cart.");
+        if (response === "new_item") {
+            var cartItemCount = $("#cart-item-count");
+            cartItemCount.text(Number(cartItemCount.text()) + 1);
+        }
+        this.resetQuantityInput(productId);
     },
 
-    handleAddToCartError: function (response) {
-        // TODO: quantity input reset to 1
+    handleAddToCartError: function (productId) {
         app.utils.toastMessage("Failed to add to cart.");
+        this.resetQuantityInput(productId);
     },
 
-    resetQuantityInput: function () {
-        // TODO: implement here
+    resetQuantityInput: function (productId) {
+        $(`#product-id-${productId}`).children().first().val(1);
     }
 
 };
