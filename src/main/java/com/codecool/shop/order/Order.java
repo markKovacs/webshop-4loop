@@ -20,6 +20,7 @@ public class Order {
     private List<LineItem> items;
 
     // Checkout (billing/shipping) information
+    private int totalPrice;
     private String fullName;
     private String email;
     private String phone;
@@ -48,11 +49,10 @@ public class Order {
         if (lineItemToAdd == null) {
             lineItemToAdd = new LineItem(product, quantity);
             items.add(lineItemToAdd);
-
             return "new_item";
         }
 
-        lineItemToAdd.changeQuantity(1);
+        lineItemToAdd.changeQuantity(quantity);
         return "quantity_change";
     }
 
@@ -113,6 +113,14 @@ public class Order {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public int getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(int totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
     @Override

@@ -7,6 +7,7 @@ public class LineItem {
     private Product product;
     private int quantity;
     private int actualPrice;
+    private int subTotalPrice;
 
     public LineItem(Product product, int quantity) {
         this. product = product;
@@ -40,6 +41,14 @@ public class LineItem {
 
     public void setActualPrice(int actualPrice) {
         this.actualPrice = actualPrice;
+    }
+
+    public int getSubTotalPrice() {
+        return subTotalPrice;
+    }
+
+    public void setSubTotalPrice(int subTotalPrice) {
+        this.subTotalPrice = subTotalPrice;
     }
 
     @Override
