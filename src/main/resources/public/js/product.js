@@ -3,19 +3,35 @@ var app = app || {};
 
 app.productLogic = {
 
-    // Only for example, to be deleted.
-    boardDetailsListener: function () {
-        $("#boards").on("click", ".details", function(ev) {
+    addToCartListener: function () {
+        $("#products").on("click", ".add-to-cart", function(ev) {
             ev.stopPropagation();
-            $('.success').remove();
-            $('.error').remove();
-            var boardId = $(this).data("board-id");
-            app.dataHandler.getBoardDetails(boardId);
+            var quantity = $(this).prev().val();
+            if (quantity < 1 || quantity > 99) {
+                app.utils.toastMessage("Wrong quantity. Must be between 1-99.");
+                return;
+            }
+            var productId = $(this).data("product-id");
+            app.dataHandler.addToCart(productId, quantity);
         });
     },
 
-    testFunction: function () {
-        console.log("Called via product.js testFunction()");
+    handleAddToCartSuccess: function (response, productId) {
+        app.utils.toastMessage("Successfully added to cart.");
+        if (response === "new_item") {
+            var cartItemCount = $("#cart-item-count");
+            cartItemCount.text(Number(cartItemCount.text()) + 1);
+        }
+        this.resetQuantityInput(productId);
+    },
+
+    handleAddToCartError: function (productId) {
+        app.utils.toastMessage("Failed to add to cart.");
+        this.resetQuantityInput(productId);
+    },
+
+    resetQuantityInput: function (productId) {
+        $(`#product-id-${productId}`).children().first().val(1);
     }
 
 };

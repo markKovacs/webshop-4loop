@@ -26,11 +26,13 @@
             crossorigin="anonymous" defer></script>
 
     <link rel="stylesheet" type="text/css" th:href="@{~/css/custom.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{~/css/style.css}" />
 
     <!-- Title formatted as title-pattern specifies -->
     <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">4loop Shop</title>
 
     <!-- JavaScript files -->
+    <script th:src="@{~/js/utils.js}" defer></script>
     <script th:src="@{~/js/data_handler.js}" defer></script>
     <script th:src="@{~/js/product.js}" defer></script>
     <script th:src="@{~/js/main.js}" defer></script>
@@ -46,7 +48,7 @@
 
         <!-- NAVBAR -->
         <a th:href="@{~/}">Products</a>
-        <a th:href="@{~/cart}">Cart</a>
+        <a th:href="@{~/cart}">Cart(<span id="cart-item-count">[[${cartItems}]]</span>)</a>
 
     </header>
 
@@ -61,6 +63,9 @@
             </div>
         </div>
     </footer>
+
+    <!-- TOAST MESSAGE -->
+    <div id="toast">Placeholder toast message.</div>
 
 </body>
 

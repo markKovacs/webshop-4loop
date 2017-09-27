@@ -26,6 +26,26 @@ app.dataHandler = {
                 window.location.replace('/login?error=timedout');
             }
         });
+    },
+
+    addToCart: function (productId, quantity) {
+
+        $.ajax({
+            url: '/api/add-to-cart',
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                product_id: productId,
+                quantity: quantity
+            },
+            success: function(response) {
+                app.productLogic.handleAddToCartSuccess(response, productId);
+            },
+            error: function() {
+                app.productLogic.handleAddToCartError(productId);
+            }
+        });
+
     }
 
 };
