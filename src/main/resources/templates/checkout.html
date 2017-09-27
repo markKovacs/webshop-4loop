@@ -9,13 +9,75 @@
 
 <body>
 
-    <div layout:fragment="content" class="container">
+<div layout:fragment="content" class="container">
 
-        <div class="well well-sm">
-            <strong>Checkout content</strong>
-        </div>
+    <div class="well well-sm">
+        <h3><strong>Checkout content</strong></h3>
+
+        <form id="checkout-form" ic-post-to="/checkout/validation">
+            <div class="form-group">
+                <label for="username">Name: </label>
+                <input id="username" placeholder="your name" name="username" pattern=".{4,}" required title="> 5 chars" autofocus>
+            </div>
+            <div class="form-group">
+                <label for="email">Email: </label>
+                <input id="email" placeholder="your email" name="email" pattern=".{4,}" required title="> 5 chars">
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone number: </label>
+                <input id="phone" placeholder="your phone number" name="phone" pattern=".{4,}" required title="> 10 chars">
+            </div>
+
+            <br>
+
+            <p>Billing Address</p>
+            <div class="form-group">
+                <label for="bill-country">Country</label>
+                <input id="bill-country" placeholder="country" name="bill-country" pattern=".{4,}" required title="> 5 chars">
+            </div>
+            <div class="form-group">
+                <label for="bill-city">City</label>
+                <input id="bill-city" placeholder="city" name="bill-city" pattern=".{4,}" required title="> 5 chars">
+            </div>
+
+            <div class="form-group">
+                <label for="bill-zip">Zip</label>
+                <input id="bill-zip" placeholder="zip" name="bill-zip" pattern=".{4,}" required title="> 3 chars">
+            </div>
+
+            <div class="form-group">
+                <label for="bill-address">Address</label>
+                <input id="bill-address" placeholder="address" name="bill-address" pattern=".{4,}" required title="> 5 chars">
+            </div>
+
+            <br>
+
+            <p>Shipping Address</p>
+            <div class="form-group">
+                <label for="ship-country">Country</label>
+                <input id="ship-country" placeholder="country" name="ship-country" pattern=".{4,}" required title="> 5 chars">
+            </div>
+            <div class="form-group">
+                <label for="ship-city">City</label>
+                <input id="ship-city" placeholder="city" name="ship-city" pattern=".{4,}" required title="> 5 chars">
+            </div>
+
+            <div class="form-group">
+                <label for="ship-zip">Zip</label>
+                <input id="ship-zip" placeholder="zip" name="ship-zip" pattern=".{4,}" required title="> 3 chars">
+            </div>
+
+            <div class="form-group">
+                <label for="ship-address">Address</label>
+                <input id="ship-address" placeholder="address" name="ship-address" pattern=".{4,}" required title="> 5 chars">
+            </div>
+            <a th:href="@{~/}">Back to Review</a>
+            <button type="submit" class="btn btn-default">Proceed to Payment</button>
+        </form>
 
     </div>
+
+</div>
 
 </body>
 
