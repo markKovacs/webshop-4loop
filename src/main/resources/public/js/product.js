@@ -31,7 +31,7 @@ app.productLogic = {
     },
 
     resetQuantityInput: function (productId) {
-        $(`#product-id-${productId}`).children().first().val(1);
+        $('#product-id-' + productId).children().first().val(1);
     }
 
 };

@@ -5,7 +5,10 @@ import com.codecool.shop.controller.ProductController;
 import com.codecool.shop.dao.*;
 import com.codecool.shop.dao.implementation.*;
 import com.codecool.shop.model.*;
+import com.codecool.shop.order.Order;
+import com.codecool.shop.order.Status;
 import com.google.gson.Gson;
+import spark.Filter;
 import spark.Request;
 import spark.Response;
 
@@ -17,17 +20,23 @@ public class Main {
         exception(Exception.class, (e, req, res) -> e.printStackTrace());
         staticFileLocation("/public");
         port(8888);
+
         // ENABLE DEBUG SCREEN
         enableDebugScreen();
+
         // POPULATE DATA FOR MEMORY STORAGE
         populateData();
 
-        // ROUTING (start with specific routes)
+        // BEFORE REQUEST CHECK
+        before("/*", orderInProgressFilter());
 
+        // API ENDPOINTS
         Gson gson = new Gson();
+        post("/api/add-to-cart", ProductController::addToCart, gson::toJson);
 
-        post("/api/add-to-cart", (req, res) -> ProductController.addToCart(req, res), gson::toJson);
-        
+        // ROUTING (start with specific routes)
+        get("/payment", ProductController::renderPayment, new ThymeleafTemplateEngine());
+
         get("/", ProductController::renderProducts, new ThymeleafTemplateEngine());
         // EQUIVALENT WITH ABOVE
         get("/index", (Request req, Response res) -> {
@@ -115,6 +124,31 @@ public class Main {
         productDataStore.add(new Product("Sebastian Vettel's helmet", 330, "USD", "Vettel won 4 Formula-1 GP with this helmet.", famous, sportMuseum, "vettel.jpg"));
         productDataStore.add(new Product("Brian May's Red Special", 1000, "USD", "A guitar made by the famous member of Queen, he played in this instrument for example We Will Rock You.", famous, emi, "brianmay.jpg"));
 
+    }
+
+    public static Filter orderInProgressFilter() {
+        return new Filter() {
+            @Override
+            public void handle(Request req, Response res) {
+                int orderId = req.session().attribute("order_id") == null ? -1 :
+                        Integer.valueOf(req.session().attribute("order_id")+"");
+
+                if (orderId != -1) {
+                    Order order = OrderDaoMem.getInstance().find(orderId);
+                    Status status = order.getStatus();
+                    if (status.equals(Status.REVIEWED) && !req.pathInfo().equals("/checkout")) {
+                        res.redirect("/checkout");
+                    } else if (status.equals(Status.CHECKEDOUT) && !req.pathInfo().equals("/payment")) {
+                        res.redirect("/payment");
+                    } else if (status.equals(Status.NEW) &&
+                            (req.pathInfo().equals("/checkout") || req.pathInfo().equals("/payment"))) {
+                        res.redirect("/?error=bad");
+                    }
+                } else if (req.pathInfo().equals("/checkout") || req.pathInfo().equals("/payment")) {
+                    res.redirect("/?error=bad");
+                }
+            }
+        };
     }
 
 }

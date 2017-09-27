@@ -6,13 +6,13 @@ import com.codecool.shop.model.Product;
 public class LineItem {
     private Product product;
     private int quantity;
-    private int actualPrice;
-    private int subTotalPrice;
+    private float actualPrice;
+    private float subTotalPrice;
 
-    public LineItem(Product product, int quantity) {
-        this. product = product;
+    public LineItem(Product product, int quantity, float actualPrice) {
+        this.product = product;
         this.quantity = quantity;
-        this.actualPrice = -1;
+        this.actualPrice = actualPrice;
     }
 
     public void changeQuantity(int amount) {
@@ -35,7 +35,7 @@ public class LineItem {
         this.quantity = quantity;
     }
 
-    public int getActualPrice() {
+    public float getActualPrice() {
         return actualPrice;
     }
 
@@ -43,12 +43,16 @@ public class LineItem {
         this.actualPrice = actualPrice;
     }
 
-    public int getSubTotalPrice() {
+    public float getSubTotalPrice() {
         return subTotalPrice;
     }
 
     public void setSubTotalPrice(int subTotalPrice) {
         this.subTotalPrice = subTotalPrice;
+    }
+
+    public String getProductName() {
+        return this.product.getName();
     }
 
     @Override

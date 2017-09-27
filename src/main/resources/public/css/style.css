@@ -47,3 +47,7 @@
     from {top: 100px; opacity: 1;}
     to {top: 0; opacity: 0;}
 }
+
+.framed {
+    border: 1px solid black;
+}

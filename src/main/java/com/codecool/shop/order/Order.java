@@ -20,7 +20,7 @@ public class Order {
     private List<LineItem> items;
 
     // Checkout (billing/shipping) information
-    private int totalPrice;
+    private float totalPrice;
     private String fullName;
     private String email;
     private String phone;
@@ -47,7 +47,7 @@ public class Order {
 
         LineItem lineItemToAdd = findLineItem(product);
         if (lineItemToAdd == null) {
-            lineItemToAdd = new LineItem(product, quantity);
+            lineItemToAdd = new LineItem(product, quantity, product.getDefaultPrice());
             items.add(lineItemToAdd);
             return "new_item";
         }
@@ -115,12 +115,60 @@ public class Order {
         this.status = status;
     }
 
-    public int getTotalPrice() {
+    public float getTotalPrice() {
         return totalPrice;
     }
 
     public void setTotalPrice(int totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public List<LineItem> getItems() {
+        return items;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public String getBillingCountry() {
+        return billingCountry;
+    }
+
+    public String getBillingCity() {
+        return billingCity;
+    }
+
+    public String getBillingZipCode() {
+        return billingZipCode;
+    }
+
+    public String getBillingAddress() {
+        return billingAddress;
+    }
+
+    public String getShippingCountry() {
+        return shippingCountry;
+    }
+
+    public String getShippingCity() {
+        return shippingCity;
+    }
+
+    public String getShippingZipCode() {
+        return shippingZipCode;
+    }
+
+    public String getShippingAddress() {
+        return shippingAddress;
     }
 
     @Override

@@ -31,9 +31,25 @@ public class ProductController {
         params.put("products", productDataStore.getBy(productCategoryDataStore.find(1)));
 
         Order order = OrderDaoMem.getInstance().find(getSessionOrderId(req));
-        int cartItems = order != null ? OrderDaoMem.getInstance().find(getSessionOrderId(req)).countCartItems() : 0;
+        int cartItems = order != null ? order.countCartItems() : 0;
         params.put("cartItems", cartItems);
         return new ModelAndView(params, "index");
+    }
+
+    public static ModelAndView renderPayment(Request req, Response res) {
+        int orderId = getSessionOrderId(req);
+        Order order = null;
+        if (orderId != -1) {
+            order = OrderDaoMem.getInstance().find(orderId);
+        }
+
+        Map params = new HashMap<>();
+        params.put("order", order);
+
+        int cartItems = order != null ? order.countCartItems() : 0;
+        params.put("cartItems", cartItems);
+
+        return new ModelAndView(params, "payment");
     }
 
     public static String addToCart(Request req, Response res) {
