@@ -10,6 +10,13 @@
 <body>
 
     <div layout:fragment="content" class="container">
+        <form id="supplier-selector" action="/index" method="post">
+            <select th:remove="all-but-first">
+                <option th:each="supplier : ${allSuppliers}" th:value="${supplier.id}" th:text="${supplier.name}">Suppliers</option>
+            </select>
+            <input type="submit" />
+        </form>
+
         <div class="well well-sm">
             <strong th:text="${category.name}">Category Title</strong>
         </div>

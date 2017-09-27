@@ -31,7 +31,17 @@ public class Main {
         get("/", ProductController::renderProducts, new ThymeleafTemplateEngine());
         // EQUIVALENT WITH ABOVE
         get("/index", (Request req, Response res) -> {
-           return new ThymeleafTemplateEngine().render( ProductController.renderProducts(req, res) );
+
+            System.out.println("HI");
+            return new ThymeleafTemplateEngine().render( ProductController.renderProducts(req, res) );
+        });
+        post("/index", (req, res) -> {
+            System.out.println("HI");
+            System.out.println("Size: " + req.queryParams().size());
+            for (int i=0; i < req.queryParams().size(); i++){
+                System.out.println(req.queryParams().toArray()[i] + ": " + req.queryParams(req.queryParams().toArray()[i].toString()));
+            }
+            return "";
         });
 
     }
