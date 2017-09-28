@@ -12,28 +12,28 @@
     <div layout:fragment="content" class="container">
 
         <div class="well well-sm">
-            <strong>Successful payment content</strong>
+            <strong>Successful Transaction</strong>
         </div>
 
         <div id="success" class="row list-group">
 
             <div class="col-xs-12 col-lg-12">
 
+
                 <div class="row">
-                    <div class="col-xs-12 col-lg-12">
-                        <div class="well well-sm">
-                            <strong>Successful Payment</strong>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-xs-offset-2 col-xs-8 framed">
+                    <div class="col-xs-offset-2 col-xs-8">
 
-                            <!-- TODO: templating of success message -->
+                        <!-- TODO: templating of success message -->
 
-                            <p>PLACEHOLDER TEXT</p>
-                        </div>
+                        <p class="text-justify">Your transaction was successful. We are going to process your order and send
+                            all selected products to your shipping address.</p>
+                        <p class="text-justify">An e-mail was sent to your e-mail address as a confirmation. Please contact
+                            us if you have any questions about your order.</p>
+
+                        <div class="text-center"><a class="text-center btn btn-success" th:href="@{~/}">Back to Index</a></div>
                     </div>
                 </div>
+
 
             </div>
 

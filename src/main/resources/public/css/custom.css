@@ -106,3 +106,41 @@ input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button {
     opacity: 1;
 }
+
+.four-num {
+    width: 50px;
+    text-align: center;
+    padding: 5px;
+
+}
+
+.three-num {
+    width: 40px;
+    text-align: center;
+    padding: 5px 0;
+    margin: 5px;
+}
+
+.two-num {
+    width: 50px;
+    text-align: center;
+    padding: 5px 0;
+    margin: 5px;
+
+}
+
+.name-input {
+    margin: 5px;
+    padding: 5px 0;
+}
+
+#exp-year {
+    width: 75px;
+}
+
+#green-white {
+    text-decoration: none;
+    color: white;
+    margin: auto;
+}
+

@@ -12,7 +12,7 @@
 <div layout:fragment="content" class="container">
 
     <div class="well well-sm">
-        <strong>Bank Payment</strong>
+        <strong>Credit Card Payment</strong>
     </div>
 
     <div id="bank" class="row list-group">
@@ -20,36 +20,36 @@
         <div class="col-xs-12 col-lg-12">
 
             <div class="row">
-                <div class="col-xs-12 col-lg-12">
-                    <div class="well well-sm">
-                        <strong>Credit Card Information</strong>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-xs-offset-2 col-xs-8">
+                <div class="col-xs-offset-2 col-xs-8 text-center">
 
                     <form th:action="@{~/payment/bank}" method="POST">
 
-                        <label for="card-holder">Card Holder: </label>
-                        <input id="card-holder" type="text" name="card-holder" class="name-input" placeholder="Full Name">
-
-                        <label for="card-number">Card Number: </label>
-                        <input id="card-number" type="text" name="card-number-1" class="four-num" placeholder="XXXX">
-                        <input type="text" name="card-number-2" class="four-num" placeholder="XXXX">
-                        <input type="text" name="card-number-3" class="four-num" placeholder="XXXX">
-                        <input type="text" name="card-number-4" class="four-num" placeholder="XXXX">
-
-                        <label for="cvc">CVC: </label>
-                        <input id="cvc" type="text" name="cvc" class="three-num" placeholder="XXX">
-
-                        <label for="exp-year">Expiration year: </label>
-                        <input id="exp-year" type="number" name="exp-year" min="1900" max="2017" placeholder="YYYY" class="four-num">
-
-                        <label for="exp-month">Expiration month: </label>
-                        <input id="exp-month" type="number" name="exp-month" placeholder="MM" class="two-num" min="1" max="12">
-
-                        <input class="btn btn-success add-to-cart" type="submit" value="Submit">
+                        <div>
+                            <label for="card-holder">Card Holder: </label>
+                            <input id="card-holder" type="text" name="card-holder" class="name-input" placeholder="Full Name">
+                        </div>
+                        <div>
+                            <label for="card-number">Card Number: </label>
+                            <input id="card-number" type="text" name="card-number-1" class="four-num" placeholder="XXXX">
+                            <span>-</span>
+                            <input type="text" name="card-number-2" class="four-num" placeholder="XXXX">
+                            <span>-</span>
+                            <input type="text" name="card-number-3" class="four-num" placeholder="XXXX">
+                            <span>-</span>
+                            <input type="text" name="card-number-4" class="four-num" placeholder="XXXX">
+                        </div>
+                        <div>
+                            <label for="cvc">CVC: </label>
+                            <input id="cvc" type="text" name="cvc" class="three-num" placeholder="XXX">
+                            <label for="exp-year">Expiration year: </label>
+                            <input id="exp-year" type="number" name="exp-year" min="2017" max="9999" placeholder="YYYY" class="four-num">
+                            <span>/</span>
+                            <label for="exp-month">Expiration month: </label>
+                            <input id="exp-month" type="number" name="exp-month" placeholder="MM" class="two-num" min="1" max="12">
+                        </div>
+                        <div class="text-center">
+                            <input class="btn btn-success add-to-cart" type="submit" value="Submit">
+                        </div>
 
                     </form>
 

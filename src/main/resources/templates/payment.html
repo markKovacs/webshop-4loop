@@ -45,6 +45,12 @@
 
                 <div class="row">
                     <div class="col-xs-12 col-lg-12">
+                        <p><strong>Total: <span th:text="${order.totalPrice + ' USD'}">3000.0 USD</span></strong></p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-12 col-lg-12">
                         <div class="well well-sm">
                             <strong>Personal Info</strong>
                         </div>
@@ -74,12 +80,14 @@
                     </div>
                 </div>
 
-                <div>
+                <div class="col-xs-12 col-lg-12 text-center">
 
-                    <!-- TODO: frontend buttons not final version yet -->
+                    <!-- TODO: frontend buttons not well formatted yet -->
 
-                    <a class="btn btn-success add-to-cart" th:href="@{~/payment/bank}">Bank</a>
+                    <a class="btn btn-default" role="button" href="/checkout?back=1">Back to Checkout</a>
+                    <a class="btn btn-success add-to-cart" th:href="@{~/payment/bank}">Credit Card</a>
                     <a class="btn btn-success add-to-cart" th:href="@{~/payment/paypal}">PayPal</a>
+
                 </div>
 
             </div>

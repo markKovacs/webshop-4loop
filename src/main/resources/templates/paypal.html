@@ -20,26 +20,21 @@
         <div class="col-xs-12 col-lg-12">
 
             <div class="row">
-                <div class="col-xs-12 col-lg-12">
-                    <div class="well well-sm">
-                        <strong>PayPal Information</strong>
-                    </div>
-                </div>
+
                 <div class="row">
-                    <div class="col-xs-offset-2 col-xs-8">
+                    <div class="col-xs-offset-2 col-xs-8 text-center">
 
                         <!-- TODO: form based on ProductController names -->
 
-                        <p>PLACEHOLDER TEXT</p>
-
                         <form th:action="@{~/payment/paypal}" method="POST">
-
-                            <label for="username">Username: </label>
-                            <input id="username" type="text" name="username" class="name-input" placeholder="Enter username...">
-
-                            <label for="password">Password: </label>
-                            <input id="password" type="text" name="password" class="name-input" placeholder="Enter password...">
-
+                            <div>
+                                <label for="username">Username: </label>
+                                <input id="username" type="text" name="username" class="name-input" placeholder="Enter username...">
+                            </div>
+                            <div>
+                                <label for="password">Password: </label>
+                                <input id="password" type="text" name="password" class="name-input" placeholder="Enter password...">
+                            </div>
                             <input class="btn btn-success add-to-cart" type="submit" value="Submit">
 
                         </form>

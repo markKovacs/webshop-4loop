@@ -90,6 +90,8 @@ public class Main {
         });
 
         get("/checkout", (Request req, Response res) -> {
+            setStatusToPrevious(req);
+
             List errorMessages = new ArrayList();
             Map userDatas = new HashMap();
             Map params = new HashMap();
@@ -169,6 +171,7 @@ public class Main {
         });
 
         get("/cart", (Request req, Response res) -> {
+            setStatusToPrevious(req);
             return new ThymeleafTemplateEngine().render( ProductController.reviewCart(req, res) );
         });
 
@@ -283,6 +286,23 @@ public class Main {
     private static int getSessionOrderId(Request req) {
         return req.session().attribute("order_id") == null ? -1 :
                 Integer.valueOf(req.session().attribute("order_id")+"");
+    }
+
+    private static void setStatusToPrevious(Request req) {
+        if (req.queryParams("back") != null) {
+            int orderId = getSessionOrderId(req);
+            Order order = null;
+            if (orderId != -1) {
+                order = OrderDaoMem.getInstance().find(orderId);
+            }
+            if (order != null) {
+                System.out.println("STATUS SET BACK FROM: " + order.getStatus());
+                switch (order.getStatus()) {
+                    case CHECKEDOUT: order.setStatus(Status.REVIEWED); break;
+                    case REVIEWED: order.setStatus(Status.NEW); break;
+                }
+            }
+        }
     }
 
 }
