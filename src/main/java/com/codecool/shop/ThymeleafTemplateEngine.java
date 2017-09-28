@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+package com.codecool.shop;
+
 import nz.net.ultraq.thymeleaf.LayoutDialect;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;

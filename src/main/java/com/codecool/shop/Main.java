@@ -1,3 +1,5 @@
+package com.codecool.shop;
+
 import static spark.Spark.*;
 import static spark.debug.DebugScreen.enableDebugScreen;
 
