@@ -176,6 +176,7 @@ public class ProductController {
         if (getSessionOrderId(req) != -1) {
             System.out.println(OrderDaoMem.getInstance().find(getSessionOrderId(req)));
             params.put("order", OrderDaoMem.getInstance().find(getSessionOrderId(req)).getItems());
+            params.put("grandTotal", OrderDaoMem.getInstance().find(getSessionOrderId(req)).getTotalPrice());
         }
 
         return new ModelAndView(params, "review");
