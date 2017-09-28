@@ -17,7 +17,9 @@ import spark.Request;
 import spark.Response;
 import spark.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ProductController {
@@ -27,8 +29,8 @@ public class ProductController {
         ProductCategoryDao productCategoryDataStore = ProductCategoryDaoMem.getInstance();
 
         Map params = new HashMap<>();
-        params.put("category", productCategoryDataStore.find(1));
-        params.put("products", productDataStore.getBy(productCategoryDataStore.find(1)));
+        params.put("category", productCategoryDataStore.find(2));
+        params.put("products", productDataStore.getBy(productCategoryDataStore.find(2)));
 
         Order order = OrderDaoMem.getInstance().find(getSessionOrderId(req));
         int cartItems = order != null ? OrderDaoMem.getInstance().find(getSessionOrderId(req)).countCartItems() : 0;
@@ -59,6 +61,20 @@ public class ProductController {
     private static int getSessionOrderId(Request req) {
         return req.session().attribute("order_id") == null ? -1 :
                 Integer.valueOf(req.session().attribute("order_id")+"");
+    }
+
+    public static ModelAndView reviewCart(Request req, Response res) {
+
+        Map params = new HashMap<>();
+        List<Order> orderItems = new ArrayList<>();
+        params.put("order", orderItems);
+
+        if (getSessionOrderId(req) != -1) {
+            System.out.println(OrderDaoMem.getInstance().find(getSessionOrderId(req)));
+            params.put("order", OrderDaoMem.getInstance().find(getSessionOrderId(req)).getItems());
+        }
+
+        return new ModelAndView(params, "review");
     }
 
 }
