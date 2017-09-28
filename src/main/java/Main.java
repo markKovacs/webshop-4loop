@@ -78,7 +78,13 @@ public class Main {
         get("/", ProductController::renderProducts, new ThymeleafTemplateEngine());
         // EQUIVALENT WITH ABOVE
         get("/index", (Request req, Response res) -> {
-           return new ThymeleafTemplateEngine().render( ProductController.renderProducts(req, res) );
+            return new ThymeleafTemplateEngine().render( ProductController.renderProducts(req, res) );
+        });
+        post("/index", (req, res) -> {
+            for (int i=0; i < req.queryParams().size(); i++){
+                System.out.println(req.queryParams().toArray()[i] + ": " + req.queryParams(req.queryParams().toArray()[i].toString()));
+            }
+            return new ThymeleafTemplateEngine().render( ProductController.renderProductsBySupplier(req, res) );
         });
 
         get("/checkout", (Request req, Response res) -> {
@@ -162,32 +168,32 @@ public class Main {
         SupplierDao supplierDataStore = SupplierDaoMem.getInstance();
 
         //setting up a new supplier
-        Supplier lucas = new Supplier("Lucasarts", "Movie and dream making");
-        supplierDataStore.add(lucas);
-        Supplier fox = new Supplier("20th Century Fox", "Movie making");
-        supplierDataStore.add(fox);
-        Supplier uffizi = new Supplier("Uffizi", "Museum in Italy");
-        supplierDataStore.add(uffizi);
+        Supplier cbs = new Supplier("CBS", "Television series");
+        supplierDataStore.add(cbs);
         Supplier columbia = new Supplier("Columbia Pictures", "Movie making");
         supplierDataStore.add(columbia);
+        Supplier emi = new Supplier("EMI Music", "CD and LP publishing etc.");
+        supplierDataStore.add(emi);
+        Supplier louvre = new Supplier("Louvre", "Museum in Paris, France");
+        supplierDataStore.add(louvre);
+        Supplier lucas = new Supplier("Lucasarts", "Movie and dream making");
+        supplierDataStore.add(lucas);
         Supplier newLineCinema = new Supplier("New Line Cinema", "Movie making");
         supplierDataStore.add(newLineCinema);
         Supplier orion = new Supplier("Orion Pictures", "Movie making, change the future");
         supplierDataStore.add(orion);
-        Supplier cbs = new Supplier("CBS", "Television series");
-        supplierDataStore.add(cbs);
-        Supplier whiteStarLine = new Supplier("White Star Line", "Ship building");
-        supplierDataStore.add(whiteStarLine);
-        Supplier emi = new Supplier("EMI Music", "CD and LP publishing etc.");
-        supplierDataStore.add(emi);
+        Supplier pentagon = new Supplier("Pentagon", "The headquarters of the US Department of Defense");
+        supplierDataStore.add(pentagon);
         Supplier sportMuseum = new Supplier("Sport Museum", "Sport equipment");
         supplierDataStore.add(sportMuseum);
         Supplier hungary = new Supplier("State of Hungary", "Our beautiful homeland");
         supplierDataStore.add(hungary);
-        Supplier louvre = new Supplier("Louvre", "Museum in Paris, France");
-        supplierDataStore.add(louvre);
-        Supplier pentagon = new Supplier("Pentagon", "The headquarters of the US Department of Defense");
-        supplierDataStore.add(pentagon);
+        Supplier uffizi = new Supplier("Uffizi", "Museum in Italy");
+        supplierDataStore.add(uffizi);
+        Supplier whiteStarLine = new Supplier("White Star Line", "Ship building");
+        supplierDataStore.add(whiteStarLine);
+        Supplier fox = new Supplier("20th Century Fox", "Movie making");
+        supplierDataStore.add(fox);
 
 
         //setting up a new product category
@@ -223,7 +229,7 @@ public class Main {
         productDataStore.add(new Product("Elvis Jacket", 1230, "USD", "Elvis went on the stage in this jacket many times.", famous, emi, "elvis.jpg"));
         productDataStore.add(new Product("Donald Trump's necktie", 90, "USD", "Trump wore this necktie when he discussed some problems with Kim Jong-un.", famous, pentagon, "trump.jpg"));
         productDataStore.add(new Product("Anita Gorbicz's first ball", 200, "USD", "Gorbicz played her first handball match with this ball. She was only 6 years old.", famous, sportMuseum, "gorbicz.jpg"));
-        productDataStore.add(new Product("Neymar's shoes", 170, "USD", "Neymar scored 4 goals against Mozambique in this special sport equipment.", famous, louvre, "neymar.jpg"));
+        productDataStore.add(new Product("Neymar's shoes", 170, "USD", "Neymar scored 4 goals against Mozambique in this special sport equipment.", famous, sportMuseum, "neymar.jpg"));
         productDataStore.add(new Product("Mohamed Ali's boxing gloves", 800, "USD", "Ali won against a lot of opponents in this gloves.", famous, sportMuseum, "ali.jpg"));
         productDataStore.add(new Product("Zsolt Erdei's boxing gloves", 100, "USD", "Erdei won against a lot of opponents in this gloves.", famous, sportMuseum, "erdei.jpg"));
         productDataStore.add(new Product("Federer's tennis racket", 200, "USD", "Federer won his last US Open with this racket.", famous, sportMuseum, "federer.jpg"));

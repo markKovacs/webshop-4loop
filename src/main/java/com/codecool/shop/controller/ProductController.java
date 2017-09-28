@@ -27,8 +27,25 @@ public class ProductController {
         ProductCategoryDao productCategoryDataStore = ProductCategoryDaoMem.getInstance();
 
         Map params = new HashMap<>();
+        params.put("allSuppliers", SupplierDaoMem.getInstance().getAll());
         params.put("category", productCategoryDataStore.find(1));
         params.put("products", productDataStore.getBy(productCategoryDataStore.find(1)));
+
+        Order order = OrderDaoMem.getInstance().find(getSessionOrderId(req));
+        int cartItems = order != null ? order.countCartItems() : 0;
+        params.put("cartItems", cartItems);
+        return new ModelAndView(params, "index");
+    }
+
+    public static ModelAndView renderProductsBySupplier(Request req, Response res){
+        int supplierId = Integer.parseInt(req.queryParams("supplier-id"));
+        ProductDao productDataStore = ProductDaoMem.getInstance();
+        SupplierDao supplierDataStore = SupplierDaoMem.getInstance();
+
+        Map params = new HashMap<>();
+        params.put("allSuppliers", SupplierDaoMem.getInstance().getAll());
+        params.put("category", supplierDataStore.find(supplierId));
+        params.put("products", productDataStore.getBy(supplierDataStore.find(supplierId)));
 
         Order order = OrderDaoMem.getInstance().find(getSessionOrderId(req));
         int cartItems = order != null ? order.countCartItems() : 0;
