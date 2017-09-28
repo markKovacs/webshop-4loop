@@ -1,5 +1,6 @@
 package com.codecool.shop.order;
 
+import com.codecool.shop.dao.implementation.OrderDaoMem;
 import com.codecool.shop.dao.implementation.ProductDaoMem;
 import com.codecool.shop.model.Product;
 
@@ -32,10 +33,14 @@ public class Order {
     private String shippingCity;
     private String shippingZipCode;
     private String shippingAddress;
+    private String orderLogFilename;
 
     public Order() {
         this.items = new ArrayList<>();
         this.status = Status.NEW;
+
+        int temporaryId = OrderDaoMem.getInstance().getAll().size();
+        this.orderLogFilename = temporaryId + "_order";
     }
 
     public String addToCart(int productId, int quantity) {

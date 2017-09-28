@@ -10,6 +10,8 @@ import com.codecool.shop.model.*;
 import com.codecool.shop.order.Order;
 import com.codecool.shop.order.Status;
 import com.codecool.shop.order.InputField;
+import com.codecool.shop.utility.Log;
+import com.codecool.shop.utility.Log.*;
 import com.codecool.shop.utility.Email;
 import com.google.gson.Gson;
 import spark.Filter;
@@ -18,6 +20,7 @@ import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -184,6 +187,11 @@ public class Main {
         });
 
         //Email.send("kovacsmark89@gmail.com", "teszt", "<h1>Működik az email küldés!</h1><br>őúűíüöóáé");
+        /*try {
+            Log.save("order", "1_order", "Teszt123");
+        } catch (IOException e) {
+            System.out.println("An error occured when saving the order!");
+        }*/
 
     }
 
