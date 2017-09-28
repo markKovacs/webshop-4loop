@@ -51,7 +51,21 @@ public class Main {
         post("/api/add-to-cart", ProductController::addToCart, gson::toJson);
 
         // ROUTING (start with specific routes)
-        get("/payment", ProductController::renderPayment, new ThymeleafTemplateEngine());
+        //get("/payment", ProductController::renderPayment, new ThymeleafTemplateEngine());
+        get("/payment", (req, res) -> {
+            setOrderStatus(req);
+            Map params = new HashMap();
+            int orderId = getSessionOrderId(req);
+            Order order = null;
+            if (orderId != -1) {
+                order = OrderDaoMem.getInstance().find(orderId);
+            }
+            params.put("order", order);
+            int cartItems = order != null ? order.countCartItems() : 0;
+            params.put("cartItems", cartItems);
+
+            return new ThymeleafTemplateEngine().render(new ModelAndView(params, "payment"));
+        });
 
         get("/payment/bank", ProductController::renderBankPayment, new ThymeleafTemplateEngine());
 
@@ -61,6 +75,11 @@ public class Main {
             boolean successfulPayment = ProductController.payWithChosenMethod(request, response);
             if (successfulPayment) {
                 request.session().removeAttribute("order_id");
+                Order order = getOrderFromSessionInfo(request);
+                if (order != null) {
+                    System.out.println("Status set to PAID");
+                    order.setStatus(Status.PAID);
+                }
                 response.redirect("/payment/success");
             } else {
                 response.redirect("/payment/bank");
@@ -72,6 +91,11 @@ public class Main {
             boolean successfulPayment = ProductController.payWithChosenMethod(request, response);
             if (successfulPayment) {
                 request.session().removeAttribute("order_id");
+                Order order = getOrderFromSessionInfo(request);
+                if (order != null) {
+                    System.out.println("Status set to PAID");
+                    order.setStatus(Status.PAID);
+                }
                 response.redirect("/payment/success");
             } else {
                 response.redirect("/payment/paypal");
@@ -101,7 +125,7 @@ public class Main {
         });
 
         get("/checkout", (Request req, Response res) -> {
-            setStatusToPrevious(req);
+            setOrderStatus(req);
 
             List errorMessages = new ArrayList();
             Map userDatas = new HashMap();
@@ -182,7 +206,7 @@ public class Main {
         });
 
         get("/cart", (Request req, Response res) -> {
-            setStatusToPrevious(req);
+            setOrderStatus(req);
             return new ThymeleafTemplateEngine().render( ProductController.reviewCart(req, res) );
         });
 
@@ -306,19 +330,32 @@ public class Main {
                 Integer.valueOf(req.session().attribute("order_id")+"");
     }
 
-    private static void setStatusToPrevious(Request req) {
-        if (req.queryParams("back") != null) {
-            int orderId = getSessionOrderId(req);
-            Order order = null;
-            if (orderId != -1) {
-                order = OrderDaoMem.getInstance().find(orderId);
+    private static Order getOrderFromSessionInfo(Request req) {
+        int orderId = getSessionOrderId(req);
+        Order order = null;
+        if (orderId != -1) {
+            order = OrderDaoMem.getInstance().find(orderId);
+        }
+        return order;
+    }
+
+    private static void setOrderStatus(Request req) {
+        Order order = getOrderFromSessionInfo(req);
+
+        if (req.queryParams("back") != null && order != null) {
+            System.out.println("STATUS SET BACK FROM: " + order.getStatus());
+            switch (order.getStatus()) {
+                case CHECKEDOUT: order.setStatus(Status.REVIEWED); break;
+                case REVIEWED: order.setStatus(Status.NEW); break;
             }
-            if (order != null) {
-                System.out.println("STATUS SET BACK FROM: " + order.getStatus());
-                switch (order.getStatus()) {
-                    case CHECKEDOUT: order.setStatus(Status.REVIEWED); break;
-                    case REVIEWED: order.setStatus(Status.NEW); break;
-                }
+        } else if (order != null) {
+            Status orderStatus = order.getStatus();
+            if (orderStatus.equals(Status.NEW) && req.pathInfo().equals("/checkout")) {
+                System.out.println("STATUS SET FORWARD FROM: " + order.getStatus());
+                order.setStatus(Status.REVIEWED);
+            } else if (orderStatus.equals(Status.REVIEWED) && req.pathInfo().equals("/payment")) {
+                System.out.println("STATUS SET FORWARD FROM: " + order.getStatus());
+                order.setStatus(Status.CHECKEDOUT);
             }
         }
     }

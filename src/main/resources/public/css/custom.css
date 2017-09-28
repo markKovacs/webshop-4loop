@@ -144,3 +144,14 @@ input[type=number]::-webkit-outer-spin-button {
     margin: auto;
 }
 
+.inline-form {
+    display: inline;
+    margin: 0 10px;
+}
+
+input[type=submit] {
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
