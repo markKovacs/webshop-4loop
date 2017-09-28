@@ -46,7 +46,7 @@ public class Order {
 
         LineItem lineItemToAdd = findLineItem(product);
         if (lineItemToAdd == null) {
-            lineItemToAdd = new LineItem(product, quantity);
+            lineItemToAdd = new LineItem(product, quantity, product.getDefaultPrice());
             items.add(lineItemToAdd);
 
             return "new_item";
@@ -134,4 +134,9 @@ public class Order {
                 ", shippingAddress='" + shippingAddress + '\'' +
                 '}';
     }
+
+    public List<LineItem> getItems() {
+        return items;
+    }
+
 }

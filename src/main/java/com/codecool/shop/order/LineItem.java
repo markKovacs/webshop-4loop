@@ -3,15 +3,20 @@ package com.codecool.shop.order;
 import com.codecool.shop.dao.implementation.ProductDaoMem;
 import com.codecool.shop.model.Product;
 
+
 public class LineItem {
+    private static int idCounter = 0;
+    private int id;
     private Product product;
     private int quantity;
-    private int actualPrice;
+    private float actualPrice;
 
-    public LineItem(Product product, int quantity) {
-        this. product = product;
+    public LineItem(Product product, int quantity, float actualPrice) {
+        this.id = idCounter;
+        idCounter++;
+        this.product = product;
         this.quantity = quantity;
-        this.actualPrice = -1;
+        this.actualPrice = actualPrice;
     }
 
     public void changeQuantity(int amount) {
@@ -34,7 +39,7 @@ public class LineItem {
         this.quantity = quantity;
     }
 
-    public int getActualPrice() {
+    public float getActualPrice() {
         return actualPrice;
     }
 
@@ -50,4 +55,13 @@ public class LineItem {
                 ", actualPrice=" + actualPrice +
                 '}';
     }
+
+    public String getProductName() {
+        return this.product.getName();
+    }
+
+    public int getId() {
+        return this.id;
+    }
+
 }
