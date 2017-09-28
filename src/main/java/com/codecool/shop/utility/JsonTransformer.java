@@ -1,3 +1,5 @@
+package com.codecool.shop.utility;
+
 import com.google.gson.Gson;
 import spark.ResponseTransformer;
 
