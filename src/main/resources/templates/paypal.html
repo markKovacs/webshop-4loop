@@ -33,7 +33,15 @@
                         <p>PLACEHOLDER TEXT</p>
 
                         <form th:action="@{~/payment/paypal}" method="POST">
+
+                            <label for="username">Username: </label>
+                            <input id="username" type="text" name="username" class="name-input" placeholder="Enter username...">
+
+                            <label for="password">Password: </label>
+                            <input id="password" type="text" name="password" class="name-input" placeholder="Enter password...">
+
                             <input class="btn btn-success add-to-cart" type="submit" value="Submit">
+
                         </form>
 
                     </div>

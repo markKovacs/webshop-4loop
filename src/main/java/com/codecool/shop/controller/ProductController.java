@@ -13,6 +13,7 @@ import com.codecool.shop.model.ProductCategory;
 import com.codecool.shop.model.Supplier;
 
 import com.codecool.shop.order.Order;
+import com.codecool.shop.processing.PaymentProcess;
 import spark.Request;
 import spark.Response;
 import spark.ModelAndView;
@@ -23,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 public class ProductController {
+
+    public static final PaymentProcess PAYMENT_PROCESS = new PaymentProcess();
 
     public static ModelAndView renderProducts(Request req, Response res) {
         ProductDao productDataStore = ProductDaoMem.getInstance();
@@ -119,28 +122,20 @@ public class ProductController {
         return new ModelAndView(params, "paypal");
     }
 
-    public static String payWithCreditCard(Request req, Response res) {
-/*        String cardNumber = req.queryParams("card-number1") + '-' + req.queryParams("card-number2") + '-' +
-                req.queryParams("card-number3") + '-' + req.queryParams("card-number4");
-        int cvc = Integer.valueOf(req.queryParams("cvc"));
-        int expiryYear = Integer.valueOf(req.queryParams("exp-year"));
-        int expiryMonth = Integer.valueOf(req.queryParams("exp-month"));
-        String cardHolder = req.queryParams("card-holder");*/
+    public static boolean payWithChosenMethod(Request req, Response res) {
+        // TODO: check if any inputs are empty (null), client side limitation is not enough
 
-        // TODO: validate input fields in payment process, send info if this is credit card payment or paypal
+        Map<String, String> inputValues = collectPaymentInput(req);
 
-        String statusMessage = "success";
-        return statusMessage;
-    }
+        int orderId = getSessionOrderId(req);
+        Order order = null;
+        if (orderId != -1) {
+            order = OrderDaoMem.getInstance().find(orderId);
+        }
 
-    public static String payWithPayPal(Request req, Response res) {
-/*        String userName = req.queryParams("username");
-        String password = req.queryParams("password");*/
+        String paymentType = getPaymentType(req);
+        return PAYMENT_PROCESS.process(order, paymentType, inputValues);
 
-        // TODO: validate input fields in payment process, send info if this is credit card payment or paypal
-
-        String statusMessage = "success";
-        return statusMessage;
     }
 
     public static ModelAndView renderSuccess(Request req, Response res) {
@@ -165,6 +160,30 @@ public class ProductController {
         }
 
         return new ModelAndView(params, "review");
+    }
+
+    private static Map<String, String> collectPaymentInput(Request req) {
+        Map<String, String> inputValues = new HashMap<>();
+        inputValues.put("card-number-1", req.queryParams("card-number-1"));
+        inputValues.put("card-number-2", req.queryParams("card-number-2"));
+        inputValues.put("card-number-3", req.queryParams("card-number-3"));
+        inputValues.put("card-number-4", req.queryParams("card-number-4"));
+        inputValues.put("card-holder", req.queryParams("card-holder"));
+        inputValues.put("exp-year", req.queryParams("exp-year"));
+        inputValues.put("exp-month", req.queryParams("exp-month"));
+        inputValues.put("cvc", req.queryParams("cvc"));
+        inputValues.put("username", req.queryParams("username"));
+        inputValues.put("password", req.queryParams("password"));
+        return inputValues;
+    }
+
+    private static String getPaymentType(Request req) {
+        String paymentType = null;
+        switch (req.pathInfo()) {
+            case "/payment/bank": paymentType = "credit-card"; break;
+            case "/payment/paypal": paymentType = "paypal"; break;
+        }
+        return paymentType;
     }
 
 }

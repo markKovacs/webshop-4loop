@@ -24,6 +24,8 @@ import java.util.Map;
 
 public class Main {
 
+    public static float balanceInUSD = 3000.0f;
+
     public static void main(String[] args) {
 
         // SERVER SETTINGS
@@ -47,31 +49,29 @@ public class Main {
         // ROUTING (start with specific routes)
         get("/payment", ProductController::renderPayment, new ThymeleafTemplateEngine());
 
-        get("/payment/bank", ProductController:: renderBankPayment, new ThymeleafTemplateEngine());
+        get("/payment/bank", ProductController::renderBankPayment, new ThymeleafTemplateEngine());
 
-        get("/payment/paypal", ProductController:: renderPayPalPayment, new ThymeleafTemplateEngine());
+        get("/payment/paypal", ProductController::renderPayPalPayment, new ThymeleafTemplateEngine());
 
         post("/payment/bank", (request, response) -> {
-            // TODO: check if this is correct, test, verify
-            String statusMessage = ProductController.payWithCreditCard(request, response);
-            if (statusMessage.equals("success")) {
+            boolean successfulPayment = ProductController.payWithChosenMethod(request, response);
+            if (successfulPayment) {
+                request.session().removeAttribute("order_id");
                 response.redirect("/payment/success");
             } else {
                 response.redirect("/payment/bank");
             }
-
             return null;
         });
 
         post("/payment/paypal", (request, response) -> {
-            // TODO: check if this is correct, test, verify
-            String statusMessage = ProductController.payWithPayPal(request, response);
-            if (statusMessage.equals("success")) {
+            boolean successfulPayment = ProductController.payWithChosenMethod(request, response);
+            if (successfulPayment) {
+                request.session().removeAttribute("order_id");
                 response.redirect("/payment/success");
             } else {
                 response.redirect("/payment/paypal");
             }
-
             return null;
         });
 
