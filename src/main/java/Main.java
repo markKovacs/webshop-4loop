@@ -50,32 +50,32 @@ public class Main {
         SupplierDao supplierDataStore = SupplierDaoMem.getInstance();
 
         //setting up a new supplier
-        Supplier lucas = new Supplier("Lucasarts", "Movie and dream making");
-        supplierDataStore.add(lucas);
-        Supplier fox = new Supplier("20th Century Fox", "Movie making");
-        supplierDataStore.add(fox);
-        Supplier uffizi = new Supplier("Uffizi", "Museum in Italy");
-        supplierDataStore.add(uffizi);
+        Supplier cbs = new Supplier("CBS", "Television series");
+        supplierDataStore.add(cbs);
         Supplier columbia = new Supplier("Columbia Pictures", "Movie making");
         supplierDataStore.add(columbia);
+        Supplier emi = new Supplier("EMI Music", "CD and LP publishing etc.");
+        supplierDataStore.add(emi);
+        Supplier louvre = new Supplier("Louvre", "Museum in Paris, France");
+        supplierDataStore.add(louvre);
+        Supplier lucas = new Supplier("Lucasarts", "Movie and dream making");
+        supplierDataStore.add(lucas);
         Supplier newLineCinema = new Supplier("New Line Cinema", "Movie making");
         supplierDataStore.add(newLineCinema);
         Supplier orion = new Supplier("Orion Pictures", "Movie making, change the future");
         supplierDataStore.add(orion);
-        Supplier cbs = new Supplier("CBS", "Television series");
-        supplierDataStore.add(cbs);
-        Supplier whiteStarLine = new Supplier("White Star Line", "Ship building");
-        supplierDataStore.add(whiteStarLine);
-        Supplier emi = new Supplier("EMI Music", "CD and LP publishing etc.");
-        supplierDataStore.add(emi);
+        Supplier pentagon = new Supplier("Pentagon", "The headquarters of the US Department of Defense");
+        supplierDataStore.add(pentagon);
         Supplier sportMuseum = new Supplier("Sport Museum", "Sport equipment");
         supplierDataStore.add(sportMuseum);
         Supplier hungary = new Supplier("State of Hungary", "Our beautiful homeland");
         supplierDataStore.add(hungary);
-        Supplier louvre = new Supplier("Louvre", "Museum in Paris, France");
-        supplierDataStore.add(louvre);
-        Supplier pentagon = new Supplier("Pentagon", "The headquarters of the US Department of Defense");
-        supplierDataStore.add(pentagon);
+        Supplier uffizi = new Supplier("Uffizi", "Museum in Italy");
+        supplierDataStore.add(uffizi);
+        Supplier whiteStarLine = new Supplier("White Star Line", "Ship building");
+        supplierDataStore.add(whiteStarLine);
+        Supplier fox = new Supplier("20th Century Fox", "Movie making");
+        supplierDataStore.add(fox);
 
 
         //setting up a new product category
