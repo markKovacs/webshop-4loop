@@ -99,7 +99,7 @@ public class Main {
         });
 
         post("/checkout", (Request req, Response res) -> {
-            Map userDatas = new HashMap();
+            Map<String, String> userDatas = new HashMap<>();
             userDatas.put("username", req.queryParams("username"));
             userDatas.put("email", req.queryParams("email"));
             userDatas.put("phone", req.queryParams("phone"));
@@ -153,6 +153,14 @@ public class Main {
                 params.put("errors", errorMessages);
                 return new ThymeleafTemplateEngine().render(new ModelAndView(params, "checkout"));
             } else {
+                int orderId = getSessionOrderId(req);
+                Order order = null;
+                if (orderId != -1){
+                    order = OrderDaoMem.getInstance().find(orderId);
+                }
+                if (order != null){
+                    order.setCheckoutInfo(userDatas);
+                }
                 res.redirect("/payment");
             }
 
@@ -270,6 +278,11 @@ public class Main {
                 }
             }
         };
+    }
+
+    private static int getSessionOrderId(Request req) {
+        return req.session().attribute("order_id") == null ? -1 :
+                Integer.valueOf(req.session().attribute("order_id")+"");
     }
 
 }
