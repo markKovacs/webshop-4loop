@@ -34,6 +34,10 @@ public class Main {
            return new ThymeleafTemplateEngine().render( ProductController.renderProducts(req, res) );
         });
 
+        get("/cart", (Request req, Response res) -> {
+            return new ThymeleafTemplateEngine().render( ProductController.reviewCart(req, res) );
+        });
+
     }
 
     public static void populateData() {
