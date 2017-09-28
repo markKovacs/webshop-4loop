@@ -184,11 +184,11 @@ public class Main {
         });
 
         //Email.send("kovacsmark89@gmail.com", "teszt", "<h1>Működik az email küldés!</h1><br>őúűíüöóáé");
-        try {
+        /*try {
             Log.save("order", "1_order", "Teszt123");
         } catch (IOException e) {
             System.out.println("An error occured when saving the order!");
-        }
+        }*/
 
     }
 
