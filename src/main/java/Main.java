@@ -111,7 +111,7 @@ public class Main {
         productDataStore.add(new Product("Elvis Jacket", 1230, "USD", "Elvis went on the stage in this jacket many times.", famous, emi, "elvis.jpg"));
         productDataStore.add(new Product("Donald Trump's necktie", 90, "USD", "Trump wore this necktie when he discussed some problems with Kim Jong-un.", famous, pentagon, "trump.jpg"));
         productDataStore.add(new Product("Anita Gorbicz's first ball", 200, "USD", "Gorbicz played her first handball match with this ball. She was only 6 years old.", famous, sportMuseum, "gorbicz.jpg"));
-        productDataStore.add(new Product("Neymar's shoes", 170, "USD", "Neymar scored 4 goals against Mozambique in this special sport equipment.", famous, louvre, "neymar.jpg"));
+        productDataStore.add(new Product("Neymar's shoes", 170, "USD", "Neymar scored 4 goals against Mozambique in this special sport equipment.", famous, sportMuseum, "neymar.jpg"));
         productDataStore.add(new Product("Mohamed Ali's boxing gloves", 800, "USD", "Ali won against a lot of opponents in this gloves.", famous, sportMuseum, "ali.jpg"));
         productDataStore.add(new Product("Zsolt Erdei's boxing gloves", 100, "USD", "Erdei won against a lot of opponents in this gloves.", famous, sportMuseum, "erdei.jpg"));
         productDataStore.add(new Product("Federer's tennis racket", 200, "USD", "Federer won his last US Open with this racket.", famous, sportMuseum, "federer.jpg"));
