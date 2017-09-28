@@ -10,6 +10,7 @@ import com.codecool.shop.model.*;
 import com.codecool.shop.order.Order;
 import com.codecool.shop.order.Status;
 import com.codecool.shop.order.InputField;
+import com.codecool.shop.utility.Email;
 import com.google.gson.Gson;
 import spark.Filter;
 import jdk.internal.util.xml.impl.Input;
@@ -178,6 +179,8 @@ public class Main {
         get("/cart", (Request req, Response res) -> {
             return new ThymeleafTemplateEngine().render( ProductController.reviewCart(req, res) );
         });
+
+        //Email.send("kovacsmark89@gmail.com", "teszt", "<h1>Működik az email küldés!</h1><br>őúűíüöóáé");
 
     }
 
