@@ -94,7 +94,8 @@
 }
 
 #empty-cart-label {
-    padding: 0 0 50px;
+    display: inline-block;
+    padding: 0 0 30px;
 }
 
 .push-right {
