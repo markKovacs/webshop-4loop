@@ -174,4 +174,7 @@ buildNumber.properties
 # Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
 !/.mvn/wrapper/maven-wrapper.jar
 
+src/main/logs/*
+src/main/orders/*
+
 # End of https://www.gitignore.io/api/java,maven,java-web,intellij,intellij+iml,intellij+all
