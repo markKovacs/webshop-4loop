@@ -4,55 +4,50 @@ package com.codecool.shop.utility;
 import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
-import javax.activation.*;
 import static com.codecool.shop.Config.*;
+
 
 public class Email {
 
-    public void Email() {
 
-    }
+    public static void send(String to, String subject, String body) {
 
-    public static void sendEmail(String to, String subject, String body) {
+        Properties props = new Properties();
+        props.put("mail.smtp.host", SMTP_HOST);
+        props.put("mail.smtp.socketFactory.port", SMTP_PORT);
+        props.put("mail.smtp.socketFactory.class",
+                "javax.net.ssl.SSLSocketFactory");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.port", SMTP_PORT);
 
-        // Sender's email ID needs to be mentioned
-        String from = EMAIL_FROM;
-
-        // Assuming you are sending email from localhost
-        String host = "localhost";
-
-        // Get system properties
-        Properties properties = System.getProperties();
-
-        // Setup mail server
-        properties.setProperty("mail.smtp.host", host);
-
-        // Get the default Session object.
-        Session session = Session.getDefaultInstance(properties);
+        Session session = Session.getDefaultInstance(props,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(SMTP_USER,SMTP_PASS);
+                    }
+                });
 
         try {
-            // Create a default MimeMessage object.
-            MimeMessage message = new MimeMessage(session);
 
-            // Set From: header field of the header.
-            message.setFrom(new InternetAddress(from));
-
-            // Set To: header field of the header.
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-
-            // Set Subject: header field
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(EMAIL_FROM));
+            message.setRecipients(Message.RecipientType.TO,
+                    InternetAddress.parse(to));
+            // message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
             message.setSubject(subject);
 
-            // Send the actual HTML message, as big as you like
-            message.setContent(body, "text/html");
 
-            // Send message
+            //message.setText("Dear Mail Crawler,");
+            message.setContent(body, "text/html; charset=UTF-8");
+
             Transport.send(message);
-            System.out.println("Sent message successfully....");
-        } catch (MessagingException mex) {
-            mex.printStackTrace();
-        }
-    }
 
+            System.out.println("Sent message successfully!");
+
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+
+    }
 
 }

@@ -32,8 +32,9 @@ public class ProductController {
         ProductCategoryDao productCategoryDataStore = ProductCategoryDaoMem.getInstance();
 
         Map params = new HashMap<>();
+        params.put("allCategories", ProductCategoryDaoMem.getInstance().getAll());
         params.put("allSuppliers", SupplierDaoMem.getInstance().getAll());
-        params.put("category", productCategoryDataStore.find(1));
+        params.put("actualSelection", productCategoryDataStore.find(1));
         params.put("products", productDataStore.getBy(productCategoryDataStore.find(1)));
 
         Order order = OrderDaoMem.getInstance().find(getSessionOrderId(req));
@@ -48,9 +49,27 @@ public class ProductController {
         SupplierDao supplierDataStore = SupplierDaoMem.getInstance();
 
         Map params = new HashMap<>();
+        params.put("allCategories", ProductCategoryDaoMem.getInstance().getAll());
         params.put("allSuppliers", SupplierDaoMem.getInstance().getAll());
-        params.put("category", supplierDataStore.find(supplierId));
+        params.put("actualSelection", supplierDataStore.find(supplierId));
         params.put("products", productDataStore.getBy(supplierDataStore.find(supplierId)));
+
+        Order order = OrderDaoMem.getInstance().find(getSessionOrderId(req));
+        int cartItems = order != null ? order.countCartItems() : 0;
+        params.put("cartItems", cartItems);
+        return new ModelAndView(params, "index");
+    }
+
+    public static ModelAndView renderProductsByCategory(Request req, Response res){
+        int categoryId = Integer.parseInt(req.queryParams("category-id"));
+        ProductDao productDataStore = ProductDaoMem.getInstance();
+        ProductCategoryDao productCategoryDataStore = ProductCategoryDaoMem.getInstance();
+
+        Map params = new HashMap<>();
+        params.put("allCategories", ProductCategoryDaoMem.getInstance().getAll());
+        params.put("allSuppliers", SupplierDaoMem.getInstance().getAll());
+        params.put("actualSelection", productCategoryDataStore.find(categoryId));
+        params.put("products", productDataStore.getBy(productCategoryDataStore.find(categoryId)));
 
         Order order = OrderDaoMem.getInstance().find(getSessionOrderId(req));
         int cartItems = order != null ? order.countCartItems() : 0;

@@ -8,6 +8,9 @@
     <meta name="author" content="Codecool" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+    <!--Font type-->
+    <link href="https://fonts.googleapis.com/css?family=Stoke" rel="stylesheet">
+
     <!-- Latest compiled and minified Jquery -->
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"
             integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous" defer></script>
@@ -44,13 +47,11 @@
     <!-- HEADER -->
     <header class="jumbotron text-center">
 
-        <h1>Codecool Shop</h1>
+        <h1>Original Relics Shop</h1>
 
         <!-- NAVBAR -->
         <a th:href="@{~/}">Products</a>
         <a th:href="@{~/cart}">Cart(<span id="cart-item-count">[[${cartItems}]]</span>)</a>
-
-        <a th:href="@{~/checkout}">Checkout</a>
 
     </header>
 

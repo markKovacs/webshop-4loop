@@ -1,3 +1,8 @@
+/*Font type*/
+/*body {
+    font-family: 'Stoke', serif;
+}*/
+
 /* Toast Message */
 #toast {
     visibility: hidden; /* Hidden by default. Visible on click */

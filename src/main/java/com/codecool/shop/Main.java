@@ -10,6 +10,7 @@ import com.codecool.shop.model.*;
 import com.codecool.shop.order.Order;
 import com.codecool.shop.order.Status;
 import com.codecool.shop.order.InputField;
+import com.codecool.shop.utility.Email;
 import com.google.gson.Gson;
 import spark.Filter;
 import jdk.internal.util.xml.impl.Input;
@@ -86,7 +87,14 @@ public class Main {
             for (int i=0; i < req.queryParams().size(); i++){
                 System.out.println(req.queryParams().toArray()[i] + ": " + req.queryParams(req.queryParams().toArray()[i].toString()));
             }
-            return new ThymeleafTemplateEngine().render( ProductController.renderProductsBySupplier(req, res) );
+
+            if (req.queryParams().toArray()[0].equals("category-id")){
+                return new ThymeleafTemplateEngine().render( ProductController.renderProductsByCategory(req, res) );
+            } else if(req.queryParams().toArray()[0].equals("supplier-id")){
+                return new ThymeleafTemplateEngine().render( ProductController.renderProductsBySupplier(req, res) );
+            }
+
+            return null;
         });
 
         get("/checkout", (Request req, Response res) -> {
@@ -174,6 +182,8 @@ public class Main {
             setStatusToPrevious(req);
             return new ThymeleafTemplateEngine().render( ProductController.reviewCart(req, res) );
         });
+
+        //Email.send("kovacsmark89@gmail.com", "teszt", "<h1>Működik az email küldés!</h1><br>őúűíüöóáé");
 
     }
 
