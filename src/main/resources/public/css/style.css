@@ -51,3 +51,8 @@
 .framed {
     border: 1px solid black;
 }
+
+#checkout-container {
+    width: 30%;
+    margin: 0 auto;
+}

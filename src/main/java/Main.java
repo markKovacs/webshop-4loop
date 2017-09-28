@@ -7,10 +7,18 @@ import com.codecool.shop.dao.implementation.*;
 import com.codecool.shop.model.*;
 import com.codecool.shop.order.Order;
 import com.codecool.shop.order.Status;
+import com.codecool.shop.order.InputField;
 import com.google.gson.Gson;
 import spark.Filter;
+import jdk.internal.util.xml.impl.Input;
+import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Main {
 
@@ -71,6 +79,77 @@ public class Main {
         // EQUIVALENT WITH ABOVE
         get("/index", (Request req, Response res) -> {
            return new ThymeleafTemplateEngine().render( ProductController.renderProducts(req, res) );
+        });
+
+        get("/checkout", (Request req, Response res) -> {
+            List errorMessages = new ArrayList();
+            Map userDatas = new HashMap();
+            Map params = new HashMap();
+            params.put("user", userDatas);
+            params.put("errors", errorMessages);
+            return new ThymeleafTemplateEngine().render(new ModelAndView(params, "checkout"));
+        });
+
+        post("/checkout", (Request req, Response res) -> {
+            Map userDatas = new HashMap();
+            userDatas.put("username", req.queryParams("username"));
+            userDatas.put("email", req.queryParams("email"));
+            userDatas.put("phone", req.queryParams("phone"));
+            userDatas.put("billcountry", req.queryParams("bill-country"));
+            userDatas.put("billcity", req.queryParams("bill-city"));
+            userDatas.put("billzip", req.queryParams("bill-zip"));
+            userDatas.put("billaddress", req.queryParams("bill-address"));
+            userDatas.put("shipcountry", req.queryParams("ship-country"));
+            userDatas.put("shipcity", req.queryParams("ship-city"));
+            userDatas.put("shipzip", req.queryParams("ship-zip"));
+            userDatas.put("shipaddress", req.queryParams("ship-address"));
+
+            List errorMessages = new ArrayList();
+            if (InputField.FULL_NAME.validate(userDatas.get("username").toString()) == false){
+                errorMessages.add("Invalid username.");
+            }
+            if (InputField.EMAIL.validate(userDatas.get("email").toString()) == false){
+                errorMessages.add("Invalid email address");
+            }
+            if (InputField.PHONE.validate(req.queryParams("phone")) == false){
+                errorMessages.add("Invalid phone number");
+            }
+            if (InputField.COUNTRY.validate(userDatas.get("billcountry").toString()) == false){
+                errorMessages.add("Invalid billing country");
+            }
+            if (InputField.CITY.validate(userDatas.get("billcity").toString()) == false){
+                errorMessages.add("Invalid billing city");
+            }
+            if (InputField.ZIP_CODE.validate(userDatas.get("billzip").toString()) == false){
+                errorMessages.add("Invalid billing ZIP code");
+            }
+            if (InputField.ADDRESS.validate(userDatas.get("billaddress").toString()) == false){
+                errorMessages.add("Invalid billing address");
+            }
+            if (InputField.COUNTRY.validate(userDatas.get("shipcountry").toString()) == false){
+                errorMessages.add("Invalid shipping country");
+            }
+            if (InputField.CITY.validate(userDatas.get("shipcity").toString()) == false){
+                errorMessages.add("Invalid shipping city");
+            }
+            if (InputField.ZIP_CODE.validate(userDatas.get("shipzip").toString()) == false){
+                errorMessages.add("Invalid shipping ZIP code");
+            }
+            if (InputField.ADDRESS.validate(userDatas.get("shipaddress").toString()) == false){
+                errorMessages.add("Invalid shipping address");
+            }
+
+            if (errorMessages.size() > 0){
+                Map params = new HashMap();
+                params.put("user", userDatas);
+                params.put("errors", errorMessages);
+                return new ThymeleafTemplateEngine().render(new ModelAndView(params, "checkout"));
+            } else {
+                res.redirect("/payment");
+            }
+
+            return "";
+
         });
 
     }
