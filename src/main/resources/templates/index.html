@@ -13,9 +13,8 @@
         <div class="well well-sm">
             <form id="list-by-supplier" action="/index" method="post">
                 <label for="supplier-selection">Choose a supplier:</label>
-                <select id="supplier-selection" name="supplier-id" th:remove="all-but-first">
+                <select id="supplier-selection" name="supplier-id">
                     <option th:each="supplier : ${allSuppliers}" th:attr="value=${supplier.id}" th:text="${supplier.name}">Suppliers</option>
-                    <option >All</option>
                 </select>
                 <input type="submit" />
             </form>
