@@ -26,26 +26,26 @@
 
                         <div>
                             <label for="card-holder">Card Holder: </label>
-                            <input id="card-holder" type="text" name="card-holder" class="name-input" placeholder="Full Name">
+                            <input id="card-holder" type="text" name="card-holder" class="name-input" placeholder="Full Name" required>
                         </div>
                         <div>
                             <label for="card-number">Card Number: </label>
-                            <input id="card-number" type="text" name="card-number-1" class="four-num" placeholder="XXXX">
+                            <input id="card-number" type="text" name="card-number-1" class="four-num" placeholder="XXXX" maxlength="4" minlength="4" required>
                             <span>-</span>
-                            <input type="text" name="card-number-2" class="four-num" placeholder="XXXX">
+                            <input type="text" name="card-number-2" class="four-num" placeholder="XXXX" maxlength="4" minlength="4" required>
                             <span>-</span>
-                            <input type="text" name="card-number-3" class="four-num" placeholder="XXXX">
+                            <input type="text" name="card-number-3" class="four-num" placeholder="XXXX" maxlength="4" minlength="4" required>
                             <span>-</span>
-                            <input type="text" name="card-number-4" class="four-num" placeholder="XXXX">
+                            <input type="text" name="card-number-4" class="four-num" placeholder="XXXX" maxlength="4" minlength="4" required>
                         </div>
                         <div>
                             <label for="cvc">CVC: </label>
-                            <input id="cvc" type="text" name="cvc" class="three-num" placeholder="XXX">
+                            <input id="cvc" type="text" name="cvc" class="three-num" placeholder="XXX" required maxlength="3" minlength="3">
                             <label for="exp-year">Expiration year: </label>
-                            <input id="exp-year" type="number" name="exp-year" min="2017" max="9999" placeholder="YYYY" class="four-num">
+                            <input id="exp-year" type="number" name="exp-year" min="2017" max="9999" placeholder="YYYY" class="four-num" required>
                             <span>/</span>
                             <label for="exp-month">Expiration month: </label>
-                            <input id="exp-month" type="number" name="exp-month" placeholder="MM" class="two-num" min="1" max="12">
+                            <input id="exp-month" type="number" name="exp-month" placeholder="MM" class="two-num" min="1" max="12" required>
                         </div>
                         <div class="text-center">
                             <input class="btn btn-success add-to-cart" type="submit" value="Submit">

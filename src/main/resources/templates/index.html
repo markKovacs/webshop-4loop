@@ -10,22 +10,24 @@
 <body>
 
     <div layout:fragment="content" class="container">
-        <div class="well well-sm">
-            <form id="list-by-category" action="/index" method="post">
+        <div class="well well-sm text-center">
+
+            <form id="list-by-category" action="/index" method="post" class="inline-form">
                 <label for="category-selection">Choose a category:</label>
                 <select id="category-selection" name="category-id">
                     <option th:each="category : ${allCategories}" th:attr="value=${category.id}" th:text="${category.name}">Categories</option>
                 </select>
-                <input type="submit" />
+                <input type="submit" value="Select" />
             </form>
 
-            <form id="list-by-supplier" action="/index" method="post">
+            <form id="list-by-supplier" action="/index" method="post" class="inline-form">
                 <label for="supplier-selection">Choose a supplier:</label>
                 <select id="supplier-selection" name="supplier-id">
                     <option th:each="supplier : ${allSuppliers}" th:attr="value=${supplier.id}" th:text="${supplier.name}">Suppliers</option>
                 </select>
-                <input type="submit" />
+                <input type="submit" value="Select" />
             </form>
+
         </div>
 
         <div class="well well-sm">
