@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html layout:decorate="~{layout}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>PayPal Payment</title>
+</head>
+
+<body>
+
+<div layout:fragment="content" class="container">
+
+    <div class="well well-sm">
+        <strong>PayPal Payment</strong>
+    </div>
+
+    <div id="paypal" class="row list-group">
+
+        <div class="col-xs-12 col-lg-12">
+
+            <div class="row">
+                <div class="col-xs-12 col-lg-12">
+                    <div class="well well-sm">
+                        <strong>PayPal Information</strong>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-offset-2 col-xs-8">
+
+                        <!-- TODO: form based on ProductController names -->
+
+                        <p>PLACEHOLDER TEXT</p>
+
+                        <form th:action="@{~/payment/paypal}" method="POST">
+                            <input class="btn btn-success add-to-cart" type="submit" value="Submit">
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

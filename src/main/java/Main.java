@@ -28,7 +28,7 @@ public class Main {
         populateData();
 
         // BEFORE REQUEST CHECK
-        before("/*", orderInProgressFilter());
+        //before("/*", orderInProgressFilter());
 
         // API ENDPOINTS
         Gson gson = new Gson();
@@ -36,6 +36,36 @@ public class Main {
 
         // ROUTING (start with specific routes)
         get("/payment", ProductController::renderPayment, new ThymeleafTemplateEngine());
+
+        get("/payment/bank", ProductController:: renderBankPayment, new ThymeleafTemplateEngine());
+
+        get("/payment/paypal", ProductController:: renderPayPalPayment, new ThymeleafTemplateEngine());
+
+        post("/payment/bank", (request, response) -> {
+            // TODO: check if this is correct, test, verify
+            String statusMessage = ProductController.payWithCreditCard(request, response);
+            if (statusMessage.equals("success")) {
+                response.redirect("/payment/success");
+            } else {
+                response.redirect("/payment/bank");
+            }
+
+            return null;
+        });
+
+        post("/payment/paypal", (request, response) -> {
+            // TODO: check if this is correct, test, verify
+            String statusMessage = ProductController.payWithPayPal(request, response);
+            if (statusMessage.equals("success")) {
+                response.redirect("/payment/success");
+            } else {
+                response.redirect("/payment/paypal");
+            }
+
+            return null;
+        });
+
+        get("/payment/success", ProductController:: renderSuccess, new ThymeleafTemplateEngine());
 
         get("/", ProductController::renderProducts, new ThymeleafTemplateEngine());
         // EQUIVALENT WITH ABOVE

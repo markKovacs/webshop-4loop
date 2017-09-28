@@ -15,9 +15,6 @@
             <strong>Payment</strong>
         </div>
 
-
-
-
         <div id="payment" class="row list-group">
 
             <div class="col-xs-12 col-lg-12">
@@ -34,25 +31,26 @@
                                 <th>Unit Price</th>
                                 <th>Subtotal</th>
                             </tr>
+                            <th:block th:if="${order}">
                             <tr th:each="item : ${order.items}" th:object="${item}">
                                 <td th:text="*{getProductName()}">Light Sabre from Star Wars</td>
                                 <td th:text="*{quantity}">42</td>
                                 <td th:text="*{actualPrice}">200 USD</td>
                                 <td th:text="*{subTotalPrice}">8400 USD</td>
                             </tr>
+                            </th:block>
                         </table>
                     </div>
                 </div>
-
 
                 <div class="row">
                     <div class="col-xs-12 col-lg-12">
                         <div class="well well-sm">
                             <strong>Personal Info</strong>
                         </div>
-                        <p><strong>Name:</strong> Some Name</p>
-                        <p><strong>E-mail:</strong> example1999@gmail.com</p>
-                        <p><strong>Phone:</strong> +41-30-2352586</p>
+                        <p><strong>Name:</strong> <span th:text="${order.fullName}">Some Name</span></p>
+                        <p><strong>E-mail:</strong> <span th:text="${order.email}">example1999@gmail.com</span></p>
+                        <p><strong>Phone:</strong> <span th:text="${order.phone}">+41-30-2352586</span></p>
                     </div>
                 </div>
                 <div class="row">
@@ -60,46 +58,33 @@
                         <div class="well well-sm">
                             <strong>Billing Info</strong>
                         </div>
-                        <p><strong>Name:</strong> Some Name</p>
-                        <p><strong>E-mail:</strong> example1999@gmail.com</p>
-                        <p><strong>Phone:</strong> +41-30-2352586</p>
+                        <p><strong>Country:</strong> <span th:text="${order.billingCountry}">Hungary</span></p>
+                        <p><strong>City:</strong> <span th:text="${order.billingCity}">Budapest</span></p>
+                        <p><strong>Zip Code:</strong> <span th:text="${order.billingZipCode}">1234</span></p>
+                        <p><strong>Address:</strong> <span th:text="${order.billingAddress}">Hungary</span></p>
                     </div>
                     <div class="col-xs-6 col-lg-6">
                         <div class="well well-sm">
                             <strong>Shipping Info</strong>
                         </div>
-                        <p><strong>Name:</strong> Some Name</p>
-                        <p><strong>E-mail:</strong> example1999@gmail.com</p>
-                        <p><strong>Phone:</strong> +41-30-2352586</p>
+                        <p><strong>Country:</strong> <span th:text="${order.billingCountry}">Hungary</span></p>
+                        <p><strong>City:</strong> <span th:text="${order.billingCity}">Budapest</span></p>
+                        <p><strong>Zip Code:</strong> <span th:text="${order.billingZipCode}">1234</span></p>
+                        <p><strong>Address:</strong> <span th:text="${order.billingAddress}">Hungary</span></p>
                     </div>
                 </div>
 
+                <div>
+
+                    <!-- TODO: frontend buttons not final version yet -->
+
+                    <a class="btn btn-success add-to-cart" th:href="@{~/payment/bank}">Bank</a>
+                    <a class="btn btn-success add-to-cart" th:href="@{~/payment/paypal}">PayPal</a>
+                </div>
 
             </div>
 
-
-<!--            <div class="item col-xs-4 col-lg-4" th:each="prod,iterStat : ${products}">
-                <div class="thumbnail">
-                    <img class="group list-group-image" src="http://placehold.it/400x250/000/fff" th:attr="src='/img/' + ${prod.imageFileName}" alt="" />
-                    <div class="caption">
-                        <h4 class="group inner list-group-item-heading" th:text="${prod.name}">Product name</h4>
-                        <p class="group inner list-group-item-text" th:text="${#strings.substring(prod.description, 0, 25) + '...'}">Product description... </p>
-                        <div class="row">
-                            <div class="col-xs-12 col-md-6">
-                                <p class="lead" th:text="${prod.getPrice()}">100 USD</p>
-                            </div>
-                            <div class="col-xs-12 col-md-6" th:id="${'product-id-' + prod.id}">
-                                <input type="number" min="1" max="99" class="quantity" value="1">
-                                <a class="btn btn-success add-to-cart" th:attr="data-product-id=${prod.id}">Add to cart</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>-->
         </div>
-
-
-
 
     </div>
 

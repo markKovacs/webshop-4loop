@@ -13,10 +13,12 @@ public class LineItem {
         this.product = product;
         this.quantity = quantity;
         this.actualPrice = actualPrice;
+        this.subTotalPrice = quantity * actualPrice;
     }
 
     public void changeQuantity(int amount) {
         this.quantity += amount;
+        this.subTotalPrice += amount * actualPrice;
     }
 
     public Product getProduct() {

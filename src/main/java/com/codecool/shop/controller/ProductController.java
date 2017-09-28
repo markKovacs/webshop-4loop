@@ -72,6 +72,63 @@ public class ProductController {
         return statusMessage;
     }
 
+    public static ModelAndView renderBankPayment(Request req, Response res) {
+        int orderId = getSessionOrderId(req);
+        Order order = null;
+        if (orderId != -1) {
+            order = OrderDaoMem.getInstance().find(orderId);
+        }
+
+        Map params = new HashMap<>();
+        int cartItems = order != null ? order.countCartItems() : 0;
+        params.put("cartItems", cartItems);
+
+        return new ModelAndView(params, "bank");
+    }
+
+    public static ModelAndView renderPayPalPayment(Request req, Response res) {
+        int orderId = getSessionOrderId(req);
+        Order order = null;
+        if (orderId != -1) {
+            order = OrderDaoMem.getInstance().find(orderId);
+        }
+
+        Map params = new HashMap<>();
+        int cartItems = order != null ? order.countCartItems() : 0;
+        params.put("cartItems", cartItems);
+
+        return new ModelAndView(params, "paypal");
+    }
+
+    public static String payWithCreditCard(Request req, Response res) {
+/*        String cardNumber = req.queryParams("card-number1") + '-' + req.queryParams("card-number2") + '-' +
+                req.queryParams("card-number3") + '-' + req.queryParams("card-number4");
+        int cvc = Integer.valueOf(req.queryParams("cvc"));
+        int expiryYear = Integer.valueOf(req.queryParams("exp-year"));
+        int expiryMonth = Integer.valueOf(req.queryParams("exp-month"));
+        String cardHolder = req.queryParams("card-holder");*/
+
+        // TODO: validate input fields in payment process, send info if this is credit card payment or paypal
+
+        String statusMessage = "success";
+        return statusMessage;
+    }
+
+    public static String payWithPayPal(Request req, Response res) {
+/*        String userName = req.queryParams("username");
+        String password = req.queryParams("password");*/
+
+        // TODO: validate input fields in payment process, send info if this is credit card payment or paypal
+
+        String statusMessage = "success";
+        return statusMessage;
+    }
+
+    public static ModelAndView renderSuccess(Request req, Response res) {
+        Map params = new HashMap<>();
+        return new ModelAndView(params, "success");
+    }
+
     private static int getSessionOrderId(Request req) {
         return req.session().attribute("order_id") == null ? -1 :
                 Integer.valueOf(req.session().attribute("order_id")+"");
