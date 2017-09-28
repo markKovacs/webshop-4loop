@@ -3,13 +3,18 @@ package com.codecool.shop.order;
 import com.codecool.shop.dao.implementation.ProductDaoMem;
 import com.codecool.shop.model.Product;
 
+
 public class LineItem {
+    private static int idCounter = 0;
+    private int id;
     private Product product;
     private int quantity;
     private float actualPrice;
     private float subTotalPrice;
 
     public LineItem(Product product, int quantity, float actualPrice) {
+        this.id = idCounter;
+        idCounter++;
         this.product = product;
         this.quantity = quantity;
         this.actualPrice = actualPrice;
@@ -65,4 +70,9 @@ public class LineItem {
                 ", actualPrice=" + actualPrice +
                 '}';
     }
+
+    public int getId() {
+        return this.id;
+    }
+
 }

@@ -190,4 +190,9 @@ public class Order {
                 ", shippingAddress='" + shippingAddress + '\'' +
                 '}';
     }
+
+    public List<LineItem> getItems() {
+        return items;
+    }
+
 }

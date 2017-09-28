@@ -8,13 +8,52 @@
 </head>
 
 <body>
-
     <div layout:fragment="content" class="container">
-
         <div class="well well-sm">
-            <strong>Review content</strong>
+            <div id="inner-box">
+                <strong id="review-label">Review your cart</strong>
+                <div th:if="${#lists.size(order) > 0}">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="center">Product</th>
+                                <th class="center">Quantity</th>
+                                <th class="center price-width">Price</th>
+                                <th class="center subtotal-width">SubTotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${order}" th:object="${item}">
+                                <td th:text="*{getProductName()}">Light Sabre from Star Wars</td>
+                                <td class="center">
+                                    <form action="/change-quantity" method="post">
+                                        <input class="center" name="quantity-mod" type="number" min="0" max="99" value="1" th:attr="value=*{quantity}, data-product-id=*{id}">
+                                    </form>
+                                </td>
+                                <td class="right price-width" th:text="*{#numbers.formatDecimal(actualPrice, 0, 'COMMA', 2, 'POINT')} + ' USD'">200 USD</td>
+                                <td class="right subtotal-width" th:text="*{#numbers.formatDecimal(quantity * actualPrice, 0, 'COMMA', 2, 'POINT') + ' USD'}">8400 USD</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td class="total center">Total</td>
+                                <td></td>
+                                <td></td>
+                                <!--<td class="right subtotal-width total" th:text="*{#numbers.formatDecimal(quantity * actualPrice, 0, 'COMMA', 2, 'POINT') + ' USD'}">1100000 USD</td>-->
+                                <td class="right subtotal-width total">11111111 USD</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+                <div th:if="${#lists.size(order) == 0}">
+                    <span id="empty-cart-label">Your cart is empty!</span>
+                </div>
+                <div>
+                    <a href="/" role="button" class="btn btn-default">Back to Products</a>
+                    <a href="/checkout" role="button" class="btn btn-success push-right" th:if="${#lists.size(order) > 0}">Proceed to Checkout</a>
+                </div>
+            </div>
         </div>
-
     </div>
 
 </body>

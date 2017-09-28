@@ -158,6 +158,10 @@ public class Main {
 
         });
 
+        get("/cart", (Request req, Response res) -> {
+            return new ThymeleafTemplateEngine().render( ProductController.reviewCart(req, res) );
+        });
+
     }
 
     public static void populateData() {
