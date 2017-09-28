@@ -11,6 +11,14 @@
 
     <div layout:fragment="content" class="container">
         <div class="well well-sm">
+            <form id="list-by-category" action="/index" method="post">
+                <label for="category-selection">Choose a category:</label>
+                <select id="category-selection" name="category-id">
+                    <option th:each="category : ${allCategories}" th:attr="value=${category.id}" th:text="${category.name}">Categories</option>
+                </select>
+                <input type="submit" />
+            </form>
+
             <form id="list-by-supplier" action="/index" method="post">
                 <label for="supplier-selection">Choose a supplier:</label>
                 <select id="supplier-selection" name="supplier-id">
@@ -21,10 +29,8 @@
         </div>
 
         <div class="well well-sm">
-            <strong th:text="${category.name}">Category Title</strong>
+            <strong th:text="${actualSelection.name}">Category Title or Supplier Name</strong>
         </div>
-        <a th:href="@{~/index/prev}">Prev</a>
-        <a th:href="@{~/index/next}">Next</a>
         <div id="products" class="row list-group">
 
             <div class="item col-xs-4 col-lg-4" th:each="prod,iterStat : ${products}">
