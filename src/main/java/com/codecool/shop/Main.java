@@ -74,7 +74,7 @@ public class Main {
         post("/payment/bank", (request, response) -> {
             boolean successfulPayment = ProductController.payWithChosenMethod(request, response);
             if (successfulPayment) {
-                request.session().removeAttribute("order_id");
+                //request.session().removeAttribute("order_id");
                 Order order = getOrderFromSessionInfo(request);
                 if (order != null) {
                     System.out.println("Status set to PAID");
@@ -90,7 +90,7 @@ public class Main {
         post("/payment/paypal", (request, response) -> {
             boolean successfulPayment = ProductController.payWithChosenMethod(request, response);
             if (successfulPayment) {
-                request.session().removeAttribute("order_id");
+                //request.session().removeAttribute("order_id");
                 Order order = getOrderFromSessionInfo(request);
                 if (order != null) {
                     System.out.println("Status set to PAID");
@@ -103,7 +103,7 @@ public class Main {
             return null;
         });
 
-        get("/payment/success", ProductController:: renderSuccess, new ThymeleafTemplateEngine());
+        get("/payment/success", ProductController::renderSuccess, new ThymeleafTemplateEngine());
 
         get("/", ProductController::renderProducts, new ThymeleafTemplateEngine());
         // EQUIVALENT WITH ABOVE
@@ -210,7 +210,7 @@ public class Main {
             return new ThymeleafTemplateEngine().render( ProductController.reviewCart(req, res) );
         });
 
-        //Email.send("kovacsmark89@gmail.com", "teszt", "<h1>Működik az email küldés!</h1><br>őúűíüöóáé");
+
         /*try {
             Log.save("order", "1_order", "Teszt123");
         } catch (IOException e) {
