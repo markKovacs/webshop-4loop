@@ -71,7 +71,7 @@ public class Order {
         System.out.println(productId);
         Product product = ProductDaoMem.getInstance().find(productId);
         System.out.println(product);
-        if (product == null || quantity < 1 || quantity > 99) {
+        if (product == null || quantity < 0 || quantity > 99) {
             return "invalid_params";
         }
         System.out.println("THERE");
@@ -87,7 +87,7 @@ public class Order {
         return "quantity_change";
     }
 
-    private void updateTotal() {
+    public void updateTotal() {
         float total = 0.0f;
         for (LineItem lineItem : items) {
             total += lineItem.getSubTotalPrice();

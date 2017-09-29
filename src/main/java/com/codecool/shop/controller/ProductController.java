@@ -142,6 +142,8 @@ public class ProductController {
         float unitPrice = ProductDaoMem.getInstance().find(productId).getDefaultPrice();
 
         String statusMessage = order.changeProductQuantity(productId, quantity);
+        System.out.println("BAKKER");
+        order.updateTotal();
         req.session().attribute("order_id", order.getId());
         System.out.println(order);
 

@@ -20,7 +20,7 @@ app.productLogic = {
         $(".review-quantity").on("change", function(ev) {
             ev.stopPropagation();
             var quantity = $(this).val();
-            if (quantity < 1 || quantity > 99) {
+            if (quantity < 0 || quantity > 99) {
                 app.utils.toastMessage("Wrong quantity. Must be between 1-99.");
                 return;
             }
@@ -51,8 +51,9 @@ app.productLogic = {
         console.log("Successfully changed quantity.");
         console.log(response);
         var resp = JSON.parse(response);
-        $("#total-total").text(resp.total);
-        $("#subtotal-" + productId).text(resp.subtotal);
+        var usd = " USD";
+        $("#total-total").text(String(Math.round(resp.total)) + usd);
+        $("#subtotal-" + productId).text(String(Math.round(resp.subtotal)) + usd);
     },
 
     handleChangeProductQuantityError: function (productId) {
