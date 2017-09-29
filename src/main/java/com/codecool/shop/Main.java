@@ -50,6 +50,8 @@ public class Main {
         Gson gson = new Gson();
         post("/api/add-to-cart", ProductController::addToCart, gson::toJson);
 
+        post("/api/change-product-quantity", ProductController::changeProductQuantity, gson::toJson);
+
         // ROUTING (start with specific routes)
 
         get("/payment", (req, res) -> {

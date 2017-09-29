@@ -15,6 +15,7 @@ import com.codecool.shop.model.Supplier;
 
 import com.codecool.shop.order.Order;
 import com.codecool.shop.processing.PaymentProcess;
+import com.google.gson.Gson;
 import spark.Request;
 import spark.Response;
 import spark.ModelAndView;
@@ -119,6 +120,34 @@ public class ProductController {
         return statusMessage;
     }
 
+
+    public static String changeProductQuantity(Request req, Response res) {
+        int orderId = getSessionOrderId(req);
+        Order order = null;
+        if (orderId != -1) {
+            order = OrderDaoMem.getInstance().find(orderId);
+        }
+        if (order == null) {
+            order = new Order();
+            OrderDaoMem.getInstance().add(order);
+        }
+
+        int quantity = Integer.valueOf(req.queryParams("quantity"));
+        int productId = Integer.valueOf(req.queryParams("product_id"));
+
+        float unitPrice = ProductDaoMem.getInstance().find(productId).getDefaultPrice();
+
+        String statusMessage = order.changeProductQuantity(productId, quantity);
+        req.session().attribute("order_id", order.getId());
+        System.out.println(order);
+
+        Map<String, Float> response = new HashMap<>();
+        response.put("total", order.getTotalPrice());
+        response.put("subtotal", (float)quantity*unitPrice);
+        Gson gson = new Gson();
+        return gson.toJson(response);
+    }
+
     public static ModelAndView renderBankPayment(Request req, Response res) {
         int orderId = getSessionOrderId(req);
         Order order = null;
@@ -181,7 +210,7 @@ public class ProductController {
 
         Map params = new HashMap<>();
         List<Order> orderItems = new ArrayList<>();
-        params.put("order", orderItems);
+        params.put("items", orderItems);
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
 
         int orderId = getSessionOrderId(req);
@@ -191,8 +220,9 @@ public class ProductController {
         }
 
         if (order != null) {
-            params.put("order", order.getItems());
-            params.put("grandTotal", order.getTotalPrice());
+            params.put("items", order.getItems());
+            params.put("order", order);
+            params.put("grandTotal", String.format("%.2f", order.getTotalPrice()));
         }
 
         int cartItems = order != null ? order.countCartItems() : 0;
