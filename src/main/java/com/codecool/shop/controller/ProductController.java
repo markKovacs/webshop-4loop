@@ -1,5 +1,6 @@
 package com.codecool.shop.controller;
 
+import com.codecool.shop.Main;
 import com.codecool.shop.dao.OrderDao;
 import com.codecool.shop.dao.ProductCategoryDao;
 import com.codecool.shop.dao.ProductDao;
@@ -16,6 +17,7 @@ import com.codecool.shop.order.Order;
 import com.codecool.shop.processing.PaymentProcess;
 import com.codecool.shop.utility.Email;
 import com.codecool.shop.utility.Log;
+import com.google.gson.Gson;
 import com.google.gson.Gson;
 import spark.Request;
 import spark.Response;
@@ -40,6 +42,8 @@ public class ProductController {
         params.put("allSuppliers", SupplierDaoMem.getInstance().getAll());
         params.put("actualSelection", productCategoryDataStore.find(1));
         params.put("products", productDataStore.getBy(productCategoryDataStore.find(1)));
+        params.put("balance", String.format("%.2f", Main.balanceInUSD));
+
 
         Order order = OrderDaoMem.getInstance().find(getSessionOrderId(req));
         int cartItems = order != null ? order.countCartItems() : 0;
@@ -57,6 +61,7 @@ public class ProductController {
         params.put("allSuppliers", SupplierDaoMem.getInstance().getAll());
         params.put("actualSelection", supplierDataStore.find(supplierId));
         params.put("products", productDataStore.getBy(supplierDataStore.find(supplierId)));
+        params.put("balance", String.format("%.2f", Main.balanceInUSD));
 
         Order order = OrderDaoMem.getInstance().find(getSessionOrderId(req));
         int cartItems = order != null ? order.countCartItems() : 0;
@@ -74,6 +79,7 @@ public class ProductController {
         params.put("allSuppliers", SupplierDaoMem.getInstance().getAll());
         params.put("actualSelection", productCategoryDataStore.find(categoryId));
         params.put("products", productDataStore.getBy(productCategoryDataStore.find(categoryId)));
+        params.put("balance", String.format("%.2f", Main.balanceInUSD));
 
         Order order = OrderDaoMem.getInstance().find(getSessionOrderId(req));
         int cartItems = order != null ? order.countCartItems() : 0;
@@ -90,6 +96,7 @@ public class ProductController {
 
         Map params = new HashMap<>();
         params.put("order", order);
+        params.put("balance", String.format("%.2f", Main.balanceInUSD));
 
         int cartItems = order != null ? order.countCartItems() : 0;
         params.put("cartItems", cartItems);
@@ -113,8 +120,36 @@ public class ProductController {
 
         String statusMessage = order.addToCart(productId, quantity);
         req.session().attribute("order_id", order.getId());
-        System.out.println(order);
+
         return statusMessage;
+    }
+
+
+    public static String changeProductQuantity(Request req, Response res) {
+        int orderId = getSessionOrderId(req);
+        Order order = null;
+        if (orderId != -1) {
+            order = OrderDaoMem.getInstance().find(orderId);
+        }
+        if (order == null) {
+            order = new Order();
+            OrderDaoMem.getInstance().add(order);
+        }
+
+        int quantity = Integer.valueOf(req.queryParams("quantity"));
+        int productId = Integer.valueOf(req.queryParams("product_id"));
+
+        float unitPrice = ProductDaoMem.getInstance().find(productId).getDefaultPrice();
+
+        String statusMessage = order.changeProductQuantity(productId, quantity);
+        req.session().attribute("order_id", order.getId());
+        System.out.println(order);
+
+        Map<String, Float> response = new HashMap<>();
+        response.put("total", order.getTotalPrice());
+        response.put("subtotal", (float)quantity*unitPrice);
+        Gson gson = new Gson();
+        return gson.toJson(response);
     }
 
     public static ModelAndView renderBankPayment(Request req, Response res) {
@@ -127,6 +162,7 @@ public class ProductController {
         Map params = new HashMap<>();
         int cartItems = order != null ? order.countCartItems() : 0;
         params.put("cartItems", cartItems);
+        params.put("balance", String.format("%.2f", Main.balanceInUSD));
 
         return new ModelAndView(params, "bank");
     }
@@ -141,6 +177,7 @@ public class ProductController {
         Map params = new HashMap<>();
         int cartItems = order != null ? order.countCartItems() : 0;
         params.put("cartItems", cartItems);
+        params.put("balance", String.format("%.2f", Main.balanceInUSD));
 
         return new ModelAndView(params, "paypal");
     }
@@ -186,6 +223,7 @@ public class ProductController {
 
         req.session().removeAttribute("order_id");
         Map params = new HashMap<>();
+        params.put("balance", String.format("%.2f", Main.balanceInUSD));
         return new ModelAndView(params, "success");
     }
 
@@ -198,12 +236,23 @@ public class ProductController {
 
         Map params = new HashMap<>();
         List<Order> orderItems = new ArrayList<>();
-        params.put("order", orderItems);
+        params.put("items", orderItems);
+        params.put("balance", String.format("%.2f", Main.balanceInUSD));
 
-        if (getSessionOrderId(req) != -1) {
-            params.put("order", OrderDaoMem.getInstance().find(getSessionOrderId(req)).getItems());
-            params.put("grandTotal", OrderDaoMem.getInstance().find(getSessionOrderId(req)).getTotalPrice());
+        int orderId = getSessionOrderId(req);
+        Order order = null;
+        if (orderId != -1) {
+            order = OrderDaoMem.getInstance().find(getSessionOrderId(req));
         }
+
+        if (order != null) {
+            params.put("items", order.getItems());
+            params.put("order", order);
+            params.put("grandTotal", String.format("%.2f", order.getTotalPrice()));
+        }
+
+        int cartItems = order != null ? order.countCartItems() : 0;
+        params.put("cartItems", cartItems);
 
         return new ModelAndView(params, "review");
     }

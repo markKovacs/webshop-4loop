@@ -26,6 +26,14 @@ public class LineItem {
         this.subTotalPrice += amount * actualPrice;
     }
 
+    public void changeQuantityToValue(int quantity) {
+        System.out.println(this.quantity);
+        System.out.println("TO");
+        System.out.println(quantity);
+        this.quantity = quantity;
+        this.subTotalPrice = quantity * actualPrice;
+    }
+
     public Product getProduct() {
         return product;
     }

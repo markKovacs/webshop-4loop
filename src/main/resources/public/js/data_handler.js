@@ -46,6 +46,26 @@ app.dataHandler = {
             }
         });
 
+    },
+
+    setProductQuantity: function (productId, quantity) {
+
+        $.ajax({
+            url: '/api/change-product-quantity',
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                product_id: productId,
+                quantity: quantity
+            },
+            success: function(response) {
+                app.productLogic.handleChangeProductQuantitySuccess(response, productId);
+            },
+            error: function() {
+                app.productLogic.handleChangeProductQuantityError(productId);
+            }
+        });
+
     }
 
 };

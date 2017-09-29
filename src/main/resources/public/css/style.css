@@ -18,7 +18,7 @@
     left: 20%; /* Center the snackbar */
     right: 20%;
     top: 100px; /* 30px from the bottom */
-    font-size: 1.2em;
+    font-size: 1.5em;
     box-shadow: 0 0 30px rgba(220,220,220,1.0);
 }
 
@@ -51,13 +51,4 @@
 @keyframes fadeout {
     from {top: 100px; opacity: 1;}
     to {top: 0; opacity: 0;}
-}
-
-.framed {
-    border: 1px solid black;
-}
-
-#checkout-container {
-    width: 30%;
-    margin: 0 auto;
 }
