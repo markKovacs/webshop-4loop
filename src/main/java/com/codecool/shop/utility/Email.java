@@ -1,6 +1,20 @@
 package com.codecool.shop.utility;
 
 
+import com.codecool.shop.order.Order;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.context.Context;
+import org.thymeleaf.context.WebContext;
+import org.thymeleaf.templatemode.TemplateMode;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.thymeleaf.templateresolver.FileTemplateResolver;
+import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+import spark.Request;
+import spark.Response;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.StringWriter;
 import java.util.*;
 import javax.mail.*;
 import javax.mail.internet.*;
@@ -36,18 +50,31 @@ public class Email {
             // message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
             message.setSubject(subject);
 
-
-            //message.setText("Dear Mail Crawler,");
             message.setContent(body, "text/html; charset=UTF-8");
 
             Transport.send(message);
 
-            System.out.println("Sent message successfully!");
+            System.out.println("Sent email message successfully!");
 
         } catch (MessagingException e) {
             e.printStackTrace();
         }
 
     }
+
+    public static String renderOrderTemplate(Order userOrder) {
+        TemplateEngine templateEngine = new TemplateEngine();
+        FileTemplateResolver templateResolver = new FileTemplateResolver();
+        templateResolver.setTemplateMode("HTML");
+        templateResolver.setSuffix(".html");
+        templateResolver.setCacheable(false);
+        templateEngine.setTemplateResolver(templateResolver);
+        Context context = new Context();
+        context.setVariable("order", userOrder);
+        StringWriter stringWriter = new StringWriter();
+        templateEngine.process("src/main/resources/templates/email", context, stringWriter);
+        return stringWriter.toString();
+    }
+
 
 }
