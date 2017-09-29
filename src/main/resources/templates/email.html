@@ -265,8 +265,8 @@
                                 <tr>
                                     <td>
                                         <p>Dear <span th:text="${order.fullName}">Someone</span>,</p>
-                                        <p>this is an automatic email from our webshop. You have just ordered the following items:</p>
-                                        <table border="0" cellpadding="0" cellspacing="0" class="align-center">
+                                        <p>this is an automatic email from the 4loop webshop. You have just ordered the following items:</p>
+                                        <table border="1" cellpadding="0" cellspacing="0" class="align-center">
                                             <tbody>
                                             <tr>
                                                 <td align="left">
@@ -283,8 +283,8 @@
                                                             <tr th:each="item : ${order.items}" th:object="${item}">
                                                                 <td th:text="*{getProductName()}">Light Sabre from Star Wars</td>
                                                                 <td th:text="*{quantity}" class="align-right">42</td>
-                                                                <td th:text="*{actualPrice}" class="align-right">200 USD</td>
-                                                                <td th:text="*{subTotalPrice}" class="align-right">8400 USD</td>
+                                                                <td th:text="*{#numbers.formatDecimal(actualPrice, 0, 'COMMA', 0, 'POINT')} + ' USD'" class="align-right">200 USD</td>
+                                                                <td th:text="*{#numbers.formatDecimal(subTotalPrice, 0, 'COMMA', 0, 'POINT') + ' USD'}" class="align-right">8400 USD</td>
                                                             </tr>
                                                         </tbody>
                                                         <tfoot>
@@ -292,7 +292,7 @@
                                                                 <td class="align-center"><strong>Total</strong></td>
                                                                 <td></td>
                                                                 <td></td>
-                                                                <td><strong th:text="*{order.totalPrice} + ' USD'">1000 USD</strong></td>
+                                                                <td class="align-right"><strong th:text="${order.totalPrice} + ' USD'">1000 USD</strong></td>
                                                             </tr>
                                                         </tfoot>
                                                     </table>
