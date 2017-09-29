@@ -49,9 +49,19 @@
 
         <h1>Original Relics Shop</h1>
 
-        <!-- NAVBAR -->
-        <a th:href="@{~/}">Products</a>
-        <a th:href="@{~/cart}">Cart(<span id="cart-item-count">[[${cartItems}]]</span>)</a>
+        <div class="container">
+            <div class="row">
+                <th:block>
+                    <span class="col-xs-6 text-left">
+                        <!-- NAVBAR -->
+                        <th:block layout:fragment="navbar"></th:block>
+                    </span>
+                </th:block>
+                <div class="col-xs-6 text-right">
+                    <p class="balance">Balance: <span th:text="${balance}">95200.00</span> USD</p>
+                </div>
+            </div>
+        </div>
 
     </header>
 

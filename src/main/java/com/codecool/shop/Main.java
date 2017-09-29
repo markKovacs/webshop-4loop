@@ -28,7 +28,7 @@ import java.util.Map;
 
 public class Main {
 
-    public static float balanceInUSD = 3000.0f;
+    public static float balanceInUSD = 75_000.0f;
 
     public static void main(String[] args) {
 
@@ -44,16 +44,17 @@ public class Main {
         populateData();
 
         // BEFORE REQUEST CHECK
-        //before("/*", orderInProgressFilter());
+        before("/*", orderInProgressFilter());
 
         // API ENDPOINTS
         Gson gson = new Gson();
         post("/api/add-to-cart", ProductController::addToCart, gson::toJson);
 
         // ROUTING (start with specific routes)
-        //get("/payment", ProductController::renderPayment, new ThymeleafTemplateEngine());
+
         get("/payment", (req, res) -> {
             setOrderStatus(req);
+
             Map params = new HashMap();
             int orderId = getSessionOrderId(req);
             Order order = null;
@@ -63,6 +64,7 @@ public class Main {
             params.put("order", order);
             int cartItems = order != null ? order.countCartItems() : 0;
             params.put("cartItems", cartItems);
+            params.put("balance", String.format("%.2f", Main.balanceInUSD));
 
             return new ThymeleafTemplateEngine().render(new ModelAndView(params, "payment"));
         });
@@ -74,7 +76,6 @@ public class Main {
         post("/payment/bank", (request, response) -> {
             boolean successfulPayment = ProductController.payWithChosenMethod(request, response);
             if (successfulPayment) {
-                request.session().removeAttribute("order_id");
                 Order order = getOrderFromSessionInfo(request);
                 if (order != null) {
                     System.out.println("Status set to PAID");
@@ -90,7 +91,6 @@ public class Main {
         post("/payment/paypal", (request, response) -> {
             boolean successfulPayment = ProductController.payWithChosenMethod(request, response);
             if (successfulPayment) {
-                request.session().removeAttribute("order_id");
                 Order order = getOrderFromSessionInfo(request);
                 if (order != null) {
                     System.out.println("Status set to PAID");
@@ -132,6 +132,7 @@ public class Main {
             Map params = new HashMap();
             params.put("user", userDatas);
             params.put("errors", errorMessages);
+            params.put("balance", String.format("%.2f", Main.balanceInUSD));
             return new ThymeleafTemplateEngine().render(new ModelAndView(params, "checkout"));
         });
 
@@ -310,15 +311,15 @@ public class Main {
                 if (orderId != -1) {
                     Order order = OrderDaoMem.getInstance().find(orderId);
                     Status status = order.getStatus();
-                    if (status.equals(Status.REVIEWED) && !req.pathInfo().equals("/checkout")) {
+                    if (status.equals(Status.REVIEWED) && !req.pathInfo().equals("/checkout") && req.queryParams("back") == null) {
                         res.redirect("/checkout");
-                    } else if (status.equals(Status.CHECKEDOUT) && !req.pathInfo().equals("/payment")) {
+                    } else if (status.equals(Status.CHECKEDOUT) && !req.pathInfo().contains("/payment") && req.queryParams("back") == null) {
                         res.redirect("/payment");
                     } else if (status.equals(Status.NEW) &&
-                            (req.pathInfo().equals("/checkout") || req.pathInfo().equals("/payment"))) {
+                            ((req.pathInfo().equals("/checkout") || req.pathInfo().contains("/payment")) && req.queryParams("back") == null)) {
                         res.redirect("/?error=bad");
                     }
-                } else if (req.pathInfo().equals("/checkout") || req.pathInfo().equals("/payment")) {
+                } else if ((req.pathInfo().equals("/checkout") || req.pathInfo().contains("/payment")) && req.queryParams("back") == null) {
                     res.redirect("/?error=bad");
                 }
             }

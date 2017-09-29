@@ -149,9 +149,35 @@ input[type=number]::-webkit-outer-spin-button {
     margin: 0 10px;
 }
 
-input[type=submit] {
+.select-cat-sup {
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
     border-radius: 5px;
 }
 
+.jumbotron {
+    padding-bottom: 0;
+}
+
+h1 {
+    margin-bottom: 50px;
+}
+
+.balance {
+    font-size: 0.9em;
+}
+
+.menu-item {
+    font-size:21px;
+    margin-right:20px;
+    font-weight:bold;
+}
+
+.menu-item:hover {
+    text-decoration: none;
+}
+
+#checkout-container {
+    width: 30%;
+    margin: 0 auto;
+}
