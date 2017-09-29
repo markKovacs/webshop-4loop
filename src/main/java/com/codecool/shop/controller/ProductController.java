@@ -14,6 +14,7 @@ import com.codecool.shop.model.Supplier;
 
 import com.codecool.shop.order.Order;
 import com.codecool.shop.processing.PaymentProcess;
+import com.codecool.shop.utility.Email;
 import spark.Request;
 import spark.Response;
 import spark.ModelAndView;
@@ -158,6 +159,20 @@ public class ProductController {
     }
 
     public static ModelAndView renderSuccess(Request req, Response res) {
+
+        Order userOrder = OrderDaoMem.getInstance().find(getSessionOrderId(req));
+
+        if (userOrder != null) {
+
+            String userEmail = userOrder.getEmail();
+
+            if (userEmail != null && !userEmail.isEmpty()) {
+                String body = Email.renderOrderTemplate(userOrder);
+                Email.send(userEmail, "order confirmation", body);
+            }
+        }
+
+        req.session().removeAttribute("order_id");
         Map params = new HashMap<>();
         return new ModelAndView(params, "success");
     }
@@ -174,7 +189,6 @@ public class ProductController {
         params.put("order", orderItems);
 
         if (getSessionOrderId(req) != -1) {
-            System.out.println(OrderDaoMem.getInstance().find(getSessionOrderId(req)));
             params.put("order", OrderDaoMem.getInstance().find(getSessionOrderId(req)).getItems());
             params.put("grandTotal", OrderDaoMem.getInstance().find(getSessionOrderId(req)).getTotalPrice());
         }
