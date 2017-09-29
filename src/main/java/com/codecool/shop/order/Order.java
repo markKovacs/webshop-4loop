@@ -3,6 +3,7 @@ package com.codecool.shop.order;
 import com.codecool.shop.dao.implementation.OrderDaoMem;
 import com.codecool.shop.dao.implementation.ProductDaoMem;
 import com.codecool.shop.model.Product;
+import com.codecool.shop.utility.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,7 @@ public class Order {
         this.status = Status.NEW;
 
         int temporaryId = OrderDaoMem.getInstance().getAll().size();
-        this.orderLogFilename = temporaryId + "_order";
+        this.orderLogFilename = Log.getNowAsString() + "_" + temporaryId + "_order";
     }
 
     public String addToCart(int productId, int quantity) {
@@ -194,6 +195,10 @@ public class Order {
                 ", shippingZipCode='" + shippingZipCode + '\'' +
                 ", shippingAddress='" + shippingAddress + '\'' +
                 '}';
+    }
+
+    public String getOrderLogFilename() {
+        return orderLogFilename;
     }
 
 

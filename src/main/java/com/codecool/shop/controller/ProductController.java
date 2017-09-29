@@ -15,10 +15,13 @@ import com.codecool.shop.model.Supplier;
 import com.codecool.shop.order.Order;
 import com.codecool.shop.processing.PaymentProcess;
 import com.codecool.shop.utility.Email;
+import com.codecool.shop.utility.Log;
+import com.google.gson.Gson;
 import spark.Request;
 import spark.Response;
 import spark.ModelAndView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -163,6 +166,15 @@ public class ProductController {
         Order userOrder = OrderDaoMem.getInstance().find(getSessionOrderId(req));
 
         if (userOrder != null) {
+            try {
+                /*Gson gson = new Gson();
+                String userOrderAsJSON = gson.toJson(userOrder);*/
+                String timestamp = Log.getNowAsString();
+                Log.save("order", timestamp + "_" + userOrder.getId() + "_order", userOrder.toString());
+                Log.save("admin", userOrder.getOrderLogFilename(), timestamp + ": Order has been closed successfully!");
+            } catch (IOException e) {
+                System.out.println("Error saving payed order!");
+            }
 
             String userEmail = userOrder.getEmail();
 

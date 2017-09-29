@@ -26,7 +26,7 @@ public class Log {
         FileWriter fwriter = null;
 
         try {
-            File file = new File( FOLDER + "/" + getNowAsString() + "_" + fileName + ".txt");
+            File file = new File( FOLDER + "/" + fileName + ".txt");
 
             if (!file.exists()) {
                 file.createNewFile();
@@ -58,7 +58,7 @@ public class Log {
 
     }
 
-    private static String getNowAsString() {
+    public static String getNowAsString() {
         SimpleDateFormat formattedDate = new SimpleDateFormat("yyyyMMdd.HHmmss.SSS");
         Date now = new Date();
         String strDate = formattedDate.format(now);

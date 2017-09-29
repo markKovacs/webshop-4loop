@@ -54,11 +54,17 @@ public class Main {
         //get("/payment", ProductController::renderPayment, new ThymeleafTemplateEngine());
         get("/payment", (req, res) -> {
             setOrderStatus(req);
+
             Map params = new HashMap();
             int orderId = getSessionOrderId(req);
             Order order = null;
             if (orderId != -1) {
                 order = OrderDaoMem.getInstance().find(orderId);
+                try {
+                    Log.save("admin", order.getOrderLogFilename(), Log.getNowAsString() + ": Order has been payed!");
+                } catch (IOException e) {
+                    System.out.println("Error saving admin log!");
+                }
             }
             params.put("order", order);
             int cartItems = order != null ? order.countCartItems() : 0;
@@ -126,7 +132,12 @@ public class Main {
 
         get("/checkout", (Request req, Response res) -> {
             setOrderStatus(req);
-
+            try {
+                Order userOrder = OrderDaoMem.getInstance().find(getSessionOrderId(req));
+                Log.save("admin", userOrder.getOrderLogFilename(), Log.getNowAsString() + ": Order has been checked out!");
+            } catch (IOException e) {
+                System.out.println("Error saving admin log!");
+            }
             List errorMessages = new ArrayList();
             Map userDatas = new HashMap();
             Map params = new HashMap();
