@@ -92,8 +92,7 @@ public class OrderController {
         Log.saveActionToOrderLog(order.getOrderLogFilename(), "reviewed");
 
         Map<String, Object> params = new HashMap<>();
-        Map<String, Object> userDatas = new HashMap<>(); // Intentionally empty
-        params.put("user", userDatas);
+        params.put("user", new HashMap<>());
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
 
         return new ModelAndView(params, "checkout");
@@ -140,9 +139,9 @@ public class OrderController {
         int cartItems = order != null ? order.countCartItems() : 0;
 
         Map<String, Object> params = new HashMap<>();
-        params.put("cardData", new HashMap<String, String>());
         params.put("cartItems", cartItems);
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
+        params.put("payment", new HashMap<String, String>());
 
         return new ModelAndView(params, "bank");
     }
@@ -154,25 +153,32 @@ public class OrderController {
         Map<String, Object> params = new HashMap<>();
         params.put("cartItems", cartItems);
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
+        params.put("payment", new HashMap<String, String>());
 
         return new ModelAndView(params, "paypal");
     }
 
     public static ModelAndView payWithChosenMethod(Request req, Response res) {
         Order order = OrderUtils.getOrderFromSessionInfo(req);
-        Map<String, String> inputValues = collectPaymentInput(req);
+        Map<String, String> paymentData = collectPaymentInfo(req);
         String paymentType = getPaymentType(req);
 
-        boolean successfulPayment = PAYMENT_PROCESS.process(order, paymentType, inputValues);
-        if (successfulPayment) {
+        List<String> errorMessages = PAYMENT_PROCESS.process(order, paymentType, paymentData);
+
+        if (errorMessages.size() == 0) {
             order = OrderUtils.getOrderFromSessionInfo(req);
-            if (order != null) {
-                System.out.println("Status set to PAID");
-                order.setStatus(Status.PAID);
-            }
+            order.setStatus(Status.PAID);
+            System.out.println("Status set to PAID");
             res.redirect("/payment/success");
         } else {
-            res.redirect(req.pathInfo());
+            int cartItems = order != null ? order.countCartItems() : 0;
+            Map<String, Object> params = new HashMap<>();
+            params.put("cartItems", cartItems);
+            params.put("balance", String.format("%.2f", Main.balanceInUSD));
+            params.put("payment", paymentData);
+            params.put("errors", errorMessages);
+            String view = req.pathInfo().contains("bank") ? "bank" : "paypal";
+            return new ModelAndView(params, view);
         }
 
         return null;
@@ -202,35 +208,35 @@ public class OrderController {
 
     // ACCESSORY METHODS
 
-    private static Map<String, String> collectPaymentInput(Request req) {
-        Map<String, String> inputValues = new HashMap<>();
-        inputValues.put("card-number-1", req.queryParams("card-number-1"));
-        inputValues.put("card-number-2", req.queryParams("card-number-2"));
-        inputValues.put("card-number-3", req.queryParams("card-number-3"));
-        inputValues.put("card-number-4", req.queryParams("card-number-4"));
-        inputValues.put("card-holder", req.queryParams("card-holder"));
-        inputValues.put("exp-year", req.queryParams("exp-year"));
-        inputValues.put("exp-month", req.queryParams("exp-month"));
-        inputValues.put("cvc", req.queryParams("cvc"));
-        inputValues.put("username", req.queryParams("username"));
-        inputValues.put("password", req.queryParams("password"));
-        return inputValues;
+    private static Map<String, String> collectPaymentInfo(Request req) {
+        Map<String, String> paymentData = new HashMap<>();
+        paymentData.put("cardnumberone", req.queryParams("card-number-1"));
+        paymentData.put("cardnumbertwo", req.queryParams("card-number-2"));
+        paymentData.put("cardnumberthree", req.queryParams("card-number-3"));
+        paymentData.put("cardnumberfour", req.queryParams("card-number-4"));
+        paymentData.put("cardholder", req.queryParams("card-holder"));
+        paymentData.put("expyear", req.queryParams("exp-year"));
+        paymentData.put("expmonth", req.queryParams("exp-month"));
+        paymentData.put("cvc", req.queryParams("cvc"));
+        paymentData.put("username", req.queryParams("username"));
+        paymentData.put("password", req.queryParams("password"));
+        return paymentData;
     }
 
     private static Map<String, String> collectCheckoutInfo(Request req) {
-        Map<String, String> userDatas = new HashMap<>();
-        userDatas.put("username", req.queryParams("username"));
-        userDatas.put("email", req.queryParams("email"));
-        userDatas.put("phone", req.queryParams("phone"));
-        userDatas.put("billcountry", req.queryParams("bill-country"));
-        userDatas.put("billcity", req.queryParams("bill-city"));
-        userDatas.put("billzip", req.queryParams("bill-zip"));
-        userDatas.put("billaddress", req.queryParams("bill-address"));
-        userDatas.put("shipcountry", req.queryParams("ship-country"));
-        userDatas.put("shipcity", req.queryParams("ship-city"));
-        userDatas.put("shipzip", req.queryParams("ship-zip"));
-        userDatas.put("shipaddress", req.queryParams("ship-address"));
-        return userDatas;
+        Map<String, String> userData = new HashMap<>();
+        userData.put("username", req.queryParams("username"));
+        userData.put("email", req.queryParams("email"));
+        userData.put("phone", req.queryParams("phone"));
+        userData.put("billcountry", req.queryParams("bill-country"));
+        userData.put("billcity", req.queryParams("bill-city"));
+        userData.put("billzip", req.queryParams("bill-zip"));
+        userData.put("billaddress", req.queryParams("bill-address"));
+        userData.put("shipcountry", req.queryParams("ship-country"));
+        userData.put("shipcity", req.queryParams("ship-city"));
+        userData.put("shipzip", req.queryParams("ship-zip"));
+        userData.put("shipaddress", req.queryParams("ship-address"));
+        return userData;
     }
 
     private static String getPaymentType(Request req) {

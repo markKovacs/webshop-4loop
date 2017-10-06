@@ -24,7 +24,12 @@
                 <div class="row">
                     <div class="col-xs-offset-2 col-xs-8 text-center">
 
-                        <!-- TODO: form based on ProductController names -->
+                        <div th:if="${errors}" id="error-messages" class="alert alert-danger">
+                            <p>You have the following errors:</p>
+                            <ul th:each="error : ${errors}">
+                                <li th:text="${error}"></li>
+                            </ul>
+                        </div>
 
                         <form th:action="@{~/payment/paypal}" method="POST">
                             <div>
@@ -35,7 +40,10 @@
                                 <label for="password">Password: </label>
                                 <input id="password" type="password" name="password" class="name-input" placeholder="Enter password..." required>
                             </div>
-                            <input class="btn btn-success add-to-cart" type="submit" value="Submit">
+                            <div class="text-center">
+                                <a class="btn btn-default add-to-cart" th:href="@{~/payment/paypal}">Back</a>
+                                <input class="btn btn-success add-to-cart" type="submit" value="Submit">
+                            </div>
 
                         </form>
 

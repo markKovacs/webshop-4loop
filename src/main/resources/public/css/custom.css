@@ -178,6 +178,15 @@ h1 {
 }
 
 #checkout-container {
-    width: 30%;
+    width: 40%;
+    margin: 0 auto;
+}
+
+.narrow {
+    width: 40%;
+    margin: 0 auto;
+}
+
+.center-content {
     margin: 0 auto;
 }

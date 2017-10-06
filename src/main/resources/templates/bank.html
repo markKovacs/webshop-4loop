@@ -12,48 +12,54 @@
 <div layout:fragment="content" class="container">
 
     <div class="well well-sm">
-        <strong>Credit Card Payment</strong>
-    </div>
 
-    <div id="bank" class="row list-group">
-
-        <div class="col-xs-12 col-lg-12">
+        <div class="container center-content">
+            <h2 class="text-center"><strong>Credit Card Payment</strong></h2>
 
             <div class="row">
                 <div class="col-xs-offset-2 col-xs-8 text-center">
+
+                    <div th:if="${errors}" id="error-messages" class="alert alert-danger">
+                        <p>You have the following errors:</p>
+                        <div th:each="error : ${errors}" class="narrow">
+                            <p th:text="${error}">Error message number one.</p>
+                        </div>
+                    </div>
 
                     <form th:action="@{~/payment/bank}" method="POST">
 
                         <div>
                             <label for="card-holder">Card Holder: </label>
-                            <input id="card-holder" type="text" name="card-holder" class="name-input" placeholder="Full Name" required>
+                            <input th:value="${payment.cardholder}" id="card-holder" type="text" name="card-holder" class="name-input" placeholder="Full Name" required>
                         </div>
                         <div>
                             <label for="card-number">Card Number: </label>
-                            <input id="card-number" type="text" name="card-number-1" class="four-num" placeholder="XXXX" maxlength="4" minlength="4" required>
+                            <input th:value="${payment.cardnumberone}" id="card-number" type="text" name="card-number-1" class="four-num" placeholder="XXXX" maxlength="4" minlength="4" required>
                             <span>-</span>
-                            <input type="text" name="card-number-2" class="four-num" placeholder="XXXX" maxlength="4" minlength="4" required>
+                            <input th:value="${payment.cardnumbertwo}" type="text" name="card-number-2" class="four-num" placeholder="XXXX" maxlength="4" minlength="4" required>
                             <span>-</span>
-                            <input type="text" name="card-number-3" class="four-num" placeholder="XXXX" maxlength="4" minlength="4" required>
+                            <input th:value="${payment.cardnumberthree}" type="text" name="card-number-3" class="four-num" placeholder="XXXX" maxlength="4" minlength="4" required>
                             <span>-</span>
-                            <input type="text" name="card-number-4" class="four-num" placeholder="XXXX" maxlength="4" minlength="4" required>
+                            <input th:value="${payment.cardnumberfour}" type="text" name="card-number-4" class="four-num" placeholder="XXXX" maxlength="4" minlength="4" required>
                         </div>
                         <div>
                             <label for="cvc">CVC: </label>
-                            <input id="cvc" type="text" name="cvc" class="three-num" placeholder="XXX" required maxlength="3" minlength="3">
+                            <input th:value="${payment.cvc}" id="cvc" type="text" name="cvc" class="three-num" placeholder="XXX" required maxlength="3" minlength="3">
                             <label for="exp-year">Expiration year: </label>
-                            <input id="exp-year" type="number" name="exp-year" min="2017" max="9999" placeholder="YYYY" class="four-num" required>
+                            <input th:value="${payment.expyear}" id="exp-year" type="number" name="exp-year" min="2017" max="9999" placeholder="YYYY" class="four-num" required>
                             <span>/</span>
                             <label for="exp-month">Expiration month: </label>
-                            <input id="exp-month" type="number" name="exp-month" placeholder="MM" class="two-num" min="1" max="12" required>
+                            <input th:value="${payment.expmonth}" id="exp-month" type="number" name="exp-month" placeholder="MM" class="two-num" min="1" max="12" required>
                         </div>
                         <div class="text-center">
+                            <a class="btn btn-default add-to-cart" th:href="@{~/payment/bank}">Back</a>
                             <input class="btn btn-success add-to-cart" type="submit" value="Submit">
                         </div>
 
                     </form>
 
                 </div>
+
             </div>
 
         </div>
