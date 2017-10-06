@@ -24,8 +24,6 @@ import static com.codecool.shop.OrderUtils.setOrderStatus;
 
 public class OrderController {
 
-    private static final PaymentProcess PAYMENT_PROCESS = new PaymentProcess();
-
     // METHODS RETURNING ModelAndView
 
     public static String addToCart(Request req, Response res) {
@@ -83,6 +81,15 @@ public class OrderController {
 
         Gson gson = new Gson();
         return gson.toJson(response);
+    }
+
+    public static ModelAndView finalizeOrder(Request req, Response res) {
+        Order order = OrderUtils.getOrderFromSessionInfo(req);
+        order.getItems().removeIf(item -> item.getQuantity() == 0);
+
+        res.redirect("/checkout");
+
+        return null;
     }
 
     public static ModelAndView renderCheckout(Request req, Response res) {
@@ -163,7 +170,8 @@ public class OrderController {
         Map<String, String> paymentData = collectPaymentInfo(req);
         String paymentType = getPaymentType(req);
 
-        List<String> errorMessages = PAYMENT_PROCESS.process(order, paymentType, paymentData);
+        PaymentProcess paymentProcess = new PaymentProcess();
+        List<String> errorMessages = paymentProcess.process(order, paymentType, paymentData);
 
         if (errorMessages.size() == 0) {
             order = OrderUtils.getOrderFromSessionInfo(req);

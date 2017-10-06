@@ -45,17 +45,15 @@ public class Main {
         get("/payment", OrderController::renderPayment, new ThymeleafTemplateEngine());
         get("/payment/bank", OrderController::renderBankPayment, new ThymeleafTemplateEngine());
         get("/payment/paypal", OrderController::renderPayPalPayment, new ThymeleafTemplateEngine());
-
         post("/payment/bank", OrderController::payWithChosenMethod, new ThymeleafTemplateEngine());
         post("/payment/paypal", OrderController::payWithChosenMethod, new ThymeleafTemplateEngine());
-
         get("/payment/success", OrderController::renderSuccess, new ThymeleafTemplateEngine());
 
         get("/checkout", OrderController::renderCheckout, new ThymeleafTemplateEngine());
-
         post("/checkout", OrderController::doCheckout, new ThymeleafTemplateEngine());
 
         get("/cart", OrderController::renderReview, new ThymeleafTemplateEngine());
+        post("/cart", OrderController::finalizeOrder, new ThymeleafTemplateEngine());
 
         get("/", ProductController::renderProducts, new ThymeleafTemplateEngine());
 

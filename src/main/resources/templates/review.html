@@ -56,7 +56,9 @@
                 </div>
                 <div>
                     <a href="/" role="button" class="btn btn-default">Back to Products</a>
-                    <a href="/checkout" role="button" class="btn btn-success push-right" th:if="${#lists.size(items) > 0}">Proceed to Checkout</a>
+                    <form th:if="${#lists.size(items) > 0}" action="/cart" method="POST">
+                        <input class="btn btn-success push-right" type="submit" value="Proceed to Checkout">
+                    </form>
                 </div>
             </div>
         </div>
