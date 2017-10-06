@@ -85,18 +85,23 @@ public class OrderController {
 
     public static ModelAndView finalizeOrder(Request req, Response res) {
         Order order = OrderUtils.getOrderFromSessionInfo(req);
+
         order.getItems().removeIf(item -> item.getQuantity() == 0);
 
-        res.redirect("/checkout");
+        if (order.getItems().size() < 1) {
+            OrderDaoMem.getInstance().remove(order.getId());
+            req.session().removeAttribute("order_id");
+            res.redirect("/cart");
+        } else {
+            Log.saveActionToOrderLog(order.getOrderLogFilename(), "reviewed");
+            res.redirect("/checkout");
+        }
 
         return null;
     }
 
     public static ModelAndView renderCheckout(Request req, Response res) {
         OrderUtils.setOrderStatus(req);
-        Order order = OrderUtils.getOrderFromSessionInfo(req);
-
-        Log.saveActionToOrderLog(order.getOrderLogFilename(), "reviewed");
 
         Map<String, Object> params = new HashMap<>();
         params.put("user", new HashMap<>());
