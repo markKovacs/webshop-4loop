@@ -1,5 +1,9 @@
 package com.codecool.shop;
 
+import com.codecool.shop.dao.implementation.ProductCategoryDaoMem;
+import com.codecool.shop.dao.implementation.ProductDaoMem;
+import com.codecool.shop.model.ProductCategory;
+
 public class Config {
 
     // Email settings
@@ -14,6 +18,6 @@ public class Config {
     public static final String ORDER_LOG_FOLDER = "src/main/orders";
     public static final String ADMIN_LOG_FOLDER = "src/main/logs";
 
-    public static final int DEFAULT_CATEGORY = 1;
+    public static final ProductCategory DEFAULT_CATEGORY = ProductCategoryDaoMem.getInstance().find(1);
 
 }

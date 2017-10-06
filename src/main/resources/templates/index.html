@@ -17,7 +17,7 @@
     <div layout:fragment="content" class="container">
         <div class="well well-sm text-center">
 
-            <form id="list-by-category" action="/index" method="post" class="inline-form">
+            <form id="list-by-category" action="/" method="GET" class="inline-form">
                 <label for="category-selection">Choose a category:</label>
                 <select id="category-selection" name="category-id">
                     <option th:each="category : ${allCategories}" th:attr="value=${category.id}" th:text="${category.name}">Categories</option>
@@ -25,7 +25,7 @@
                 <input type="submit" value="Select" class="select-cat-sup" />
             </form>
 
-            <form id="list-by-supplier" action="/index" method="post" class="inline-form">
+            <form id="list-by-supplier" action="/" method="GET" class="inline-form">
                 <label for="supplier-selection">Choose a supplier:</label>
                 <select id="supplier-selection" name="supplier-id">
                     <option th:each="supplier : ${allSuppliers}" th:attr="value=${supplier.id}" th:text="${supplier.name}">Suppliers</option>
@@ -36,7 +36,7 @@
         </div>
 
         <div class="well well-sm">
-            <strong th:text="${actualSelection.name}">Category Title or Supplier Name</strong>
+            <strong th:text="${actualSelection}">Category Title or Supplier Name</strong>
         </div>
         <div id="products" class="row list-group">
 

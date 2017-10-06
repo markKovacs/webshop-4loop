@@ -15,8 +15,7 @@
         <div id="checkout-container">
             <h2 class="text-center"><strong>Personal Information</strong></h2>
 
-
-            <div id="error-messages" class="alert alert-danger" th:if="${#lists.size(errors)>0}">
+            <div th:if="${errors}" id="error-messages" class="alert alert-danger">
                 <p>You have the following errors:</p>
                 <ul th:each="error : ${errors}">
                     <li th:text="${error}"></li>

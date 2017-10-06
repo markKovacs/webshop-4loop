@@ -10,19 +10,10 @@ import com.codecool.shop.dao.implementation.*;
 import com.codecool.shop.model.*;
 import com.codecool.shop.order.Order;
 import com.codecool.shop.order.Status;
-import com.codecool.shop.order.InputField;
-import com.codecool.shop.utility.Log;
 import com.google.gson.Gson;
 import spark.Filter;
-import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class Main {
 
@@ -42,14 +33,14 @@ public class Main {
         populateData();
 
         // BEFORE REQUEST CHECK
-        before("/*", orderInProgressFilter());
+        before("/*", orderInProgressFilter);
 
         // API ENDPOINTS
         Gson gson = new Gson();
         post("/api/add-to-cart", OrderController::addToCart, gson::toJson);
-        post("/api/change-product-quantity", OrderController::changeProductQuantity, gson::toJson);
+        post("/api/change-product-quantity", OrderController::changeQuantity, gson::toJson);
 
-        // ROUTING (start with specific routes)
+        // ROUTING
 
         get("/payment", OrderController::renderPayment, new ThymeleafTemplateEngine());
         get("/payment/bank", OrderController::renderBankPayment, new ThymeleafTemplateEngine());
@@ -60,113 +51,17 @@ public class Main {
 
         get("/payment/success", OrderController::renderSuccess, new ThymeleafTemplateEngine());
 
+        get("/checkout", OrderController::renderCheckout, new ThymeleafTemplateEngine());
+
+        post("/checkout", OrderController::doCheckout, new ThymeleafTemplateEngine());
+
+        get("/cart", OrderController::renderReview, new ThymeleafTemplateEngine());
+
         get("/", ProductController::renderProducts, new ThymeleafTemplateEngine());
-        // EQUIVALENT WITH ABOVE
-        get("/index", (Request req, Response res) -> {
-            return new ThymeleafTemplateEngine().render(ProductController.renderProducts(req, res));
-        });
-        post("/index", (req, res) -> {
-
-            if (req.queryParams().toArray()[0].equals("category-id")) {
-                return new ThymeleafTemplateEngine().render(ProductController.renderProductsByCategory(req, res));
-            } else if (req.queryParams().toArray()[0].equals("supplier-id")) {
-                return new ThymeleafTemplateEngine().render(ProductController.renderProductsBySupplier(req, res));
-            }
-
-            return null;
-        });
-
-        get("/checkout", (Request req, Response res) -> {
-            OrderUtils.setOrderStatus(req);
-            Order userOrder = OrderUtils.getOrderFromSessionInfo(req);
-            try {
-                Log.save("admin", userOrder.getOrderLogFilename(), Log.getNowAsString() + ": Order has been checked out!");
-            } catch (IOException e) {
-                System.out.println("Error saving admin log!");
-            }
-            List errorMessages = new ArrayList();
-            Map userDatas = new HashMap();
-            Map params = new HashMap();
-            params.put("user", userDatas);
-            params.put("errors", errorMessages);
-            params.put("balance", String.format("%.2f", Main.balanceInUSD));
-            return new ThymeleafTemplateEngine().render(new ModelAndView(params, "checkout"));
-        });
-
-        post("/checkout", (Request req, Response res) -> {
-            Map<String, String> userDatas = new HashMap<>();
-            userDatas.put("username", req.queryParams("username"));
-            userDatas.put("email", req.queryParams("email"));
-            userDatas.put("phone", req.queryParams("phone"));
-            userDatas.put("billcountry", req.queryParams("bill-country"));
-            userDatas.put("billcity", req.queryParams("bill-city"));
-            userDatas.put("billzip", req.queryParams("bill-zip"));
-            userDatas.put("billaddress", req.queryParams("bill-address"));
-            userDatas.put("shipcountry", req.queryParams("ship-country"));
-            userDatas.put("shipcity", req.queryParams("ship-city"));
-            userDatas.put("shipzip", req.queryParams("ship-zip"));
-            userDatas.put("shipaddress", req.queryParams("ship-address"));
-
-            List errorMessages = new ArrayList();
-            if (InputField.FULL_NAME.validate(userDatas.get("username").toString()) == false) {
-                errorMessages.add("Invalid username.");
-            }
-            if (InputField.EMAIL.validate(userDatas.get("email").toString()) == false) {
-                errorMessages.add("Invalid email address");
-            }
-            if (InputField.PHONE.validate(req.queryParams("phone")) == false) {
-                errorMessages.add("Invalid phone number");
-            }
-            if (InputField.COUNTRY.validate(userDatas.get("billcountry").toString()) == false) {
-                errorMessages.add("Invalid billing country");
-            }
-            if (InputField.CITY.validate(userDatas.get("billcity").toString()) == false) {
-                errorMessages.add("Invalid billing city");
-            }
-            if (InputField.ZIP_CODE.validate(userDatas.get("billzip").toString()) == false) {
-                errorMessages.add("Invalid billing ZIP code");
-            }
-            if (InputField.ADDRESS.validate(userDatas.get("billaddress").toString()) == false) {
-                errorMessages.add("Invalid billing address");
-            }
-            if (InputField.COUNTRY.validate(userDatas.get("shipcountry").toString()) == false) {
-                errorMessages.add("Invalid shipping country");
-            }
-            if (InputField.CITY.validate(userDatas.get("shipcity").toString()) == false) {
-                errorMessages.add("Invalid shipping city");
-            }
-            if (InputField.ZIP_CODE.validate(userDatas.get("shipzip").toString()) == false) {
-                errorMessages.add("Invalid shipping ZIP code");
-            }
-            if (InputField.ADDRESS.validate(userDatas.get("shipaddress").toString()) == false) {
-                errorMessages.add("Invalid shipping address");
-            }
-
-            if (errorMessages.size() > 0) {
-                Map params = new HashMap();
-                params.put("user", userDatas);
-                params.put("errors", errorMessages);
-                return new ThymeleafTemplateEngine().render(new ModelAndView(params, "checkout"));
-            } else {
-                Order order = OrderUtils.getOrderFromSessionInfo(req);
-                if (order != null) {
-                    order.setCheckoutInfo(userDatas);
-                }
-                res.redirect("/payment");
-            }
-
-            return "";
-
-        });
-
-        get("/cart", (Request req, Response res) -> {
-            OrderUtils.setOrderStatus(req);
-            return new ThymeleafTemplateEngine().render(OrderController.renderReview(req, res));
-        });
 
     }
 
-    public static void populateData() {
+    private static void populateData() {
         // This method initializes the data and loads into memory storage.
 
         ProductDao productDataStore = ProductDaoMem.getInstance();
@@ -247,29 +142,24 @@ public class Main {
 
     }
 
-    public static Filter orderInProgressFilter() {
-        return new Filter() {
-            @Override
-            public void handle(Request req, Response res) {
-                int orderId = req.session().attribute("order_id") == null ? -1 :
-                        Integer.valueOf(req.session().attribute("order_id") + "");
+    private static Filter orderInProgressFilter = (Request req, Response res) -> {
+        int orderId = req.session().attribute("order_id") == null ? -1 :
+                Integer.valueOf(req.session().attribute("order_id") + "");
 
-                if (orderId != -1) {
-                    Order order = OrderDaoMem.getInstance().find(orderId);
-                    Status status = order.getStatus();
-                    if (status.equals(Status.REVIEWED) && !req.pathInfo().equals("/checkout") && req.queryParams("back") == null) {
-                        res.redirect("/checkout");
-                    } else if (status.equals(Status.CHECKEDOUT) && !req.pathInfo().contains("/payment") && req.queryParams("back") == null) {
-                        res.redirect("/payment");
-                    } else if (status.equals(Status.NEW) &&
-                            ((req.pathInfo().equals("/checkout") || req.pathInfo().contains("/payment")) && req.queryParams("back") == null)) {
-                        res.redirect("/?error=bad");
-                    }
-                } else if ((req.pathInfo().equals("/checkout") || req.pathInfo().contains("/payment")) && req.queryParams("back") == null) {
-                    res.redirect("/?error=bad");
-                }
+        if (orderId != -1) {
+            Order order = OrderDaoMem.getInstance().find(orderId);
+            Status status = order.getStatus();
+            if (status.equals(Status.REVIEWED) && !req.pathInfo().equals("/checkout") && req.queryParams("back") == null) {
+                res.redirect("/checkout");
+            } else if (status.equals(Status.CHECKEDOUT) && !req.pathInfo().contains("/payment") && req.queryParams("back") == null) {
+                res.redirect("/payment");
+            } else if (status.equals(Status.NEW) &&
+                    ((req.pathInfo().equals("/checkout") || req.pathInfo().contains("/payment")) && req.queryParams("back") == null)) {
+                res.redirect("/?error=bad");
             }
-        };
-    }
+        } else if ((req.pathInfo().equals("/checkout") || req.pathInfo().contains("/payment")) && req.queryParams("back") == null) {
+            res.redirect("/?error=bad");
+        }
+    };
 
 }
