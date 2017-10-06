@@ -14,4 +14,6 @@ public class Config {
     public static final String ORDER_LOG_FOLDER = "src/main/orders";
     public static final String ADMIN_LOG_FOLDER = "src/main/logs";
 
+    public static final int DEFAULT_CATEGORY = 1;
+
 }

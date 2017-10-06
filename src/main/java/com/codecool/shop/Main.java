@@ -3,6 +3,7 @@ package com.codecool.shop;
 import static spark.Spark.*;
 import static spark.debug.DebugScreen.enableDebugScreen;
 
+import com.codecool.shop.controller.OrderController;
 import com.codecool.shop.controller.ProductController;
 import com.codecool.shop.dao.*;
 import com.codecool.shop.dao.implementation.*;
@@ -11,11 +12,8 @@ import com.codecool.shop.order.Order;
 import com.codecool.shop.order.Status;
 import com.codecool.shop.order.InputField;
 import com.codecool.shop.utility.Log;
-import com.codecool.shop.utility.Log.*;
-import com.codecool.shop.utility.Email;
 import com.google.gson.Gson;
 import spark.Filter;
-import jdk.internal.util.xml.impl.Input;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
@@ -48,93 +46,40 @@ public class Main {
 
         // API ENDPOINTS
         Gson gson = new Gson();
-        post("/api/add-to-cart", ProductController::addToCart, gson::toJson);
-
-        post("/api/change-product-quantity", ProductController::changeProductQuantity, gson::toJson);
+        post("/api/add-to-cart", OrderController::addToCart, gson::toJson);
+        post("/api/change-product-quantity", OrderController::changeProductQuantity, gson::toJson);
 
         // ROUTING (start with specific routes)
 
-        get("/payment", (req, res) -> {
-            setOrderStatus(req);
+        get("/payment", OrderController::renderPayment, new ThymeleafTemplateEngine());
+        get("/payment/bank", OrderController::renderBankPayment, new ThymeleafTemplateEngine());
+        get("/payment/paypal", OrderController::renderPayPalPayment, new ThymeleafTemplateEngine());
 
-            Map params = new HashMap();
-            int orderId = getSessionOrderId(req);
-            Order order = null;
-            if (orderId != -1) {
-                order = OrderDaoMem.getInstance().find(orderId);
-                try {
-                    Log.save("admin", order.getOrderLogFilename(), Log.getNowAsString() + ": Order has been payed!");
-                } catch (IOException e) {
-                    System.out.println("Error saving admin log!");
-                }
-            }
-            params.put("order", order);
-            int cartItems = order != null ? order.countCartItems() : 0;
-            params.put("cartItems", cartItems);
-            params.put("balance", String.format("%.2f", Main.balanceInUSD));
+        post("/payment/bank", OrderController::payWithChosenMethod, new ThymeleafTemplateEngine());
+        post("/payment/paypal", OrderController::payWithChosenMethod, new ThymeleafTemplateEngine());
 
-            return new ThymeleafTemplateEngine().render(new ModelAndView(params, "payment"));
-        });
-
-        get("/payment/bank", ProductController::renderBankPayment, new ThymeleafTemplateEngine());
-
-        get("/payment/paypal", ProductController::renderPayPalPayment, new ThymeleafTemplateEngine());
-
-        post("/payment/bank", (request, response) -> {
-            boolean successfulPayment = ProductController.payWithChosenMethod(request, response);
-            if (successfulPayment) {
-                Order order = getOrderFromSessionInfo(request);
-                if (order != null) {
-                    System.out.println("Status set to PAID");
-                    order.setStatus(Status.PAID);
-                }
-                response.redirect("/payment/success");
-            } else {
-                response.redirect("/payment/bank");
-            }
-            return null;
-        });
-
-        post("/payment/paypal", (request, response) -> {
-            boolean successfulPayment = ProductController.payWithChosenMethod(request, response);
-            if (successfulPayment) {
-                Order order = getOrderFromSessionInfo(request);
-                if (order != null) {
-                    System.out.println("Status set to PAID");
-                    order.setStatus(Status.PAID);
-                }
-                response.redirect("/payment/success");
-            } else {
-                response.redirect("/payment/paypal");
-            }
-            return null;
-        });
-
-        get("/payment/success", ProductController::renderSuccess, new ThymeleafTemplateEngine());
+        get("/payment/success", OrderController::renderSuccess, new ThymeleafTemplateEngine());
 
         get("/", ProductController::renderProducts, new ThymeleafTemplateEngine());
         // EQUIVALENT WITH ABOVE
         get("/index", (Request req, Response res) -> {
-            return new ThymeleafTemplateEngine().render( ProductController.renderProducts(req, res) );
+            return new ThymeleafTemplateEngine().render(ProductController.renderProducts(req, res));
         });
         post("/index", (req, res) -> {
-            for (int i=0; i < req.queryParams().size(); i++){
-                System.out.println(req.queryParams().toArray()[i] + ": " + req.queryParams(req.queryParams().toArray()[i].toString()));
-            }
 
-            if (req.queryParams().toArray()[0].equals("category-id")){
-                return new ThymeleafTemplateEngine().render( ProductController.renderProductsByCategory(req, res) );
-            } else if(req.queryParams().toArray()[0].equals("supplier-id")){
-                return new ThymeleafTemplateEngine().render( ProductController.renderProductsBySupplier(req, res) );
+            if (req.queryParams().toArray()[0].equals("category-id")) {
+                return new ThymeleafTemplateEngine().render(ProductController.renderProductsByCategory(req, res));
+            } else if (req.queryParams().toArray()[0].equals("supplier-id")) {
+                return new ThymeleafTemplateEngine().render(ProductController.renderProductsBySupplier(req, res));
             }
 
             return null;
         });
 
         get("/checkout", (Request req, Response res) -> {
-            setOrderStatus(req);
+            OrderUtils.setOrderStatus(req);
+            Order userOrder = OrderUtils.getOrderFromSessionInfo(req);
             try {
-                Order userOrder = OrderDaoMem.getInstance().find(getSessionOrderId(req));
                 Log.save("admin", userOrder.getOrderLogFilename(), Log.getNowAsString() + ": Order has been checked out!");
             } catch (IOException e) {
                 System.out.println("Error saving admin log!");
@@ -163,52 +108,48 @@ public class Main {
             userDatas.put("shipaddress", req.queryParams("ship-address"));
 
             List errorMessages = new ArrayList();
-            if (InputField.FULL_NAME.validate(userDatas.get("username").toString()) == false){
+            if (InputField.FULL_NAME.validate(userDatas.get("username").toString()) == false) {
                 errorMessages.add("Invalid username.");
             }
-            if (InputField.EMAIL.validate(userDatas.get("email").toString()) == false){
+            if (InputField.EMAIL.validate(userDatas.get("email").toString()) == false) {
                 errorMessages.add("Invalid email address");
             }
-            if (InputField.PHONE.validate(req.queryParams("phone")) == false){
+            if (InputField.PHONE.validate(req.queryParams("phone")) == false) {
                 errorMessages.add("Invalid phone number");
             }
-            if (InputField.COUNTRY.validate(userDatas.get("billcountry").toString()) == false){
+            if (InputField.COUNTRY.validate(userDatas.get("billcountry").toString()) == false) {
                 errorMessages.add("Invalid billing country");
             }
-            if (InputField.CITY.validate(userDatas.get("billcity").toString()) == false){
+            if (InputField.CITY.validate(userDatas.get("billcity").toString()) == false) {
                 errorMessages.add("Invalid billing city");
             }
-            if (InputField.ZIP_CODE.validate(userDatas.get("billzip").toString()) == false){
+            if (InputField.ZIP_CODE.validate(userDatas.get("billzip").toString()) == false) {
                 errorMessages.add("Invalid billing ZIP code");
             }
-            if (InputField.ADDRESS.validate(userDatas.get("billaddress").toString()) == false){
+            if (InputField.ADDRESS.validate(userDatas.get("billaddress").toString()) == false) {
                 errorMessages.add("Invalid billing address");
             }
-            if (InputField.COUNTRY.validate(userDatas.get("shipcountry").toString()) == false){
+            if (InputField.COUNTRY.validate(userDatas.get("shipcountry").toString()) == false) {
                 errorMessages.add("Invalid shipping country");
             }
-            if (InputField.CITY.validate(userDatas.get("shipcity").toString()) == false){
+            if (InputField.CITY.validate(userDatas.get("shipcity").toString()) == false) {
                 errorMessages.add("Invalid shipping city");
             }
-            if (InputField.ZIP_CODE.validate(userDatas.get("shipzip").toString()) == false){
+            if (InputField.ZIP_CODE.validate(userDatas.get("shipzip").toString()) == false) {
                 errorMessages.add("Invalid shipping ZIP code");
             }
-            if (InputField.ADDRESS.validate(userDatas.get("shipaddress").toString()) == false){
+            if (InputField.ADDRESS.validate(userDatas.get("shipaddress").toString()) == false) {
                 errorMessages.add("Invalid shipping address");
             }
 
-            if (errorMessages.size() > 0){
+            if (errorMessages.size() > 0) {
                 Map params = new HashMap();
                 params.put("user", userDatas);
                 params.put("errors", errorMessages);
                 return new ThymeleafTemplateEngine().render(new ModelAndView(params, "checkout"));
             } else {
-                int orderId = getSessionOrderId(req);
-                Order order = null;
-                if (orderId != -1){
-                    order = OrderDaoMem.getInstance().find(orderId);
-                }
-                if (order != null){
+                Order order = OrderUtils.getOrderFromSessionInfo(req);
+                if (order != null) {
                     order.setCheckoutInfo(userDatas);
                 }
                 res.redirect("/payment");
@@ -219,16 +160,9 @@ public class Main {
         });
 
         get("/cart", (Request req, Response res) -> {
-            setOrderStatus(req);
-            return new ThymeleafTemplateEngine().render( ProductController.reviewCart(req, res) );
+            OrderUtils.setOrderStatus(req);
+            return new ThymeleafTemplateEngine().render(OrderController.renderReview(req, res));
         });
-
-
-        /*try {
-            Log.save("order", "1_order", "Teszt123");
-        } catch (IOException e) {
-            System.out.println("An error occured when saving the order!");
-        }*/
 
     }
 
@@ -318,7 +252,7 @@ public class Main {
             @Override
             public void handle(Request req, Response res) {
                 int orderId = req.session().attribute("order_id") == null ? -1 :
-                        Integer.valueOf(req.session().attribute("order_id")+"");
+                        Integer.valueOf(req.session().attribute("order_id") + "");
 
                 if (orderId != -1) {
                     Order order = OrderDaoMem.getInstance().find(orderId);
@@ -336,41 +270,6 @@ public class Main {
                 }
             }
         };
-    }
-
-    private static int getSessionOrderId(Request req) {
-        return req.session().attribute("order_id") == null ? -1 :
-                Integer.valueOf(req.session().attribute("order_id")+"");
-    }
-
-    private static Order getOrderFromSessionInfo(Request req) {
-        int orderId = getSessionOrderId(req);
-        Order order = null;
-        if (orderId != -1) {
-            order = OrderDaoMem.getInstance().find(orderId);
-        }
-        return order;
-    }
-
-    private static void setOrderStatus(Request req) {
-        Order order = getOrderFromSessionInfo(req);
-
-        if (req.queryParams("back") != null && order != null) {
-            System.out.println("STATUS SET BACK FROM: " + order.getStatus());
-            switch (order.getStatus()) {
-                case CHECKEDOUT: order.setStatus(Status.REVIEWED); break;
-                case REVIEWED: order.setStatus(Status.NEW); break;
-            }
-        } else if (order != null) {
-            Status orderStatus = order.getStatus();
-            if (orderStatus.equals(Status.NEW) && req.pathInfo().equals("/checkout")) {
-                System.out.println("STATUS SET FORWARD FROM: " + order.getStatus());
-                order.setStatus(Status.REVIEWED);
-            } else if (orderStatus.equals(Status.REVIEWED) && req.pathInfo().equals("/payment")) {
-                System.out.println("STATUS SET FORWARD FROM: " + order.getStatus());
-                order.setStatus(Status.CHECKEDOUT);
-            }
-        }
     }
 
 }

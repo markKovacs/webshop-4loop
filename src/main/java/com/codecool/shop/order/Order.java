@@ -65,26 +65,19 @@ public class Order {
         return "quantity_change";
     }
 
-    public String changeProductQuantity(int productId, int quantity) {
-        System.out.println("HERE?");
-        System.out.println(quantity);
-        System.out.println(productId);
+    public float changeProductQuantity(int productId, int quantity) {
         Product product = ProductDaoMem.getInstance().find(productId);
-        System.out.println(product);
         if (product == null || quantity < 0 || quantity > 99) {
-            return "invalid_params";
+            return -1f;
         }
-        System.out.println("THERE");
-        // TODO: check if correct
         LineItem lineItem = findLineItem(product);
         if (lineItem == null) {
-            return "invalid_params";
+            return -1f;
         }
 
-        lineItem.changeQuantityToValue(quantity);
+        float newSubtotal = lineItem.changeQuantityToValue(quantity);
         updateTotal();
-
-        return "quantity_change";
+        return newSubtotal;
     }
 
     public void updateTotal() {

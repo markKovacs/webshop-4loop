@@ -48,12 +48,9 @@ app.productLogic = {
     },
 
     handleChangeProductQuantitySuccess: function (response, productId) {
-        console.log("Successfully changed quantity.");
-        console.log(response);
         var resp = JSON.parse(response);
-        var usd = " USD";
-        $("#total-total").text(String(Math.round(resp.total)) + usd);
-        $("#subtotal-" + productId).text(String(Math.round(resp.subtotal)) + usd);
+        $("#total-total").text(String(parseFloat(Math.round(resp.total * 100) / 100).toFixed(2)) + " USD");
+        $("#subtotal-" + productId).text(String(parseFloat(Math.round(resp.subtotal * 100) / 100).toFixed(2)) + " USD");
     },
 
     handleChangeProductQuantityError: function (productId) {
