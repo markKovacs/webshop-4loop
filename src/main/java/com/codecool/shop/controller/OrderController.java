@@ -168,7 +168,7 @@ public class OrderController {
         if (errorMessages.size() == 0) {
             order = OrderUtils.getOrderFromSessionInfo(req);
             order.setStatus(Status.PAID);
-            System.out.println("Status set to PAID");
+            System.out.println("Status SET TO PAID");
             res.redirect("/payment/success");
         } else {
             int cartItems = order != null ? order.countCartItems() : 0;
@@ -189,14 +189,8 @@ public class OrderController {
         Order order = OrderUtils.getOrderFromSessionInfo(req);
 
         Log.saveActionToOrderLog(order.getOrderLogFilename(), "paid");
-        Log.saveOrderToJson(order.getId(), order.toString());
-
-        // SEND EMAIL
-        String userEmail = order.getEmail();
-        if (userEmail != null && !userEmail.isEmpty()) {
-            String body = Email.renderOrderTemplate(order);
-            Email.send(userEmail, "order confirmation", body);
-        }
+        Log.saveOrderToJson(order);
+        Email.send(order);
 
         req.session().removeAttribute("order_id");
 

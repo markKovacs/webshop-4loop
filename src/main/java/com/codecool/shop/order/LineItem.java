@@ -2,6 +2,7 @@ package com.codecool.shop.order;
 
 import com.codecool.shop.dao.implementation.ProductDaoMem;
 import com.codecool.shop.model.Product;
+import com.google.gson.Gson;
 
 
 public class LineItem {
@@ -70,11 +71,11 @@ public class LineItem {
 
     @Override
     public String toString() {
-        return "LineItem{" +
-                "product=" + product +
-                ", quantity=" + quantity +
-                ", actualPrice=" + actualPrice +
-                '}';
+        return "\t{\n" +
+                "\t\"product\": \"" + product.getName() + "\",\n"+
+                "\t\"quantity\": " + quantity + ",\n" +
+                "\t\"actualPrice\": " + actualPrice + "\n" +
+                "\t}";
     }
 
     public int getId() {

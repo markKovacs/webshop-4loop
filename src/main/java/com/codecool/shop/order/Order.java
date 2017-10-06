@@ -5,6 +5,7 @@ import com.codecool.shop.dao.implementation.ProductDaoMem;
 import com.codecool.shop.model.Product;
 import com.codecool.shop.utility.Log;
 
+import javax.sound.sampled.Line;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -205,27 +206,32 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Order{" +
-                "id=" + id +
-                ", status=" + status +
-                ", items=" + items +
-                ", fullName='" + fullName + '\'' +
-                ", email='" + email + '\'' +
-                ", phone='" + phone + '\'' +
-                ", billingCountry='" + billingCountry + '\'' +
-                ", billingCity='" + billingCity + '\'' +
-                ", billingZipCode='" + billingZipCode + '\'' +
-                ", billingAddress='" + billingAddress + '\'' +
-                ", shippingCountry='" + shippingCountry + '\'' +
-                ", shippingCity='" + shippingCity + '\'' +
-                ", shippingZipCode='" + shippingZipCode + '\'' +
-                ", shippingAddress='" + shippingAddress + '\'' +
+
+        String itemsStringified = "[";
+        for (LineItem item : items) {
+            itemsStringified += '\n' + item.toString();
+        }
+        itemsStringified += "\n]";
+
+        return "{\n" +
+                "\"id\": " + id + ",\n" +
+                "\"status\": \"" + status + "\",\n" +
+                "\"items\": " + itemsStringified + ",\n" +
+                "\"fullName\": \"" + fullName + "\",\n" +
+                "\"email\": \"" + email + "\",\n" +
+                "\"billingCountry\": \"" + billingCountry + "\",\n" +
+                "\"billingCity\": \"" + billingCity + "\",\n" +
+                "\"billingZipCode\": \"" + billingZipCode + "\",\n" +
+                "\"billingAddress\": \"" + billingAddress + "\",\n" +
+                "\"shippingCountry\": \"" + shippingCountry + "\",\n" +
+                "\"shippingCity\": \"" + shippingCity + "\",\n" +
+                "\"shippingZipCode\": \"" + shippingZipCode + "\",\n" +
+                "\"shippingAddress\": \"" + shippingAddress + "\"\n" +
                 '}';
     }
 
     public String getOrderLogFilename() {
         return orderLogFilename;
     }
-
 
 }

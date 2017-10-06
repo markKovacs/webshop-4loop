@@ -1,5 +1,8 @@
 package com.codecool.shop.utility;
 
+import com.codecool.shop.order.Order;
+import com.google.gson.Gson;
+
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -17,9 +20,9 @@ public class Log {
         save(ADMIN_LOG_FOLDER, fileName, Data);
     }
 
-    public static void saveOrderToJson(int orderId, String data){
-        String fileName = getNowAsString() + "_" + orderId + "_order";
-        save(ORDER_LOG_FOLDER, fileName, data);
+    public static void saveOrderToJson(Order order){
+        String fileName = getNowAsString() + "_" + order.getId() + "_order";
+        save(ORDER_LOG_FOLDER, fileName, order.toString());
     }
 
     private static void save(String folder, String fileName, String Data) {

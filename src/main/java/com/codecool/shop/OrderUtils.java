@@ -11,11 +11,11 @@ public class OrderUtils {
     public static Order getOrderFromSessionInfo(Request req) {
         int orderId = req.session().attribute("order_id") == null ? -1 :
                 Integer.valueOf(req.session().attribute("order_id") + "");
-        Order order = null;
         if (orderId != -1) {
-            order = OrderDaoMem.getInstance().find(orderId);
+            return OrderDaoMem.getInstance().find(orderId);
+        } else {
+            return null;
         }
-        return order;
     }
 
     public static void setOrderStatus(Request req) {
@@ -42,4 +42,5 @@ public class OrderUtils {
             }
         }
     }
+
 }
