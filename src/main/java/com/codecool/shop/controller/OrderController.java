@@ -140,6 +140,7 @@ public class OrderController {
         int cartItems = order != null ? order.countCartItems() : 0;
 
         Map<String, Object> params = new HashMap<>();
+        params.put("cardData", new HashMap<String, String>());
         params.put("cartItems", cartItems);
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
 
@@ -158,8 +159,6 @@ public class OrderController {
     }
 
     public static ModelAndView payWithChosenMethod(Request req, Response res) {
-        // TODO: check if any inputs are empty (null), client side limitation is not enough
-
         Order order = OrderUtils.getOrderFromSessionInfo(req);
         Map<String, String> inputValues = collectPaymentInput(req);
         String paymentType = getPaymentType(req);

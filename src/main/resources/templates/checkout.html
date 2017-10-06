@@ -25,15 +25,15 @@
             <form id="checkout-form" action="/checkout" method="post">
                 <div class="form-group">
                     <label class="form-control-label" for="username">Full name:</label>
-                    <input class="form-control" id="username" placeholder="Example Name" name="username" th:attr="value=${user.username}" required title="> 5 chars" autofocus>
+                    <input class="form-control" id="username" placeholder="Example Name" name="username" th:value="${user.username}" required title="> 5 chars" autofocus>
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" for="email">E-mail:</label>
-                    <input class="form-control" id="email" placeholder="example@example.com" name="email" th:attr="value=${user.email}" required title="> 5 chars">
+                    <input class="form-control" id="email" placeholder="example@example.com" name="email" th:value="${user.email}" required title="> 5 chars">
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" for="phone">Phone number:</label>
-                    <input class="form-control" id="phone" placeholder="XXX-XX-XXXXXXXXXX" name="phone" th:attr="value=${user.phone}" required title="> 10 chars">
+                    <input class="form-control" id="phone" placeholder="XXX-XX-XXXXXXXXXX" name="phone" th:value="${user.phone}" required title="> 10 chars">
                 </div>
 
                 <br>
@@ -41,21 +41,21 @@
                 <h4 class="text-center"><strong>Billing Address</strong></h4>
                 <div class="form-group">
                     <label class="form-control-label" for="bill-country">Country:</label>
-                    <input class="form-control" id="bill-country" placeholder="Country Name" name="bill-country" th:attr="value=${user.billcountry}" required title="> 5 chars">
+                    <input class="form-control" id="bill-country" placeholder="Country Name" name="bill-country" th:value="${user.billcountry}" required title="> 5 chars">
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" for="bill-city">City:</label>
-                    <input class="form-control" id="bill-city" placeholder="City Name" name="bill-city" th:attr="value=${user.billcity}" required title="> 5 chars">
+                    <input class="form-control" id="bill-city" placeholder="City Name" name="bill-city" th:value="${user.billcity}" required title="> 5 chars">
                 </div>
 
                 <div class="form-group">
                     <label class="form-control-label" for="bill-zip">Zip:</label>
-                    <input class="form-control" id="bill-zip" placeholder="Zip Code" name="bill-zip" th:attr="value=${user.billzip}" required title="> 3 chars">
+                    <input class="form-control" id="bill-zip" placeholder="Zip Code" name="bill-zip" th:value="${user.billzip}" required title="> 3 chars">
                 </div>
 
                 <div class="form-group">
                     <label class="form-control-label" for="bill-address">Address:</label>
-                    <input class="form-control" id="bill-address" placeholder="Address" name="bill-address" th:attr="value=${user.billaddress}" required title="> 5 chars">
+                    <input class="form-control" id="bill-address" placeholder="Address" name="bill-address" th:value="${user.billaddress}" required title="> 5 chars">
                 </div>
 
                 <br>
@@ -63,21 +63,21 @@
                 <h4 class="text-center"><strong>Shipping Address</strong></h4>
                 <div class="form-group">
                     <label class="form-control-label" for="ship-country">Country:</label>
-                    <input class="form-control" id="ship-country" placeholder="Country Name" name="ship-country" th:attr="value=${user.shipcountry}" required title="> 5 chars">
+                    <input class="form-control" id="ship-country" placeholder="Country Name" name="ship-country" th:value="${user.shipcountry}" required title="> 5 chars">
                 </div>
                 <div class="form-group">
                     <label class="form-control-label" for="ship-city">City:</label>
-                    <input class="form-control" id="ship-city" placeholder="City Name" name="ship-city" th:attr="value=${user.shipcity}" required title="> 5 chars">
+                    <input class="form-control" id="ship-city" placeholder="City Name" name="ship-city" th:value="${user.shipcity}" required title="> 5 chars">
                 </div>
 
                 <div class="form-group">
                     <label class="form-control-label" for="ship-zip">Zip Code:</label>
-                    <input class="form-control" id="ship-zip" placeholder="Zip Code" name="ship-zip" th:attr="value=${user.shipzip}" required title="> 3 chars">
+                    <input class="form-control" id="ship-zip" placeholder="Zip Code" name="ship-zip" th:value="${user.shipzip}" required title="> 3 chars">
                 </div>
 
                 <div class="form-group">
                     <label class="form-control-label" for="ship-address">Address:</label>
-                    <input class="form-control" id="ship-address" placeholder="Address" name="ship-address" th:attr="value=${user.shipaddress}" required title="> 5 chars">
+                    <input class="form-control" id="ship-address" placeholder="Address" name="ship-address" th:value="${user.shipaddress}" required title="> 5 chars">
                 </div>
 
                 <a class="btn btn-default" role="button" href="/cart?back=1">Back to Cart Review</a>
