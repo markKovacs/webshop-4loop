@@ -29,6 +29,14 @@ app.productLogic = {
         });
     },
 
+    reviewRemoveItemListener: function () {
+        $(".remove-img").on("click", function(ev) {
+            ev.stopPropagation();
+            var productId = $(this).data("product-id");
+            app.dataHandler.removeLineItem(productId);
+        });
+    },
+
     handleAddToCartSuccess: function (response, productId) {
         app.utils.toastMessage("Successfully added to cart.");
         if (response === "new_item") {
@@ -53,8 +61,19 @@ app.productLogic = {
         $("#subtotal-" + productId).text(String(parseFloat(Math.round(resp.subtotal * 100) / 100).toFixed(2)) + " USD");
     },
 
-    handleChangeProductQuantityError: function (productId) {
-        console.log("Failed to change quantity.");
+    handleChangeProductQuantityError: function () {
+        app.utils.toastMessage("Failed to change quantity.");
+    },
+
+    handleRemoveLineItemSuccess: function (response, productId) {
+        var resp = JSON.parse(response);
+        $("#total-total").text(String(parseFloat(Math.round(resp.total * 100) / 100).toFixed(2)) + " USD");
+        $('#line-item-' + productId).remove();
+        app.utils.toastMessage("Item removed from cart.");
+    },
+
+    handleRemoveLineItemError: function () {
+        app.utils.toastMessage("Item could not be removed from cart.");
     }
 
 };

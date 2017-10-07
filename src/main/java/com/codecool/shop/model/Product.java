@@ -40,7 +40,7 @@ public class Product extends BaseModel {
     }
 
     public void setPrice(float price, String currency) {
-        this.defaultPrice = price;
+        this.defaultPrice = Math.round(price * 100.0f) / 100.0f;
         this.defaultCurrency = Currency.getInstance(currency);
     }
 

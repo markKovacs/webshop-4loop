@@ -62,7 +62,26 @@ app.dataHandler = {
                 app.productLogic.handleChangeProductQuantitySuccess(response, productId);
             },
             error: function() {
-                app.productLogic.handleChangeProductQuantityError(productId);
+                app.productLogic.handleChangeProductQuantityError();
+            }
+        });
+
+    },
+
+    removeLineItem: function (productId) {
+
+        $.ajax({
+            url: '/api/remove-line-item',
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                product_id: productId
+            },
+            success: function(response) {
+                app.productLogic.handleRemoveLineItemSuccess(response, productId);
+            },
+            error: function() {
+                app.productLogic.handleRemoveLineItemError();
             }
         });
 

@@ -83,6 +83,22 @@ public class OrderController {
         return gson.toJson(response);
     }
 
+    public static String removeLineItem(Request req, Response res) {
+        Order order = OrderUtils.getOrderFromSessionInfo(req);
+        int productId = Integer.parseInt(req.queryParams("product_id"));
+
+        System.out.println(order);
+        order.removeLineItem(productId);
+        System.out.println(order);
+        order.updateTotal();
+
+        Map<String, Float> response = new HashMap<>();
+        response.put("total", order.getTotalPrice());
+
+        Gson gson = new Gson();
+        return gson.toJson(response);
+    }
+
     public static ModelAndView finalizeOrder(Request req, Response res) {
         Order order = OrderUtils.getOrderFromSessionInfo(req);
 

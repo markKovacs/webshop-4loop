@@ -190,3 +190,19 @@ h1 {
 .center-content {
     margin: 0 auto;
 }
+
+.cart-img {
+    width: 100px;
+}
+
+.remove-img {
+    width: 30px;
+    -webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+    filter: grayscale(100%);
+    cursor: pointer;
+}
+
+.remove-img:hover {
+    -webkit-filter: grayscale(0%); /* Safari 6.0 - 9.0 */
+    filter: grayscale(0%);
+}

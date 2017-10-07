@@ -1,9 +1,6 @@
 package com.codecool.shop.order;
 
-import com.codecool.shop.dao.implementation.ProductDaoMem;
 import com.codecool.shop.model.Product;
-import com.google.gson.Gson;
-
 
 public class LineItem {
     private static int idCounter = 0;

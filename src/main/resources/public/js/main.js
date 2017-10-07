@@ -5,6 +5,7 @@ app.init = function() {
 
     app.productLogic.addToCartListener();
     app.productLogic.reviewQuantityChangeListener();
+    app.productLogic.reviewRemoveItemListener();
 
 };
 

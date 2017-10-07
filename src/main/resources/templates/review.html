@@ -22,6 +22,8 @@
                     <table class="table table-hover">
                         <thead>
                             <tr>
+                                <th class="center">Remove</th>
+                                <th class="center">Image</th>
                                 <th class="center">Product</th>
                                 <th class="center">Quantity</th>
                                 <th class="center price-width">Price</th>
@@ -29,7 +31,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr th:each="item : ${items}" th:object="${item}">
+                            <tr th:each="item : ${items}" th:object="${item}" th:attr="id=*{'line-item-' + product.id}">
+                                <td>
+                                    <img class="remove-img" th:attr="data-product-id=*{product.id}" src="/accessories/remove.png" alt="DEL" />
+                                </td>
+                                <td class="center">
+                                    <img class="cart-img" src="http://placehold.it/400x250/000/fff" th:attr="src='/img/' + *{product.imageFileName}" alt="IMG" />
+                                </td>
                                 <td th:text="*{getProductName()}">Light Sabre from Star Wars</td>
                                 <td class="center">
                                     <form action="/change-quantity" method="post">
@@ -42,10 +50,11 @@
                         </tbody>
                         <tfoot>
                             <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                                 <td class="total center">Total</td>
-                                <td></td>
-                                <td></td>
-                                <!--<td class="right subtotal-width total" th:text="*{#numbers.formatDecimal(quantity * actualPrice, 0, 'COMMA', 2, 'POINT') + ' USD'}">1100000 USD</td>-->
                                 <td id="total-total" class="right subtotal-width total" th:text="${grandTotal + ' USD'}">11111111 USD</td>
                             </tr>
                         </tfoot>
@@ -55,7 +64,7 @@
                     <span id="empty-cart-label">Your cart is empty!</span>
                 </div>
                 <div>
-                    <a href="/" role="button" class="btn btn-default">Back to Products</a>
+                    <a href="/" class="btn btn-default">Continue Shopping</a>
                     <form th:if="${#lists.size(items) > 0}" action="/cart" method="POST">
                         <input class="btn btn-success push-right" type="submit" value="Proceed to Checkout">
                     </form>

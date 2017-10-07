@@ -89,6 +89,11 @@ public class Order {
         this.totalPrice = total;
     }
 
+    public void removeLineItem(int productId) {
+        LineItem foundLineItem = items.stream().filter(i -> i.getProduct().getId() == productId).findFirst().orElse(null);
+        items.remove(foundLineItem);
+    }
+
     private LineItem findLineItem(Product product) {
         return items.stream().filter(t -> t.getProduct().equals(product)).findFirst().orElse(null);
     }

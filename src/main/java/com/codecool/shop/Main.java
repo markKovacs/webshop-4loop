@@ -39,6 +39,7 @@ public class Main {
         Gson gson = new Gson();
         post("/api/add-to-cart", OrderController::addToCart, gson::toJson);
         post("/api/change-product-quantity", OrderController::changeQuantity, gson::toJson);
+        post("/api/remove-line-item", OrderController::removeLineItem, gson::toJson);
 
         // ROUTING
 
