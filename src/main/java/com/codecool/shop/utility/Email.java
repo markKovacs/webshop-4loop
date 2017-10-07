@@ -42,7 +42,7 @@ public class Email {
             message.setContent(body, "text/html; charset=UTF-8");
 
             Transport.send(message);
-            System.out.println("Wmail message sent successfully.");
+            System.out.println("E-mail message was sent successfully.");
         } catch (MessagingException e) {
             e.printStackTrace();
         }

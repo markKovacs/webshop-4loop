@@ -87,9 +87,7 @@ public class OrderController {
         Order order = OrderUtils.getOrderFromSessionInfo(req);
         int productId = Integer.parseInt(req.queryParams("product_id"));
 
-        System.out.println(order);
         order.removeLineItem(productId);
-        System.out.println(order);
         order.updateTotal();
 
         Map<String, Float> response = new HashMap<>();
@@ -139,9 +137,9 @@ public class OrderController {
         }
 
         Order order = OrderUtils.getOrderFromSessionInfo(req);
-        if (order != null) {
-            order.setCheckoutInfo(userData);
-        }
+        order.setCheckoutInfo(userData);
+        Log.saveActionToOrderLog(order.getOrderLogFilename(), "checkedout");
+
         res.redirect("/payment");
 
         return null;
@@ -150,8 +148,6 @@ public class OrderController {
     public static ModelAndView renderPayment(Request req, Response res) {
         setOrderStatus(req);
         Order order = OrderUtils.getOrderFromSessionInfo(req);
-
-        Log.saveActionToOrderLog(order.getOrderLogFilename(), "checkedout");
 
         Map<String, Object> params = new HashMap<>();
         params.put("order", order);
@@ -198,6 +194,9 @@ public class OrderController {
             order = OrderUtils.getOrderFromSessionInfo(req);
             order.setStatus(Status.PAID);
             System.out.println("Status SET TO PAID");
+            Log.saveActionToOrderLog(order.getOrderLogFilename(), "paid");
+            Log.saveOrderToJson(order);
+            Email.send(order);
             res.redirect("/payment/success");
         } else {
             int cartItems = order != null ? order.countCartItems() : 0;
@@ -214,12 +213,6 @@ public class OrderController {
     }
 
     public static ModelAndView renderSuccess(Request req, Response res) {
-
-        Order order = OrderUtils.getOrderFromSessionInfo(req);
-
-        Log.saveActionToOrderLog(order.getOrderLogFilename(), "paid");
-        Log.saveOrderToJson(order);
-        Email.send(order);
 
         req.session().removeAttribute("order_id");
 

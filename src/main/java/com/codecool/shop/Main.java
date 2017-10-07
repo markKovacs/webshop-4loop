@@ -42,7 +42,6 @@ public class Main {
         post("/api/remove-line-item", OrderController::removeLineItem, gson::toJson);
 
         // ROUTING
-
         get("/payment", OrderController::renderPayment, new ThymeleafTemplateEngine());
         get("/payment/bank", OrderController::renderBankPayment, new ThymeleafTemplateEngine());
         get("/payment/paypal", OrderController::renderPayPalPayment, new ThymeleafTemplateEngine());
@@ -59,6 +58,26 @@ public class Main {
         get("/", ProductController::renderProducts, new ThymeleafTemplateEngine());
 
     }
+
+    private static Filter orderInProgressFilter = (Request req, Response res) -> {
+        int orderId = req.session().attribute("order_id") == null ? -1 :
+                Integer.valueOf(req.session().attribute("order_id") + "");
+
+        if (orderId != -1) {
+            Order order = OrderDaoMem.getInstance().find(orderId);
+            Status status = order.getStatus();
+            if (status.equals(Status.REVIEWED) && !req.pathInfo().equals("/checkout") && req.queryParams("back") == null) {
+                res.redirect("/checkout");
+            } else if (status.equals(Status.CHECKEDOUT) && !req.pathInfo().contains("/payment") && req.queryParams("back") == null) {
+                res.redirect("/payment");
+            } else if (status.equals(Status.NEW) &&
+                    ((req.pathInfo().equals("/checkout") || req.pathInfo().contains("/payment")) && req.queryParams("back") == null)) {
+                res.redirect("/?error=bad");
+            }
+        } else if ((req.pathInfo().equals("/checkout") || req.pathInfo().contains("/payment")) && req.queryParams("back") == null) {
+            res.redirect("/?error=bad");
+        }
+    };
 
     private static void populateData() {
         // This method initializes the data and loads into memory storage.
@@ -140,25 +159,5 @@ public class Main {
         productDataStore.add(new Product("Brian May's Red Special", 1000, "USD", "A guitar made by the famous member of Queen, he played in this instrument for example We Will Rock You.", famous, emi, "brianmay.jpg"));
 
     }
-
-    private static Filter orderInProgressFilter = (Request req, Response res) -> {
-        int orderId = req.session().attribute("order_id") == null ? -1 :
-                Integer.valueOf(req.session().attribute("order_id") + "");
-
-        if (orderId != -1) {
-            Order order = OrderDaoMem.getInstance().find(orderId);
-            Status status = order.getStatus();
-            if (status.equals(Status.REVIEWED) && !req.pathInfo().equals("/checkout") && req.queryParams("back") == null) {
-                res.redirect("/checkout");
-            } else if (status.equals(Status.CHECKEDOUT) && !req.pathInfo().contains("/payment") && req.queryParams("back") == null) {
-                res.redirect("/payment");
-            } else if (status.equals(Status.NEW) &&
-                    ((req.pathInfo().equals("/checkout") || req.pathInfo().contains("/payment")) && req.queryParams("back") == null)) {
-                res.redirect("/?error=bad");
-            }
-        } else if ((req.pathInfo().equals("/checkout") || req.pathInfo().contains("/payment")) && req.queryParams("back") == null) {
-            res.redirect("/?error=bad");
-        }
-    };
 
 }
