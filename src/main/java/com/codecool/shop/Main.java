@@ -33,7 +33,7 @@ public class Main {
         populateData();
 
         // BEFORE REQUEST CHECK
-        before("/*", orderInProgressFilter);
+        before(orderInProgressFilter);
 
         // API ENDPOINTS
         Gson gson = new Gson();
@@ -60,23 +60,42 @@ public class Main {
     }
 
     private static Filter orderInProgressFilter = (Request req, Response res) -> {
-        int orderId = req.session().attribute("order_id") == null ? -1 :
-                Integer.valueOf(req.session().attribute("order_id") + "");
-
-        if (orderId != -1) {
-            Order order = OrderDaoMem.getInstance().find(orderId);
+        Order order = OrderUtils.getOrderFromSessionInfo(req);
+        if (order != null) {
             Status status = order.getStatus();
-            if (status.equals(Status.REVIEWED) && !req.pathInfo().equals("/checkout") && req.queryParams("back") == null) {
-                res.redirect("/checkout");
-            } else if (status.equals(Status.CHECKEDOUT) && !req.pathInfo().contains("/payment") && req.queryParams("back") == null) {
-                res.redirect("/payment");
-            } else if (status.equals(Status.NEW) &&
-                    ((req.pathInfo().equals("/checkout") || req.pathInfo().contains("/payment")) && req.queryParams("back") == null)) {
-                res.redirect("/?error=bad");
+            switch (status) {
+                case NEW:
+                    if (!(req.pathInfo().equals("/") || req.pathInfo().equals("/cart") ||
+                            req.pathInfo().startsWith("/api/") ||
+                            (req.pathInfo().equals("/checkout") && req.queryParams("next") != null))) {
+                        res.redirect("/?error=restricted");
+                        halt(401);
+                    }
+                    break;
+                case REVIEWED:
+                    if (!(req.pathInfo().equals("/checkout") ||
+                            (req.pathInfo().equals("/cart") && req.queryParams("back") != null) ||
+                            (req.pathInfo().equals("/payment") && req.queryParams("next") != null))) {
+                        res.redirect("/checkout");
+                        halt(401);
+                    }
+                    break;
+                case CHECKEDOUT:
+                    if ( !(req.pathInfo().equals("/payment") ||
+                            req.pathInfo().equals("/payment/bank") ||
+                            req.pathInfo().equals("/payment/paypal") ||
+                            (req.pathInfo().equals("/checkout") && req.queryParams("back") != null) ) ) {
+                        res.redirect("/payment");
+                        halt(401);
+                    }
+                    break;
             }
-        } else if ((req.pathInfo().equals("/checkout") || req.pathInfo().contains("/payment")) && req.queryParams("back") == null) {
-            res.redirect("/?error=bad");
+        } else if (!(req.pathInfo().equals("/") || req.pathInfo().equals("/cart") ||
+                req.pathInfo().equals("/api/add-to-cart"))) {
+            res.redirect("/?error=restricted");
+            halt(401);
         }
+
     };
 
     private static void populateData() {

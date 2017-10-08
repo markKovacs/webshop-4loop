@@ -68,8 +68,19 @@ app.productLogic = {
     handleRemoveLineItemSuccess: function (response, productId) {
         var resp = JSON.parse(response);
         $("#total-total").text(String(parseFloat(Math.round(resp.total * 100) / 100).toFixed(2)) + " USD");
-        $('#line-item-' + productId).remove();
+        $("#line-item-" + productId).remove();
         app.utils.toastMessage("Item removed from cart.");
+
+        var cartItemCounterEl = $("#cart-item-count");
+        var refreshedValue = Number(cartItemCounterEl.text()) < 1 ? 0 : Number(cartItemCounterEl.text()) - 1;
+        cartItemCounterEl.text(refreshedValue);
+
+        if (resp.cartIsEmpty) {
+            var table = $("#review-table");
+            table.after(`<div><span id="empty-cart-label">Your cart is empty!</span></div>`);
+            table.remove();
+            $("#proceed-to-checkout").remove();
+        }
     },
 
     handleRemoveLineItemError: function () {

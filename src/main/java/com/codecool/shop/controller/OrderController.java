@@ -24,7 +24,7 @@ import static com.codecool.shop.OrderUtils.setOrderStatus;
 
 public class OrderController {
 
-    // METHODS RETURNING ModelAndView
+    // METHODS RETURNING RAW RESPONSE
 
     public static String addToCart(Request req, Response res) {
         int quantity = Integer.parseInt(req.queryParams("quantity"));
@@ -74,6 +74,7 @@ public class OrderController {
 
         float newSubtotal = order.changeProductQuantity(productId, quantity);
         order.updateTotal();
+        // TODO: if all stuff is zero, remove order too
 
         Map<String, Float> response = new HashMap<>();
         response.put("total", order.getTotalPrice());
@@ -90,8 +91,15 @@ public class OrderController {
         order.removeLineItem(productId);
         order.updateTotal();
 
-        Map<String, Float> response = new HashMap<>();
+        boolean cartIsEmpty = order.getItems().isEmpty();
+        if (cartIsEmpty) {
+            OrderDaoMem.getInstance().remove(order.getId());
+            req.session().removeAttribute("order_id");
+        }
+
+        Map<String, Object> response = new HashMap<>();
         response.put("total", order.getTotalPrice());
+        response.put("cartIsEmpty", cartIsEmpty);
 
         Gson gson = new Gson();
         return gson.toJson(response);
@@ -108,7 +116,7 @@ public class OrderController {
             res.redirect("/cart");
         } else {
             Log.saveActionToOrderLog(order.getOrderLogFilename(), "reviewed");
-            res.redirect("/checkout");
+            res.redirect("/checkout?next=process");
         }
 
         return null;
@@ -120,7 +128,6 @@ public class OrderController {
         Map<String, Object> params = new HashMap<>();
         params.put("user", new HashMap<>());
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
-
         return new ModelAndView(params, "checkout");
     }
 
@@ -140,8 +147,7 @@ public class OrderController {
         order.setCheckoutInfo(userData);
         Log.saveActionToOrderLog(order.getOrderLogFilename(), "checkedout");
 
-        res.redirect("/payment");
-
+        res.redirect("/payment?next=process");
         return null;
     }
 
@@ -154,7 +160,6 @@ public class OrderController {
         int cartItems = order != null ? order.countCartItems() : 0;
         params.put("cartItems", cartItems);
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
-
         return new ModelAndView(params, "payment");
     }
 
@@ -191,9 +196,7 @@ public class OrderController {
         List<String> errorMessages = paymentProcess.process(order, paymentType, paymentData);
 
         if (errorMessages.size() == 0) {
-            order = OrderUtils.getOrderFromSessionInfo(req);
             order.setStatus(Status.PAID);
-            System.out.println("Status SET TO PAID");
             Log.saveActionToOrderLog(order.getOrderLogFilename(), "paid");
             Log.saveOrderToJson(order);
             Email.send(order);

@@ -22,7 +22,6 @@ public class OrderUtils {
         Order order = getOrderFromSessionInfo(req);
 
         if (req.queryParams("back") != null && order != null) {
-            System.out.println("STATUS SET BACK FROM: " + order.getStatus());
             switch (order.getStatus()) {
                 case CHECKEDOUT:
                     order.setStatus(Status.REVIEWED);
@@ -34,10 +33,8 @@ public class OrderUtils {
         } else if (order != null) {
             Status orderStatus = order.getStatus();
             if (orderStatus.equals(Status.NEW) && req.pathInfo().equals("/checkout")) {
-                System.out.println("STATUS SET FORWARD FROM: " + order.getStatus());
                 order.setStatus(Status.REVIEWED);
             } else if (orderStatus.equals(Status.REVIEWED) && req.pathInfo().equals("/payment")) {
-                System.out.println("STATUS SET FORWARD FROM: " + order.getStatus());
                 order.setStatus(Status.CHECKEDOUT);
             }
         }

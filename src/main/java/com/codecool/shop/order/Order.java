@@ -145,11 +145,10 @@ public class Order {
         this.id = id;
     }
 
-    public Status getStatus() {
-        return status;
-    }
+    public Status getStatus() { return status; }
 
     public void setStatus(Status status) {
+        System.out.println("Order status set from " + this.status + " to " + status + ".");
         this.status = status;
     }
 
