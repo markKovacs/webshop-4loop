@@ -2,7 +2,7 @@ package com.codecool.shop.controller;
 
 import com.codecool.shop.Main;
 import com.codecool.shop.OrderUtils;
-import com.codecool.shop.dao.implementation.OrderDaoMem;
+import com.codecool.shop.dao.implementation.memory.OrderDaoMem;
 import com.codecool.shop.order.InputField;
 import com.codecool.shop.order.LineItem;
 import com.codecool.shop.order.Order;
@@ -31,7 +31,7 @@ public class OrderController {
         int productId = Integer.parseInt(req.queryParams("product_id"));
 
         Order order = OrderUtils.getOrderFromSessionInfo(req);
-
+        req.session(true).attribute("user");
         if (order == null) {
             order = new Order();
             OrderDaoMem.getInstance().add(order);
@@ -200,6 +200,7 @@ public class OrderController {
             Log.saveActionToOrderLog(order.getOrderLogFilename(), "paid");
             Log.saveOrderToJson(order);
             Email.send(order);
+            req.session().removeAttribute("order_id");
             res.redirect("/payment/success");
         } else {
             int cartItems = order != null ? order.countCartItems() : 0;
@@ -216,8 +217,6 @@ public class OrderController {
     }
 
     public static ModelAndView renderSuccess(Request req, Response res) {
-
-        req.session().removeAttribute("order_id");
 
         Map<String, Object> params = new HashMap<>();
         params.put("balance", String.format("%.2f", Main.balanceInUSD));

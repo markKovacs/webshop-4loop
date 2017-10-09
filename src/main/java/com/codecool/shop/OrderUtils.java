@@ -1,12 +1,11 @@
 package com.codecool.shop;
 
-import com.codecool.shop.dao.implementation.OrderDaoMem;
+import com.codecool.shop.dao.implementation.memory.OrderDaoMem;
 import com.codecool.shop.order.Order;
 import com.codecool.shop.order.Status;
 import spark.Request;
 
 public class OrderUtils {
-
 
     public static Order getOrderFromSessionInfo(Request req) {
         int orderId = req.session().attribute("order_id") == null ? -1 :

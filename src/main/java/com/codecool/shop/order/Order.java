@@ -1,11 +1,10 @@
 package com.codecool.shop.order;
 
-import com.codecool.shop.dao.implementation.OrderDaoMem;
-import com.codecool.shop.dao.implementation.ProductDaoMem;
+import com.codecool.shop.dao.implementation.memory.OrderDaoMem;
+import com.codecool.shop.dao.implementation.memory.ProductDaoMem;
 import com.codecool.shop.model.Product;
 import com.codecool.shop.utility.Log;
 
-import javax.sound.sampled.Line;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
