@@ -19,14 +19,16 @@ public class Config {
 
     public static final ProductCategory DEFAULT_CATEGORY = ProductCategoryDaoMem.getInstance().find(1);
 
-    
-    public static final String DB_TYPE = "";
-    public static final String HOST = "";
-    public static final String PORT = "";
+
+    public static final boolean USE_DB = true;
+    public static final boolean USE_PRODUCTION_DB = true;
+
+    public static final String DB_TYPE = "postgres";
+    public static final String HOST = "localhost";
+    public static final String PORT = "5432";
     public static final String DB_NAME = "";
     public static final String USER = "";
     public static final String PASSWORD = "";
-
 
     public static final String TEST_DB_TYPE = "";
     public static final String TEST_HOST = "";
