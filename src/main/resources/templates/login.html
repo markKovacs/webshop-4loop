@@ -4,7 +4,7 @@
       xmlns:layout="http://www.w3.org/1999/xhtml">
 
 <head>
-    <title>PayPal Payment</title>
+    <title>Login</title>
 </head>
 
 <body>
@@ -12,10 +12,10 @@
 <div layout:fragment="content" class="container">
 
     <div class="well well-sm">
-        <strong>PayPal Payment</strong>
+        <strong>Login</strong>
     </div>
 
-    <div id="paypal" class="row list-group">
+    <div id="login" class="row list-group">
 
         <div class="col-xs-12 col-lg-12">
 
@@ -31,18 +31,18 @@
                             </ul>
                         </div>
 
-                        <form th:action="@{~/payment/paypal}" method="POST">
+                        <form th:action="@{~/login}" method="POST">
                             <div>
-                                <label for="username">Username: </label>
-                                <input th:value="${payment.username}" id="username" type="text" name="username" class="name-input" placeholder="Enter username..." required>
+                                <label for="email">E-mail: </label>
+                                <input id="email" name="email" class="name-input" placeholder="Enter e-mail..." required>
                             </div>
                             <div>
                                 <label for="password">Password: </label>
                                 <input id="password" type="password" name="password" class="name-input" placeholder="Enter password..." required>
                             </div>
                             <div class="text-center">
-                                <a class="btn btn-default" th:href="@{~/payment}">Back</a>
-                                <input class="btn btn-success" type="submit" value="Submit">
+                                <a class="btn btn-default" th:href="@{~/}">Back</a>
+                                <input class="btn btn-success" type="submit" value="Login">
                             </div>
 
                         </form>
