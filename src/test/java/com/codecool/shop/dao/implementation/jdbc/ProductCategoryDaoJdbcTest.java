@@ -1,4 +1,4 @@
-package com.codecool.shop.dao.implementation.memory;
+package com.codecool.shop.dao.implementation.jdbc;
 
 import com.codecool.shop.dao.ProductCategoryDao;
 import com.codecool.shop.model.Product;
@@ -11,7 +11,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ProductCategoryDaoMemTest {
+class ProductCategoryDaoJdbcTest {
 
     private ProductCategoryDao dao;
     private ProductCategory productCategory;
@@ -31,7 +31,7 @@ class ProductCategoryDaoMemTest {
 
     @BeforeEach
     public void setUp() {
-        dao = ProductCategoryDaoMem.getInstance();
+        dao = new ProductCategoryDaoJdbc();
         dao.getAll().clear();
         productCategory = new ProductCategory("Some name", "Some department", "Some description");
         supplier = new Supplier("Something", "Something");
@@ -50,18 +50,18 @@ class ProductCategoryDaoMemTest {
         ProductCategory foundCategory = dao.find(id);
 
         assertAll("add-and-find",
-            () -> {
-                assertNotNull(foundCategory);
-                assertAll("found-equals-original",
-                        () -> assertEquals(name, foundCategory.getName()),
-                        () -> assertEquals(department, foundCategory.getDepartment()),
-                        () -> assertEquals(desc, foundCategory.getDescription()),
-                        () -> assertEquals(productList.get(0), foundCategory.getProducts().get(0)),
-                        () -> assertThrows(IndexOutOfBoundsException.class, () -> {
-                            foundCategory.getProducts().get(1);
-                        })
-                );
-            }
+                () -> {
+                    assertNotNull(foundCategory);
+                    assertAll("found-equals-original",
+                            () -> assertEquals(name, foundCategory.getName()),
+                            () -> assertEquals(department, foundCategory.getDepartment()),
+                            () -> assertEquals(desc, foundCategory.getDescription()),
+                            () -> assertEquals(productList.get(0), foundCategory.getProducts().get(0)),
+                            () -> assertThrows(IndexOutOfBoundsException.class, () -> {
+                                foundCategory.getProducts().get(1);
+                            })
+                    );
+                }
         );
     }
 
