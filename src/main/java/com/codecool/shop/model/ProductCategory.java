@@ -24,7 +24,7 @@ public class ProductCategory extends BaseModel {
         this.products = products;
     }
 
-    public ArrayList getProducts() {
+    public ArrayList<Product> getProducts() {
         return this.products;
     }
 

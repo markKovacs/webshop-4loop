@@ -1,6 +1,7 @@
-package com.codecool.shop.dao.implementation.memory;
+package com.codecool.shop.dao.implementation.jdbc;
 
 import com.codecool.shop.dao.SupplierDao;
+import com.codecool.shop.dao.implementation.memory.SupplierDaoMem;
 import com.codecool.shop.model.Product;
 import com.codecool.shop.model.ProductCategory;
 import com.codecool.shop.model.Supplier;
@@ -11,7 +12,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class SupplierDaoMemTest {
+class SupplierDaoJdbcTest {
 
     /**
      * Methods to test:
@@ -31,7 +32,7 @@ class SupplierDaoMemTest {
 
     @BeforeEach
     public void setUp() {
-        dao = SupplierDaoMem.getInstance();
+        dao = new SupplierDaoJdbc();
         dao.getAll().clear();
         productCategory = new ProductCategory("Some name", "Some department", "Some description");
         supplier = new Supplier("Something", "Something");

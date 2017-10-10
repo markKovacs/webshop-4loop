@@ -1,15 +1,18 @@
-package com.codecool.shop.dao.implementation.memory;
+package com.codecool.shop.dao.implementation.jdbc;
 
 import com.codecool.shop.dao.ProductDao;
+import com.codecool.shop.dao.implementation.memory.ProductDaoMem;
 import com.codecool.shop.model.Product;
 import com.codecool.shop.model.ProductCategory;
 import com.codecool.shop.model.Supplier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.util.Currency;
+
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ProductDaoMemTest {
+class ProductDaoJdbcTest {
 
     private ProductDao dao;
     private ProductCategory productCategory;
@@ -33,7 +36,7 @@ public class ProductDaoMemTest {
 
     @BeforeEach
     public void setUp() {
-        dao = ProductDaoMem.getInstance();
+        dao = new ProductDaoJdbc();
         dao.getAll().clear();
         productCategory = new ProductCategory("Some name", "Some department", "Some description");
         supplier = new Supplier("Something", "Something");
