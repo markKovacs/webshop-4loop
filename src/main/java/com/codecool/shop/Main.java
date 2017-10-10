@@ -6,6 +6,7 @@ import static spark.debug.DebugScreen.enableDebugScreen;
 import com.codecool.shop.controller.OrderController;
 import com.codecool.shop.controller.ProductController;
 import com.codecool.shop.dao.*;
+import com.codecool.shop.dao.implementation.jdbc.SupplierDaoJdbc;
 import com.codecool.shop.dao.implementation.memory.ProductCategoryDaoMem;
 import com.codecool.shop.dao.implementation.memory.ProductDaoMem;
 import com.codecool.shop.dao.implementation.memory.SupplierDaoMem;
@@ -58,6 +59,16 @@ public class Main {
         post("/cart", OrderController::finalizeOrder, new ThymeleafTemplateEngine());
 
         get("/", ProductController::renderProducts, new ThymeleafTemplateEngine());
+
+        // DB calling test:
+        SupplierDaoJdbc getSupplier = new SupplierDaoJdbc();
+        getSupplier.getAll();
+        Supplier foundedSupplier = getSupplier.find(1);
+        if(foundedSupplier != null){
+            System.out.println(foundedSupplier.toString());
+        } else {
+            System.out.println("No supplier");
+        }
 
     }
 
