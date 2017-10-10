@@ -15,8 +15,8 @@ public enum InputField {
     CARD_HOLDER ("^[a-zA-Z -]{4,50}$"),
     EXP_YEAR ("^20(1[7-9]|[2-9][0-9])$"),
     EXP_MONTH ("^(0?[1-9]|1[012])$"),
-    PAYPAL_USERNAME ("^[a-zA-Z-_]{4,50}$"),
-    PAYPAL_PASSWORD ("^[a-zA-Z -_!?]{4,50}$");
+    USERNAME("^[a-zA-Z-_]{4,50}$"),
+    PASSWORD("^[a-zA-Z -_!?]{4,50}$");
 
     private String regex;
 

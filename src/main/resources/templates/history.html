@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html layout:decorate="~{layout}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Order History</title>
+</head>
+
+<body>
+
+<div layout:fragment="content" class="container">
+
+    <div class="well well-sm">
+        <strong>Order History</strong>
+    </div>
+
+    <div id="history" class="row list-group">
+
+        <div class="col-xs-12 col-lg-12">
+
+            <div class="row">
+
+                <div class="row">
+                    <div class="col-xs-offset-2 col-xs-8 text-center">
+
+                        <div id="orders">
+
+                        <th:block th:if="${#lists.size(orders) > 0}" th:each="order : ${orders}" th:object="${order}">
+
+                            <div class="order">
+                                <h4 th:text="${'Order ID #' + order.id}" class="order-title" th:attr="id=*{'order-' + id}">Order ID #1</h4>
+
+                                <table class="order-lineitems-table">
+                                    <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Product</th>
+                                        <th>Quantity</th>
+                                        <th>Unit Price</th>
+                                        <th>Subtotal</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr th:each="item : *{items}" th:object="${item}">
+                                        <td class="center">
+                                            <img class="cart-img" th:attr="src='/img/' + *{productImageFileName}" alt="IMG" src="http://placehold.it/400x250/000/fff" />
+                                        </td>
+                                        <td th:text="*{productName}">Light Sabre from Star Wars</td>
+                                        <td th:text="*{quantity}">67</td>
+                                        <td class="right price-width" th:text="*{#numbers.formatDecimal(actualPrice, 0, 'COMMA', 2, 'POINT')} + ' USD'">200 USD</td>
+                                        <td th:attr="id=${'subtotal-' + item.product.id}" class="right subtotal-width" th:text="*{#numbers.formatDecimal(subTotal, 0, 'COMMA', 2, 'POINT') + ' USD'}">8400 USD</td>
+                                    </tr>
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="total center">Total:</td>
+                                        <td id="total-total" class="right subtotal-width total" th:text="*{#numbers.formatDecimal(grandTotal, 0, 'COMMA', 2, 'POINT') + ' USD'}">95000 USD</td>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+
+                        </th:block>
+
+                        <th:block th:if="${#lists.size(orders) <= 0}">
+
+                            <p>There are no orders in history.</p>
+
+                        </th:block>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

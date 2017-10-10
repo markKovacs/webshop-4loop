@@ -3,6 +3,7 @@ package com.codecool.shop;
 import static spark.Spark.*;
 import static spark.debug.DebugScreen.enableDebugScreen;
 
+import com.codecool.shop.controller.AccountController;
 import com.codecool.shop.controller.OrderController;
 import com.codecool.shop.controller.ProductController;
 import com.codecool.shop.dao.*;
@@ -19,9 +20,16 @@ import spark.Response;
 
 public class Main {
 
+    // GLOBALS
     public static float balanceInUSD = 75_000.0f;
 
+    // DAO OBJECTS
+    public static UserDao userDao;
+
     public static void main(String[] args) {
+
+        // INIT DAO GLOBALS
+        userDao = new UserDaoJdbc();
 
         // SERVER SETTINGS
         exception(Exception.class, (e, req, res) -> e.printStackTrace());
@@ -43,7 +51,7 @@ public class Main {
         post("/api/change-product-quantity", OrderController::changeQuantity, gson::toJson);
         post("/api/remove-line-item", OrderController::removeLineItem, gson::toJson);
 
-        // ROUTING
+        // ROUTING (sprint #1)
         get("/payment", OrderController::renderPayment, new ThymeleafTemplateEngine());
         get("/payment/bank", OrderController::renderBankPayment, new ThymeleafTemplateEngine());
         get("/payment/paypal", OrderController::renderPayPalPayment, new ThymeleafTemplateEngine());
@@ -58,6 +66,17 @@ public class Main {
         post("/cart", OrderController::finalizeOrder, new ThymeleafTemplateEngine());
 
         get("/", ProductController::renderProducts, new ThymeleafTemplateEngine());
+
+        // ROUTING (sprint #2)
+        get("/register", AccountController::renderRegistration, new ThymeleafTemplateEngine());
+        get("/login", AccountController::renderLogin, new ThymeleafTemplateEngine());
+        get("/history", AccountController::renderOrderHistory, new ThymeleafTemplateEngine());
+        get("/profile", AccountController::renderProfile, new ThymeleafTemplateEngine());
+
+        post("/register", AccountController::doRegistration, new ThymeleafTemplateEngine());
+        post("/login", AccountController::doLogin, new ThymeleafTemplateEngine());
+        post("/logout", AccountController::doLogout, new ThymeleafTemplateEngine());
+        post("/profile", AccountController::editProfile, new ThymeleafTemplateEngine());
 
     }
 

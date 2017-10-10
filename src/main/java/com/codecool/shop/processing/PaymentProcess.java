@@ -63,10 +63,10 @@ public class PaymentProcess extends AbstractProcess {
 
     private static List<String> validatePayPalAccount(Map<String, String> paymentData) {
         List<String> errorMessages = new ArrayList<>();
-        if (!InputField.PAYPAL_USERNAME.validate(paymentData.get("username"))) {
+        if (!InputField.USERNAME.validate(paymentData.get("username"))) {
             errorMessages.add("PayPal username must be 4-50 characters long. Use standard characters. No spaces allowed.");
         }
-        if (!InputField.PAYPAL_PASSWORD.validate(paymentData.get("password"))) {
+        if (!InputField.PASSWORD.validate(paymentData.get("password"))) {
             errorMessages.add("PayPal password must be between 4-50 characters long. Use standard characters.");
         }
         return errorMessages;
