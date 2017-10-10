@@ -14,6 +14,20 @@ public class SupplierDaoJdbc implements SupplierDao {
 
     @Override
     public void add(Supplier supplier) {
+        try (DB db = new DB();
+             PreparedStatement stmt = db.getPreparedStatement("INSERT INTO suppliers (name, description) VALUES (?, ?);")
+        ){
+            stmt.setString(1, supplier.getName());
+            stmt.setString(2, supplier.getDescription());
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0){
+                System.out.println("New supplier added to database.");
+            } else {
+                System.out.println("New supplier addition failed.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -21,17 +35,14 @@ public class SupplierDaoJdbc implements SupplierDao {
     public Supplier find(int id) {
 
         try (DB db = new DB();
-            PreparedStatement stmt = db.getPreparedStatement("SELECT ?, ? FROM suppliers WHERE id = ?;")
+            PreparedStatement stmt = db.getPreparedStatement("SELECT name, description FROM suppliers WHERE id = ?;")
         ){
-            stmt.setString(1, "name");
-            stmt.setString(2, "description");
-            stmt.setInt(3, id);
+            stmt.setInt(1, id);
             ResultSet resultSet = stmt.executeQuery();
-            System.out.println(resultSet.getFetchSize());
             if(resultSet.next()){
                 Supplier supplier = new Supplier(resultSet.getString("name"),
                         resultSet.getString("description"));
-                System.out.println(supplier.toString());
+                return supplier;
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -42,7 +53,19 @@ public class SupplierDaoJdbc implements SupplierDao {
 
     @Override
     public void remove(int id) {
-
+        try (DB db = new DB();
+             PreparedStatement stmt = db.getPreparedStatement("DELETE FROM suppliers WHERE id = ?;")
+        ){
+            stmt.setInt(1, id);
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0){
+                System.out.println("Supplier deleted from database.");
+            } else {
+                System.out.println("Deletion failed.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -59,7 +82,6 @@ public class SupplierDaoJdbc implements SupplierDao {
                         resultSet.getString("name"),
                         resultSet.getString("description")));
             }
-            System.out.println(resultList);
             return resultList;
         } catch (SQLException e) {
             e.printStackTrace();
