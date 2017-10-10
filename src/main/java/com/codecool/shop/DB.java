@@ -1,7 +1,6 @@
 package com.codecool.shop;
 
 import java.sql.*;
-import java.util.List;
 
 public class DB implements AutoCloseable {
 
@@ -41,60 +40,14 @@ public class DB implements AutoCloseable {
     public PreparedStatement getPreparedStatement(String query) {
         try {
             this.connection = getConnection();
-            this.connection.setAutoCommit(false);
+            this.connection.setAutoCommit(true);
             PreparedStatement pstmt = this.connection.prepareStatement(query);
-            System.out.println("NOW WE SEND pstmt FROM getPreparedStatement!");
             return pstmt;
         } catch (SQLException e){
             e.printStackTrace();
         }
         return null;
     }
-
-    /*public int executeDML(PreparedStatement pstmt) {
-        int affectedRows = -1;
-
-        try {
-            affectedRows = pstmt.executeUpdate();
-            this.connection.commit();
-        } catch (SQLException e) {
-            try{
-                this.connection.rollback();
-            } catch (SQLException er) {
-                er.printStackTrace();
-            }
-        } finally{
-            try{
-                if(pstmt!=null)
-                    pstmt.close();
-            }catch(SQLException se){
-                se.printStackTrace();
-            }
-            try {
-                if(this.connection != null) {
-                    this.connection.close();
-                }
-            } catch (SQLException e){
-                e.printStackTrace();
-            }
-        }
-
-        return affectedRows;
-    }
-
-
-    public ResultSet executeDQL(PreparedStatement pstmt) {
-
-        try  {
-            ResultSet resultSet = pstmt.executeQuery();
-            //this.connection.commit();
-            return resultSet;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }*/
 
     @Override
     public void close() throws SQLException {
