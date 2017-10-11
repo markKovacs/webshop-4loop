@@ -118,9 +118,9 @@ public class Main {
     private static void populateData() {
         // This method initializes the data and loads into memory storage.
 
-        ProductDao productDataStore = ProductDaoMem.getInstance();
-        ProductCategoryDao productCategoryDataStore = ProductCategoryDaoMem.getInstance();
-        SupplierDao supplierDataStore = SupplierDaoMem.getInstance();
+        ProductDao productDataStore = DaoFactory.getProductDao();
+        ProductCategoryDao productCategoryDataStore = DaoFactory.getProductCategoryDao();
+        SupplierDao supplierDataStore = DaoFactory.getSupplierDao();
 
         //setting up a new supplier
         Supplier cbs = new Supplier("CBS", "Television series");
