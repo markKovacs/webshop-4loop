@@ -1,6 +1,5 @@
 package com.codecool.shop.utility;
 
-import com.codecool.shop.order.Order;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.templateresolver.FileTemplateResolver;
@@ -12,11 +11,9 @@ import static com.codecool.shop.Config.*;
 
 public class Email {
 
-    public static void send(Order order) {
+    private static final String PATH = "src/main/resources/templates/";
 
-        String to = order.getEmail();
-        String body = renderOrderTemplate(order);
-        String subject = "Order Confirmation";
+    public static void send(String to, String body, String subject) {
 
         Properties props = new Properties();
         props.put("mail.smtp.host", SMTP_HOST);
@@ -49,7 +46,7 @@ public class Email {
 
     }
 
-    public static String renderOrderTemplate(Order userOrder) {
+    public static String renderEmailTemplate(String template, Map<String, Object> params) {
         TemplateEngine templateEngine = new TemplateEngine();
         FileTemplateResolver templateResolver = new FileTemplateResolver();
         templateResolver.setTemplateMode("HTML");
@@ -57,9 +54,9 @@ public class Email {
         templateResolver.setCacheable(false);
         templateEngine.setTemplateResolver(templateResolver);
         Context context = new Context();
-        context.setVariable("order", userOrder);
+        context.setVariable("params", params);
         StringWriter stringWriter = new StringWriter();
-        templateEngine.process("src/main/resources/templates/email", context, stringWriter);
+        templateEngine.process(PATH + template, context, stringWriter);
         return stringWriter.toString();
     }
 

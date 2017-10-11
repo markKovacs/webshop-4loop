@@ -8,6 +8,7 @@ import com.codecool.shop.order.LineItem;
 import com.codecool.shop.order.Order;
 import com.codecool.shop.user.PasswordStorage;
 import com.codecool.shop.user.User;
+import com.codecool.shop.utility.Email;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
@@ -84,7 +85,15 @@ public class AccountController {
             return new ModelAndView(params, "register");
         }
 
-        userDao.add(User.create(inputData.get("fullname"), inputData.get("email"), hashedPasswordAndSalt));
+        User user = User.create(inputData.get("fullname"), inputData.get("email"), hashedPasswordAndSalt);
+        userDao.add(user);
+
+        String to = user.getEmail();
+        String body = Email.renderEmailTemplate("welcome_email",
+                new HashMap<String, Object>(){{ put("user", user); }});
+        String subject = "Welcome " + user.getFullName() + " in the 4loop Shop!";
+        Email.send(to, body, subject);
+
         res.redirect("/");
         return null;
     }

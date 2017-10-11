@@ -197,9 +197,16 @@ public class OrderController {
 
         if (errorMessages.size() == 0) {
             order.setStatus(Status.PAID);
+
             Log.saveActionToOrderLog(order.getOrderLogFilename(), "paid");
             Log.saveOrderToJson(order);
-            Email.send(order);
+
+            String to = order.getEmail();
+            String body = Email.renderEmailTemplate("order_email",
+                    new HashMap<String, Object>(){{ put("order", order); }});
+            String subject = "Order Confirmation";
+            Email.send(to, body, subject);
+
             req.session().removeAttribute("order_id");
             res.redirect("/payment/success");
         } else {
