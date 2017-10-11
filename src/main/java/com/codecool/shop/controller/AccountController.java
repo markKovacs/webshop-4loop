@@ -117,7 +117,7 @@ public class AccountController {
     public static ModelAndView editProfile(Request req, Response res) {
 
         Map<String, String> profileInput = collectEditData(req);
-        List<String> errorMessages = validateEditProfileInput(profileInput);
+        List<String> errorMessages = validateProfileInput(profileInput);
 
         if (errorMessages.size() > 0) {
             Map<String, Object> params = new HashMap<>();
@@ -141,21 +141,21 @@ public class AccountController {
 
     private static Map<String, String> getUserData(int userId) {
 
-        User userData = userDao.find(userId);
-        Map<String, String> user = new HashMap<>();
-        user.put("phone", userData.getPhone());
+        User user = userDao.find(userId);
+        Map<String, String> modUser = new HashMap<>();
+        modUser.put("phone", user.getPhone());
 
-        user.put("billcountry", userData.getBillingCountry());
-        user.put("billcity", userData.getBillingCity());
-        user.put("billzip", userData.getBillingZipCode());
-        user.put("billaddress", userData.getBillingAddress());
+        modUser.put("billcountry", user.getBillingCountry());
+        modUser.put("billcity", user.getBillingCity());
+        modUser.put("billzip", user.getBillingZipCode());
+        modUser.put("billaddress", user.getBillingAddress());
 
-        user.put("shipcountry", userData.getShippingCountry());
-        user.put("shipcity", userData.getShippingCity());
-        user.put("shipzip", userData.getShippingZipCode());
-        user.put("shipaddress", userData.getShippingAddress());
+        modUser.put("shipcountry", user.getShippingCountry());
+        modUser.put("shipcity", user.getShippingCity());
+        modUser.put("shipzip", user.getShippingZipCode());
+        modUser.put("shipaddress", user.getShippingAddress());
 
-        return user;
+        return modUser;
     }
 
     private static List<HashMap<String, Object>> getPaidOrders(int userId) {
@@ -163,7 +163,7 @@ public class AccountController {
         // Or simply return orderDao.getAllPaidOrders(userId)... will see!
 
         OrderDao orderDao = new OrderDaoJdbc();
-        List<Order> ordersData = orderDao.getAllPaidOrders(userId);
+        List<Order> ordersData = orderDao.getAllPaid(userId);
 
         List<HashMap<String, Object>> orders = new ArrayList<>();
         for (Order o : ordersData) {
@@ -200,20 +200,20 @@ public class AccountController {
         return registrationData;
     }
 
-    private static List<String> validateRegistrationInput(Map<String, String> regData) {
+    private static List<String> validateRegistrationInput(Map<String, String> regInput) {
         List<String> errorMessages = new ArrayList<>();
-        if (!InputField.FULL_NAME.validate(regData.get("fullname"))) {
+        if (!InputField.FULL_NAME.validate(regInput.get("fullname"))) {
             errorMessages.add("Full name field is wrong.");
         }
-        if (!InputField.EMAIL.validate(regData.get("email"))) {
+        if (!InputField.EMAIL.validate(regInput.get("email"))) {
             errorMessages.add("E-mail field is wrong.");
-        } else if (userDao.getUserEmails().contains(regData.get("email"))) {
+        } else if (userDao.getUserEmails().contains(regInput.get("email"))) {
             errorMessages.add("E-mail field is already registered.");
         }
-        if (!regData.get("password1").equals(regData.get("password2"))) {
+        if (!regInput.get("password1").equals(regInput.get("password2"))) {
             errorMessages.add("Passwords are not matching.");
-        } else if (!InputField.PASSWORD.validate(regData.get("password1")) ||
-                !InputField.PASSWORD.validate(regData.get("password2"))){
+        } else if (!InputField.PASSWORD.validate(regInput.get("password1")) ||
+                !InputField.PASSWORD.validate(regInput.get("password2"))){
             errorMessages.add("Password incorrect. Has to be 4-8 characters long and use regular characters.");
         }
         return errorMessages;
@@ -227,9 +227,9 @@ public class AccountController {
         return loginData;
     }
 
-    private static int validateLoginCredentials(Map<String, String> loginData) {
-        String email = loginData.get("email");
-        String password = loginData.get("password");
+    private static int validateLoginCredentials(Map<String, String> loginInput) {
+        String email = loginInput.get("email");
+        String password = loginInput.get("password");
         User user = userDao.find(email);
         if (user == null) {
             return -1;
@@ -260,6 +260,38 @@ public class AccountController {
         profileInfo.put("shipzip", req.queryParams("ship-zip"));
         profileInfo.put("shipaddress", req.queryParams("ship-address"));
         return profileInfo;
+    }
+
+    private static List<String> validateProfileInput(Map<String, String> profileInput) {
+        List<String> errorMessages = new ArrayList<>();
+        if (!InputField.PHONE.validate(profileInput.get("phone"))) {
+            errorMessages.add("Phone field is invalid.");
+        }
+        if (!InputField.COUNTRY.validate(profileInput.get("billcountry"))) {
+            errorMessages.add("Invalid billing country");
+        }
+        if (!InputField.CITY.validate(profileInput.get("billcity"))) {
+            errorMessages.add("Invalid billing city");
+        }
+        if (!InputField.ZIP_CODE.validate(profileInput.get("billzip"))) {
+            errorMessages.add("Invalid billing ZIP code");
+        }
+        if (!InputField.ADDRESS.validate(profileInput.get("billaddress"))) {
+            errorMessages.add("Invalid billing address");
+        }
+        if (!InputField.COUNTRY.validate(profileInput.get("shipcountry"))) {
+            errorMessages.add("Invalid shipping country");
+        }
+        if (!InputField.CITY.validate(profileInput.get("shipcity"))) {
+            errorMessages.add("Invalid shipping city");
+        }
+        if (!InputField.ZIP_CODE.validate(profileInput.get("shipzip"))) {
+            errorMessages.add("Invalid shipping ZIP code");
+        }
+        if (!InputField.ADDRESS.validate(profileInput.get("shipaddress"))) {
+            errorMessages.add("Invalid shipping address");
+        }
+        return errorMessages;
     }
 
 }
