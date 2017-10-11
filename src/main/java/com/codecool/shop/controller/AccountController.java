@@ -13,6 +13,8 @@ import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
 import static com.codecool.shop.Main.userDao;
+import static com.codecool.shop.Main.orderDao;
+
 
 import java.util.*;
 
@@ -171,8 +173,7 @@ public class AccountController {
 
         // Or simply return orderDao.getAllPaidOrders(userId)... will see!
 
-        OrderDao orderDao = new OrderDaoJdbc();
-        List<Order> ordersData = orderDao.getAllPaid(userId);
+        List<Order> ordersData = orderDao.getAllPaid(userId); // or just get all and then stream.filter?
 
         List<HashMap<String, Object>> orders = new ArrayList<>();
         for (Order o : ordersData) {
@@ -254,7 +255,7 @@ public class AccountController {
         } catch (PasswordStorage.InvalidHashException e) {
             return -1;
         }
-        return validCredentials ? user.getId() : -1;
+        return validCredentials ? user.getUserId() : -1;
     }
 
     private static Map<String, String> collectEditData(Request req) {
