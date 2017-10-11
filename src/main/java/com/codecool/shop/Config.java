@@ -17,7 +17,7 @@ public class Config {
     public static final String ORDER_LOG_FOLDER = "src/main/orders";
     public static final String ADMIN_LOG_FOLDER = "src/main/logs";
 
-    public static final ProductCategory DEFAULT_CATEGORY = ProductCategoryDaoMem.getInstance().find(1);
+    public static final ProductCategory DEFAULT_CATEGORY = ProductCategoryDaoMem.find(1);
 
 
     public static final boolean USE_DB = true;
