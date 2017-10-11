@@ -5,7 +5,7 @@
 -- Dumped from database version 9.5.8
 -- Dumped by pg_dump version 9.5.8
 
--- Started on 2017-10-09 20:40:24 CEST
+-- Started on 2017-10-10 18:32:52 CEST
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -35,19 +35,19 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 SET search_path = public, pg_catalog;
 
 --
--- TOC entry 563 (class 1247 OID 49619)
+-- TOC entry 558 (class 1247 OID 26872)
 -- Name: order_status; Type: TYPE; Schema: public; Owner: -
 --
 
 CREATE TYPE order_status AS ENUM (
     'reviewed',
     'checked',
-    'payed'
+    'paid'
 );
 
 
 --
--- TOC entry 191 (class 1255 OID 49696)
+-- TOC entry 191 (class 1255 OID 26879)
 -- Name: update_modified_column(); Type: FUNCTION; Schema: public; Owner: -
 --
 
@@ -66,14 +66,14 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- TOC entry 185 (class 1259 OID 49642)
+-- TOC entry 181 (class 1259 OID 26880)
 -- Name: categories; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE categories (
     id integer NOT NULL,
     name character varying(100) NOT NULL,
-    department character varying(100) NOT NULL,
+    department character varying(100),
     description character varying(300) NOT NULL,
     created timestamp without time zone DEFAULT now() NOT NULL,
     modified timestamp without time zone DEFAULT now() NOT NULL
@@ -81,7 +81,7 @@ CREATE TABLE categories (
 
 
 --
--- TOC entry 184 (class 1259 OID 49640)
+-- TOC entry 182 (class 1259 OID 26888)
 -- Name: categories_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -95,7 +95,7 @@ CREATE SEQUENCE categories_id_seq
 
 --
 -- TOC entry 2221 (class 0 OID 0)
--- Dependencies: 184
+-- Dependencies: 182
 -- Name: categories_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
@@ -103,7 +103,7 @@ ALTER SEQUENCE categories_id_seq OWNED BY categories.id;
 
 
 --
--- TOC entry 190 (class 1259 OID 49683)
+-- TOC entry 183 (class 1259 OID 26890)
 -- Name: lineitems; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -117,48 +117,49 @@ CREATE TABLE lineitems (
 
 
 --
--- TOC entry 183 (class 1259 OID 49625)
+-- TOC entry 184 (class 1259 OID 26893)
 -- Name: orders; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE orders (
     user_id integer NOT NULL,
     id integer NOT NULL,
-    billing_country character varying(100) NOT NULL,
-    billing_city character varying(100) NOT NULL,
-    billing_zip character varying(20) NOT NULL,
-    billing_address character varying(255) NOT NULL,
-    shipping_country character varying(100) NOT NULL,
-    shipping_city character varying(100) NOT NULL,
-    shipping_zip character varying(20) NOT NULL,
-    shipping_address character varying(255) NOT NULL,
+    closed_date timestamp without time zone,
     status order_status,
+    billing_country character varying(100),
+    billing_city character varying(100),
+    billing_zip character varying(20),
+    billing_address character varying(255),
+    shipping_country character varying(100),
+    shipping_city character varying(100),
+    shipping_zip character varying(20),
+    shipping_address character varying(255),
     created timestamp without time zone DEFAULT now() NOT NULL,
     modified timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
 --
--- TOC entry 189 (class 1259 OID 49665)
+-- TOC entry 185 (class 1259 OID 26901)
 -- Name: products; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE products (
     id integer NOT NULL,
+    name character varying(100) NOT NULL,
+    description character varying(300) NOT NULL,
     category_id integer NOT NULL,
     supplier_id integer NOT NULL,
     price numeric(10,2) NOT NULL,
     currency character varying(3) NOT NULL,
     image_filename character varying(100),
     created timestamp without time zone DEFAULT now() NOT NULL,
-    modified timestamp without time zone DEFAULT now() NOT NULL,
-    name character varying(100) NOT NULL,
-    description character varying(300) NOT NULL
+    modified timestamp without time zone DEFAULT now() NOT NULL
 );
 
 
 --
--- TOC entry 188 (class 1259 OID 49663)
+-- TOC entry 186 (class 1259 OID 26909)
 -- Name: products_product_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -172,7 +173,7 @@ CREATE SEQUENCE products_product_id_seq
 
 --
 -- TOC entry 2222 (class 0 OID 0)
--- Dependencies: 188
+-- Dependencies: 186
 -- Name: products_product_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
@@ -180,7 +181,7 @@ ALTER SEQUENCE products_product_id_seq OWNED BY products.id;
 
 
 --
--- TOC entry 187 (class 1259 OID 49655)
+-- TOC entry 187 (class 1259 OID 26911)
 -- Name: suppliers; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -194,7 +195,7 @@ CREATE TABLE suppliers (
 
 
 --
--- TOC entry 186 (class 1259 OID 49653)
+-- TOC entry 188 (class 1259 OID 26916)
 -- Name: suppliers_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -208,7 +209,7 @@ CREATE SEQUENCE suppliers_id_seq
 
 --
 -- TOC entry 2223 (class 0 OID 0)
--- Dependencies: 186
+-- Dependencies: 188
 -- Name: suppliers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
@@ -216,7 +217,7 @@ ALTER SEQUENCE suppliers_id_seq OWNED BY suppliers.id;
 
 
 --
--- TOC entry 182 (class 1259 OID 49604)
+-- TOC entry 189 (class 1259 OID 26918)
 -- Name: users; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -241,7 +242,7 @@ CREATE TABLE users (
 
 
 --
--- TOC entry 181 (class 1259 OID 49602)
+-- TOC entry 190 (class 1259 OID 26927)
 -- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -255,7 +256,7 @@ CREATE SEQUENCE users_id_seq
 
 --
 -- TOC entry 2224 (class 0 OID 0)
--- Dependencies: 181
+-- Dependencies: 190
 -- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
@@ -263,7 +264,7 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 
 
 --
--- TOC entry 2059 (class 2604 OID 49645)
+-- TOC entry 2055 (class 2604 OID 26929)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -271,7 +272,7 @@ ALTER TABLE ONLY categories ALTER COLUMN id SET DEFAULT nextval('categories_id_s
 
 
 --
--- TOC entry 2065 (class 2604 OID 49668)
+-- TOC entry 2060 (class 2604 OID 26930)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -279,7 +280,7 @@ ALTER TABLE ONLY products ALTER COLUMN id SET DEFAULT nextval('products_product_
 
 
 --
--- TOC entry 2062 (class 2604 OID 49658)
+-- TOC entry 2063 (class 2604 OID 26931)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -287,7 +288,7 @@ ALTER TABLE ONLY suppliers ALTER COLUMN id SET DEFAULT nextval('suppliers_id_seq
 
 
 --
--- TOC entry 2053 (class 2604 OID 49607)
+-- TOC entry 2067 (class 2604 OID 26932)
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -295,8 +296,8 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regcl
 
 
 --
--- TOC entry 2208 (class 0 OID 49642)
--- Dependencies: 185
+-- TOC entry 2204 (class 0 OID 26880)
+-- Dependencies: 181
 -- Data for Name: categories; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -309,7 +310,7 @@ COPY categories (id, name, department, description, created, modified) FROM stdi
 
 --
 -- TOC entry 2225 (class 0 OID 0)
--- Dependencies: 184
+-- Dependencies: 182
 -- Name: categories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
@@ -317,8 +318,8 @@ SELECT pg_catalog.setval('categories_id_seq', 3, true);
 
 
 --
--- TOC entry 2213 (class 0 OID 49683)
--- Dependencies: 190
+-- TOC entry 2206 (class 0 OID 26890)
+-- Dependencies: 183
 -- Data for Name: lineitems; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -327,18 +328,18 @@ COPY lineitems (product_id, order_id, quantity, actual_price, currency) FROM std
 
 
 --
--- TOC entry 2206 (class 0 OID 49625)
--- Dependencies: 183
+-- TOC entry 2207 (class 0 OID 26893)
+-- Dependencies: 184
 -- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY orders (user_id, id, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, status, created, modified) FROM stdin;
+COPY orders (user_id, id, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, status, created, modified, closed_date) FROM stdin;
 \.
 
 
 --
--- TOC entry 2212 (class 0 OID 49665)
--- Dependencies: 189
+-- TOC entry 2208 (class 0 OID 26901)
+-- Dependencies: 185
 -- Data for Name: products; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -378,7 +379,7 @@ COPY products (id, category_id, supplier_id, price, currency, image_filename, cr
 
 --
 -- TOC entry 2226 (class 0 OID 0)
--- Dependencies: 188
+-- Dependencies: 186
 -- Name: products_product_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
@@ -386,7 +387,7 @@ SELECT pg_catalog.setval('products_product_id_seq', 30, true);
 
 
 --
--- TOC entry 2210 (class 0 OID 49655)
+-- TOC entry 2210 (class 0 OID 26911)
 -- Dependencies: 187
 -- Data for Name: suppliers; Type: TABLE DATA; Schema: public; Owner: -
 --
@@ -410,16 +411,16 @@ COPY suppliers (id, name, description, created, modified) FROM stdin;
 
 --
 -- TOC entry 2227 (class 0 OID 0)
--- Dependencies: 186
+-- Dependencies: 188
 -- Name: suppliers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('suppliers_id_seq', 13, true);
+SELECT pg_catalog.setval('suppliers_id_seq', 14, true);
 
 
 --
--- TOC entry 2205 (class 0 OID 49604)
--- Dependencies: 182
+-- TOC entry 2212 (class 0 OID 26918)
+-- Dependencies: 189
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: -
 --
 
@@ -429,7 +430,7 @@ COPY users (id, name, phone_number, email, password, billing_country, billing_ci
 
 --
 -- TOC entry 2228 (class 0 OID 0)
--- Dependencies: 181
+-- Dependencies: 190
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
@@ -437,7 +438,7 @@ SELECT pg_catalog.setval('users_id_seq', 1, false);
 
 
 --
--- TOC entry 2075 (class 2606 OID 49652)
+-- TOC entry 2069 (class 2606 OID 26934)
 -- Name: categories_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -446,7 +447,7 @@ ALTER TABLE ONLY categories
 
 
 --
--- TOC entry 2073 (class 2606 OID 49634)
+-- TOC entry 2071 (class 2606 OID 26936)
 -- Name: orders_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -455,7 +456,7 @@ ALTER TABLE ONLY orders
 
 
 --
--- TOC entry 2079 (class 2606 OID 49672)
+-- TOC entry 2073 (class 2606 OID 26938)
 -- Name: products_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -464,7 +465,7 @@ ALTER TABLE ONLY products
 
 
 --
--- TOC entry 2077 (class 2606 OID 49662)
+-- TOC entry 2075 (class 2606 OID 26940)
 -- Name: suppliers_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -473,7 +474,7 @@ ALTER TABLE ONLY suppliers
 
 
 --
--- TOC entry 2069 (class 2606 OID 49617)
+-- TOC entry 2077 (class 2606 OID 26942)
 -- Name: users_email_key; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -482,7 +483,7 @@ ALTER TABLE ONLY users
 
 
 --
--- TOC entry 2071 (class 2606 OID 49615)
+-- TOC entry 2079 (class 2606 OID 26944)
 -- Name: users_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -491,7 +492,7 @@ ALTER TABLE ONLY users
 
 
 --
--- TOC entry 2087 (class 2620 OID 49699)
+-- TOC entry 2085 (class 2620 OID 26945)
 -- Name: update_categories_modtime; Type: TRIGGER; Schema: public; Owner: -
 --
 
@@ -499,7 +500,7 @@ CREATE TRIGGER update_categories_modtime BEFORE UPDATE ON categories FOR EACH RO
 
 
 --
--- TOC entry 2086 (class 2620 OID 49701)
+-- TOC entry 2086 (class 2620 OID 26946)
 -- Name: update_orders_modtime; Type: TRIGGER; Schema: public; Owner: -
 --
 
@@ -507,7 +508,7 @@ CREATE TRIGGER update_orders_modtime BEFORE UPDATE ON orders FOR EACH ROW EXECUT
 
 
 --
--- TOC entry 2089 (class 2620 OID 49700)
+-- TOC entry 2087 (class 2620 OID 26947)
 -- Name: update_products_modtime; Type: TRIGGER; Schema: public; Owner: -
 --
 
@@ -515,7 +516,7 @@ CREATE TRIGGER update_products_modtime BEFORE UPDATE ON products FOR EACH ROW EX
 
 
 --
--- TOC entry 2088 (class 2620 OID 49697)
+-- TOC entry 2088 (class 2620 OID 26948)
 -- Name: update_suppliers_modtime; Type: TRIGGER; Schema: public; Owner: -
 --
 
@@ -523,7 +524,7 @@ CREATE TRIGGER update_suppliers_modtime BEFORE UPDATE ON suppliers FOR EACH ROW 
 
 
 --
--- TOC entry 2085 (class 2620 OID 49698)
+-- TOC entry 2089 (class 2620 OID 26949)
 -- Name: update_users_modtime; Type: TRIGGER; Schema: public; Owner: -
 --
 
@@ -531,7 +532,7 @@ CREATE TRIGGER update_users_modtime BEFORE UPDATE ON users FOR EACH ROW EXECUTE 
 
 
 --
--- TOC entry 2081 (class 2606 OID 49673)
+-- TOC entry 2083 (class 2606 OID 26950)
 -- Name: category_id_products_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -540,7 +541,7 @@ ALTER TABLE ONLY products
 
 
 --
--- TOC entry 2083 (class 2606 OID 49686)
+-- TOC entry 2080 (class 2606 OID 26955)
 -- Name: order_id_lineitems_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -549,7 +550,7 @@ ALTER TABLE ONLY lineitems
 
 
 --
--- TOC entry 2084 (class 2606 OID 49691)
+-- TOC entry 2081 (class 2606 OID 26960)
 -- Name: product_id_products_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -558,7 +559,7 @@ ALTER TABLE ONLY lineitems
 
 
 --
--- TOC entry 2082 (class 2606 OID 49678)
+-- TOC entry 2084 (class 2606 OID 26965)
 -- Name: supplier_id_products_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -567,7 +568,7 @@ ALTER TABLE ONLY products
 
 
 --
--- TOC entry 2080 (class 2606 OID 49635)
+-- TOC entry 2082 (class 2606 OID 26970)
 -- Name: user_id_orders_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -575,7 +576,7 @@ ALTER TABLE ONLY orders
     ADD CONSTRAINT user_id_orders_fk FOREIGN KEY (user_id) REFERENCES users(id);
 
 
--- Completed on 2017-10-09 20:40:25 CEST
+-- Completed on 2017-10-10 18:32:52 CEST
 
 --
 -- PostgreSQL database dump complete
