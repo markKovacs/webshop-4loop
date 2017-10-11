@@ -7,6 +7,7 @@ import com.codecool.shop.controller.AccountController;
 import com.codecool.shop.controller.OrderController;
 import com.codecool.shop.controller.ProductController;
 import com.codecool.shop.dao.*;
+import com.codecool.shop.dao.implementation.jdbc.OrderDaoJdbc;
 import com.codecool.shop.dao.implementation.memory.ProductCategoryDaoMem;
 import com.codecool.shop.dao.implementation.memory.ProductDaoMem;
 import com.codecool.shop.dao.implementation.memory.SupplierDaoMem;
@@ -25,11 +26,13 @@ public class Main {
 
     // DAO OBJECTS
     public static UserDao userDao;
+    public static OrderDao orderDao;
 
     public static void main(String[] args) {
 
         // INIT DAO GLOBALS
         userDao = new UserDaoJdbc();
+        orderDao = new OrderDaoJdbc();
 
         // SERVER SETTINGS
         exception(Exception.class, (e, req, res) -> e.printStackTrace());
