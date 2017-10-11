@@ -45,6 +45,7 @@ public class ProductCategoryDaoJdbc implements ProductCategoryDao {
                         resultSet.getString("name"),
                         resultSet.getString("department"),
                         resultSet.getString("description"));
+                category.setId(id);
                 return category;
             }
         } catch (SQLException e) {
@@ -81,10 +82,12 @@ public class ProductCategoryDaoJdbc implements ProductCategoryDao {
         ){
             ResultSet resultSet = stmt.executeQuery();
             while (resultSet.next()){
-                resultList.add(new ProductCategory(
+                ProductCategory productCategory = new ProductCategory(
                         resultSet.getString("name"),
                         resultSet.getString("department"),
-                        resultSet.getString("description")));
+                        resultSet.getString("description"));
+                productCategory.setId(resultSet.getInt("id"));
+                resultList.add(productCategory);
             }
             return resultList;
         } catch (SQLException e) {
