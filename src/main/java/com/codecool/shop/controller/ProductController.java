@@ -25,20 +25,20 @@ import java.util.Map;
 public class ProductController {
 
     public static ModelAndView renderProducts(Request req, Response res) {
-        ProductDao productData = DaoFactory.getProductDao();
+        ProductDao productDao = DaoFactory.getProductDao();
         ProductCategory productCategory = getSelectedProductCategory(req);
         Supplier supplier = getSelectedSupplier(req);
         List<Product> products;
         String selected;
 
         if (productCategory != null) {
-            products = productData.getBy(productCategory);
+            products = productDao.getBy(productCategory);
             selected = productCategory.getName();
         } else if (supplier != null) {
-            products = productData.getBy(supplier);
+            products = productDao.getBy(supplier);
             selected = supplier.getName();
         } else {
-            products = productData.getBy(Config.DEFAULT_CATEGORY);
+            products = productDao.getBy(Config.DEFAULT_CATEGORY);
             selected = Config.DEFAULT_CATEGORY.getName();
         }
 

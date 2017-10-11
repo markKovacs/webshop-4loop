@@ -1,12 +1,8 @@
 package com.codecool.shop.dao;
 
 import com.codecool.shop.Config;
-import com.codecool.shop.dao.implementation.jdbc.OrderDaoJdbc;
-import com.codecool.shop.dao.implementation.jdbc.ProductCategoryDaoJdbc;
-import com.codecool.shop.dao.implementation.jdbc.SupplierDaoJdbc;
-import com.codecool.shop.dao.implementation.memory.OrderDaoMem;
-import com.codecool.shop.dao.implementation.memory.ProductCategoryDaoMem;
-import com.codecool.shop.dao.implementation.memory.SupplierDaoMem;
+import com.codecool.shop.dao.implementation.jdbc.*;
+import com.codecool.shop.dao.implementation.memory.*;
 
 public class DaoFactory {
 
@@ -28,21 +24,28 @@ public class DaoFactory {
         if (Config.USE_DB) {
             return new UserDaoJdbc();
         }
-        return new UserDaomem();
+        return new UserDaoMem();
     }
 
     public static ProductCategoryDao getProductCategoryDao() {
         if (Config.USE_DB) {
             return new ProductCategoryDaoJdbc();
         }
-        return ProductCategoryDaoMem.getInstance();
+        return new ProductCategoryDaoMem();
     }
 
     public static SupplierDao getSupplierDao() {
         if (Config.USE_DB) {
             return new SupplierDaoJdbc();
         }
-        return SupplierDaoMem.getInstance();
+        return new SupplierDaoMem();
+    }
+
+    public static ProductDao getProductDao() {
+        if (Config.USE_DB) {
+            return new ProductDaoJdbc();
+        }
+        return new ProductDaoMem();
     }
 
 }

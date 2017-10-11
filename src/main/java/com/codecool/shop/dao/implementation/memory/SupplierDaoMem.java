@@ -9,19 +9,19 @@ import java.util.List;
 public class SupplierDaoMem implements SupplierDao {
 
     private List<Supplier> DATA = new ArrayList<>();
-    private static SupplierDaoMem instance = null;
+    // private static SupplierDaoMem instance = null;
 
     /* A private Constructor prevents any other class from instantiating.
      */
-    private SupplierDaoMem() {
+    public SupplierDaoMem() {
     }
 
-    public static SupplierDaoMem getInstance() {
+    /*public static SupplierDaoMem getInstance() {
         if (instance == null) {
             instance = new SupplierDaoMem();
         }
         return instance;
-    }
+    }*/
 
     @Override
     public void add(Supplier supplier) {
