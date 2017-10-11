@@ -5,6 +5,9 @@ import com.codecool.shop.Main;
 import com.codecool.shop.OrderUtils;
 import com.codecool.shop.dao.DaoFactory;
 import com.codecool.shop.dao.ProductDao;
+import com.codecool.shop.dao.implementation.jdbc.ProductCategoryDaoJdbc;
+import com.codecool.shop.dao.implementation.jdbc.ProductDaoJdbc;
+import com.codecool.shop.dao.implementation.jdbc.SupplierDaoJdbc;
 import com.codecool.shop.dao.implementation.memory.ProductCategoryDaoMem;
 import com.codecool.shop.dao.implementation.memory.ProductDaoMem;
 import com.codecool.shop.dao.implementation.memory.SupplierDaoMem;
@@ -22,7 +25,7 @@ import java.util.Map;
 public class ProductController {
 
     public static ModelAndView renderProducts(Request req, Response res) {
-        ProductDao productData = ProductDaoMem.getInstance();
+        ProductDao productData = DaoFactory.getProductDao();
         ProductCategory productCategory = getSelectedProductCategory(req);
         Supplier supplier = getSelectedSupplier(req);
         List<Product> products;
