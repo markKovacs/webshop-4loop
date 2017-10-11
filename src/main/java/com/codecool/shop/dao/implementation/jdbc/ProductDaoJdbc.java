@@ -107,7 +107,7 @@ public class ProductDaoJdbc implements ProductDao {
 
     @Override
     public List<Product> getAll() {
-        List<Product> resultList = new ArrayList();
+        List<Product> resultList = new ArrayList<>();
 
         try (DB db = new DB();
              PreparedStatement stmt = db.getPreparedStatement(

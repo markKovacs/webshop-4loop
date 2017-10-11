@@ -41,7 +41,7 @@ public class AccountController {
 
         int userId = getUserIdFromSession(req);
 
-        List<HashMap<String, Object>> orders = getPaidOrders(userId);
+        List<HashMap<String, Object>> orders = getPaidOrders(userId); // TODO: maybe this needs refactoring
         Map<String, Object> params = new HashMap<>();
         params.put("orders", orders);
         params.put("balance", Main.balanceInUSD);

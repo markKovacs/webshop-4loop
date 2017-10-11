@@ -31,10 +31,11 @@ public class User {
         this.password = password;
     }
 
-    private User(String fullName, String email, String password,
+    private User(int id, String fullName, String email, String password,
                 String phone, String billingCountry, String billingCity,
                 String billingZipCode, String billingAddress, String shippingCountry,
                 String shippingCity, String shippingZipCode, String shippingAddress) {
+        this.userId = id;
         this.fullName = fullName;
         this.email = email;
         this.password = password;
@@ -53,11 +54,11 @@ public class User {
         return new User(fullName, email, password);
     }
 
-    public static User create(String fullName, String email, String password,
+    public static User create(int id, String fullName, String email, String password,
                  String phone, String billingCountry, String billingCity,
                  String billingZipCode, String billingAddress, String shippingCountry,
                  String shippingCity, String shippingZipCode, String shippingAddress) {
-        return new User(fullName, email, password, phone, billingCountry, billingCity,
+        return new User(id, fullName, email, password, phone, billingCountry, billingCity,
                 billingZipCode, billingAddress, shippingCountry, shippingCity,
                 shippingZipCode, shippingAddress);
     }

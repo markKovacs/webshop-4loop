@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface UserDao {
 
-    void add(User order);
+    void add(User user);
     User find(int id);
     User find(String email);
     void remove(int id);
