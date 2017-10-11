@@ -44,10 +44,11 @@ public class ProductDaoJdbc implements ProductDao {
     public Product find(int id) {
         try (DB db = new DB();
              PreparedStatement stmt = db.getPreparedStatement(
-                     "SELECT p.name product_name, p.description product_description, " +
-                             "p.category_id, c.name category_name, " +
+                     "SELECT p.id product_id, p.name product_name, " +
+                             "p.description product_description, " +
+                             "p.category_id category_id, c.name category_name, " +
                              "c.department category_department, " +
-                             "c.description category_description, p.supplier_id, " +
+                             "c.description category_description, p.supplier_id supplier_id, " +
                              "s.name supplier_name, s.description supplier_description, " +
                              "p.price product_price, p.currency product_currency, " +
                              "p.image_filename " +
@@ -60,8 +61,14 @@ public class ProductDaoJdbc implements ProductDao {
             ResultSet resultSet = stmt.executeQuery();
             if(resultSet.next()){
                 ProductCategory category = new ProductCategory(
-                        "category_name","category_department","category_description");
-                Supplier supplier = new Supplier("supplier_name", "supplier_description");
+                        resultSet.getString("category_name"),
+                        resultSet.getString("category_department"),
+                        resultSet.getString("category_description"));
+                category.setId(resultSet.getInt("category_id"));
+                Supplier supplier = new Supplier(
+                        resultSet.getString("supplier_name"),
+                        resultSet.getString("supplier_description"));
+                supplier.setId(resultSet.getInt("supplier_id"));
                 Product product = new Product(
                         resultSet.getString("product_name"),
                         resultSet.getFloat("product_price"),
@@ -71,6 +78,7 @@ public class ProductDaoJdbc implements ProductDao {
                         supplier,
                         resultSet.getString("image_filename")
                 );
+                product.setId(resultSet.getInt("product_id"));
                 return product;
             }
         } catch (SQLException e) {
@@ -103,10 +111,10 @@ public class ProductDaoJdbc implements ProductDao {
 
         try (DB db = new DB();
              PreparedStatement stmt = db.getPreparedStatement(
-                     "SELECT p.name product_name, p.description product_description, " +
-                             "p.category_id, c.name category_name, " +
+                     "SELECT p.id product_id, p.name product_name, p.description product_description, " +
+                             "p.category_id category_id, c.name category_name, " +
                              "c.department category_department, " +
-                             "c.description category_description, p.supplier_id, " +
+                             "c.description category_description, p.supplier_id supplier_id, " +
                              "s.name supplier_name, s.description supplier_description, " +
                              "p.price product_price, p.currency product_currency, p.image_filename " +
                              "FROM products p " +
@@ -116,8 +124,15 @@ public class ProductDaoJdbc implements ProductDao {
             ResultSet resultSet = stmt.executeQuery();
             while (resultSet.next()){
                 ProductCategory category = new ProductCategory(
-                        "category_name","category_department","category_description");
-                Supplier supplier = new Supplier("supplier_name", "supplier_description");
+                        resultSet.getString("category_name"),
+                        resultSet.getString("category_department"),
+                        resultSet.getString("category_description")
+                );
+                category.setId(resultSet.getInt("category_id"));
+                Supplier supplier = new Supplier(
+                        resultSet.getString("supplier_name"),
+                        resultSet.getString("supplier_description"));
+                supplier.setId(resultSet.getInt("supplier_id"));
                 Product product = new Product(
                         resultSet.getString("product_name"),
                         resultSet.getFloat("product_price"),
@@ -127,6 +142,7 @@ public class ProductDaoJdbc implements ProductDao {
                         supplier,
                         resultSet.getString("image_filename")
                 );
+                product.setId(resultSet.getInt("product_id"));
                 resultList.add(product);
             }
             return resultList;
@@ -145,10 +161,10 @@ public class ProductDaoJdbc implements ProductDao {
 
         try (DB db = new DB();
              PreparedStatement stmt = db.getPreparedStatement(
-                     "SELECT p.name product_name, p.description product_description, " +
-                             "p.category_id, c.name category_name, " +
+                     "SELECT p.id product_id, p.name product_name, p.description product_description, " +
+                             "p.category_id category_id, c.name category_name, " +
                              "c.department category_department, " +
-                             "c.description category_description, p.supplier_id, " +
+                             "c.description category_description, p.supplier_id supplier_id, " +
                              "s.name supplier_name, s.description supplier_description, " +
                              "p.price product_price, p.currency product_currency, " +
                              "p.image_filename " +
@@ -161,8 +177,15 @@ public class ProductDaoJdbc implements ProductDao {
             ResultSet resultSet = stmt.executeQuery();
             while (resultSet.next()){
                 ProductCategory category = new ProductCategory(
-                        "category_name","category_department","category_description");
-                Supplier supplier = new Supplier("supplier_name", "supplier_description");
+                        resultSet.getString("category_name"),
+                        resultSet.getString("category_department"),
+                        resultSet.getString("category_description")
+                );
+                category.setId(resultSet.getInt("category_id"));
+                Supplier supplier = new Supplier(
+                        resultSet.getString("supplier_name"),
+                        resultSet.getString("supplier_description"));
+                supplier.setId(resultSet.getInt("supplier_id"));
                 Product product = new Product(
                         resultSet.getString("product_name"),
                         resultSet.getFloat("product_price"),
@@ -172,6 +195,7 @@ public class ProductDaoJdbc implements ProductDao {
                         supplier,
                         resultSet.getString("image_filename")
                 );
+                product.setId(resultSet.getInt("product_id"));
                 resultList.add(product);
             }
             return resultList;
@@ -190,10 +214,10 @@ public class ProductDaoJdbc implements ProductDao {
 
         try (DB db = new DB();
              PreparedStatement stmt = db.getPreparedStatement(
-                     "SELECT p.name product_name, p.description product_description, " +
-                             "p.category_id, c.name category_name, " +
+                     "SELECT p.id product_id, p.name product_name, p.description product_description, " +
+                             "p.category_id category_id, c.name category_name, " +
                              "c.department category_department, " +
-                             "c.description category_description, p.supplier_id, " +
+                             "c.description category_description, p.supplier_id supplier_id, " +
                              "s.name supplier_name, s.description supplier_description, " +
                              "p.price product_price, p.currency product_currency, " +
                              "p.image_filename " +
@@ -206,8 +230,15 @@ public class ProductDaoJdbc implements ProductDao {
             ResultSet resultSet = stmt.executeQuery();
             while (resultSet.next()){
                 ProductCategory category = new ProductCategory(
-                        "category_name","category_department","category_description");
-                Supplier supplier = new Supplier("supplier_name", "supplier_description");
+                        resultSet.getString("category_name"),
+                        resultSet.getString("category_department"),
+                        resultSet.getString("category_description")
+                );
+                category.setId(resultSet.getInt("category_id"));
+                Supplier supplier = new Supplier(
+                        resultSet.getString("supplier_name"),
+                        resultSet.getString("supplier_description"));
+                supplier.setId(resultSet.getInt("supplier_id"));
                 Product product = new Product(
                         resultSet.getString("product_name"),
                         resultSet.getFloat("product_price"),
@@ -217,6 +248,7 @@ public class ProductDaoJdbc implements ProductDao {
                         supplier,
                         resultSet.getString("image_filename")
                 );
+                product.setId(resultSet.getInt("product_id"));
                 resultList.add(product);
             }
             return resultList;
@@ -226,4 +258,6 @@ public class ProductDaoJdbc implements ProductDao {
 
         return null;
     }
+
+
 }
