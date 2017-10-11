@@ -2,7 +2,7 @@ package com.codecool.shop.controller;
 
 import com.codecool.shop.Main;
 import com.codecool.shop.OrderUtils;
-import com.codecool.shop.dao.implementation.memory.OrderDaoMem;
+import com.codecool.shop.dao.DaoFactory;
 import com.codecool.shop.order.InputField;
 import com.codecool.shop.order.LineItem;
 import com.codecool.shop.order.Order;
@@ -34,7 +34,7 @@ public class OrderController {
         req.session(true).attribute("user");
         if (order == null) {
             order = new Order();
-            OrderDaoMem.getInstance().add(order);
+            DaoFactory.getOrderDao().add(order);
         }
 
         String statusMessage = order.addToCart(productId, quantity);
@@ -74,7 +74,6 @@ public class OrderController {
 
         float newSubtotal = order.changeProductQuantity(productId, quantity);
         order.updateTotal();
-        // TODO: if all stuff is zero, remove order too
 
         Map<String, Float> response = new HashMap<>();
         response.put("total", order.getTotalPrice());
@@ -93,7 +92,7 @@ public class OrderController {
 
         boolean cartIsEmpty = order.getItems().isEmpty();
         if (cartIsEmpty) {
-            OrderDaoMem.getInstance().remove(order.getId());
+            DaoFactory.getOrderDao().remove(order.getId());
             req.session().removeAttribute("order_id");
         }
 
@@ -111,7 +110,7 @@ public class OrderController {
         order.getItems().removeIf(item -> item.getQuantity() == 0);
 
         if (order.getItems().size() < 1) {
-            OrderDaoMem.getInstance().remove(order.getId());
+            DaoFactory.getOrderDao().remove(order.getId());
             req.session().removeAttribute("order_id");
             res.redirect("/cart");
         } else {

@@ -14,4 +14,6 @@ public interface OrderDao {
     List<Order> getAll();
     List<Order> getBy(Status status);
 
+    List<Order> getAllPaid(int userId);
+
 }

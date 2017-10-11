@@ -31,6 +31,10 @@
                             <div class="order">
                                 <h4 th:text="${'Order ID #' + order.id}" class="order-title" th:attr="id=*{'order-' + id}">Order ID #1</h4>
 
+                                <!--TODO: put closedDate here, next to Order ID #N-->
+
+
+
                                 <table class="order-lineitems-table">
                                     <thead>
                                     <tr>
@@ -48,8 +52,8 @@
                                         </td>
                                         <td th:text="*{productName}">Light Sabre from Star Wars</td>
                                         <td th:text="*{quantity}">67</td>
-                                        <td class="right price-width" th:text="*{#numbers.formatDecimal(actualPrice, 0, 'COMMA', 2, 'POINT')} + ' USD'">200 USD</td>
-                                        <td th:attr="id=${'subtotal-' + item.product.id}" class="right subtotal-width" th:text="*{#numbers.formatDecimal(subTotal, 0, 'COMMA', 2, 'POINT') + ' USD'}">8400 USD</td>
+                                        <td class="right price-width" th:text="*{#numbers.formatDecimal(actualPrice, 0, 'COMMA', 2, 'POINT')} + ' ' + *{currency}">200 USD</td>
+                                        <td class="right subtotal-width" th:text="*{#numbers.formatDecimal(subTotal, 0, 'COMMA', 2, 'POINT') + ' ' + *{currency}">8400 USD</td>
                                     </tr>
                                     </tbody>
                                     <tfoot>

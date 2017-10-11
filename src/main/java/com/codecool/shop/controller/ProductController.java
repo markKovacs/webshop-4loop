@@ -3,6 +3,7 @@ package com.codecool.shop.controller;
 import com.codecool.shop.Config;
 import com.codecool.shop.Main;
 import com.codecool.shop.OrderUtils;
+import com.codecool.shop.dao.DaoFactory;
 import com.codecool.shop.dao.ProductDao;
 import com.codecool.shop.dao.implementation.memory.ProductCategoryDaoMem;
 import com.codecool.shop.dao.implementation.memory.ProductDaoMem;
@@ -39,8 +40,8 @@ public class ProductController {
         }
 
         Map<String, Object> params = new HashMap<>();
-        params.put("allCategories", ProductCategoryDaoMem.getInstance().getAll());
-        params.put("allSuppliers", SupplierDaoMem.getInstance().getAll());
+        params.put("allCategories", DaoFactory.getProductCategoryDao().getAll());
+        params.put("allSuppliers", DaoFactory.getSupplierDao().getAll());
         params.put("actualSelection", selected);
         params.put("products", products);
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
@@ -61,7 +62,7 @@ public class ProductController {
         }
         ProductCategory selectedProductCategory = null;
         if (categoryId != -1) {
-            selectedProductCategory = ProductCategoryDaoMem.getInstance().find(categoryId);
+            selectedProductCategory = DaoFactory.getProductCategoryDao().find(categoryId);
         }
         return selectedProductCategory;
     }
@@ -75,7 +76,7 @@ public class ProductController {
         }
         Supplier selectedSupplier = null;
         if (supplierId != -1) {
-            selectedSupplier = SupplierDaoMem.getInstance().find(supplierId);
+            selectedSupplier = DaoFactory.getSupplierDao().find(supplierId);
         }
         return selectedSupplier;
     }

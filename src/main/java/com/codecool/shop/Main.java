@@ -24,15 +24,7 @@ public class Main {
     // GLOBALS
     public static float balanceInUSD = 75_000.0f;
 
-    // DAO OBJECTS
-    public static UserDao userDao;
-    public static OrderDao orderDao;
-
     public static void main(String[] args) {
-
-        // INIT DAO GLOBALS
-        userDao = new UserDaoJdbc();
-        orderDao = new OrderDaoJdbc();
 
         // SERVER SETTINGS
         exception(Exception.class, (e, req, res) -> e.printStackTrace());

@@ -1,6 +1,7 @@
 package com.codecool.shop.controller;
 
 import com.codecool.shop.Main;
+import com.codecool.shop.dao.DaoFactory;
 import com.codecool.shop.dao.OrderDao;
 import com.codecool.shop.dao.implementation.jdbc.OrderDaoJdbc;
 import com.codecool.shop.order.InputField;
@@ -12,9 +13,6 @@ import com.codecool.shop.utility.Email;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
-import static com.codecool.shop.Main.userDao;
-import static com.codecool.shop.Main.orderDao;
-
 
 import java.util.*;
 
@@ -88,7 +86,7 @@ public class AccountController {
         }
 
         User user = User.create(inputData.get("fullname"), inputData.get("email"), hashedPasswordAndSalt);
-        userDao.add(user);
+        DaoFactory.getUserDao().add(user);
 
         String to = user.getEmail();
         String body = Email.renderEmailTemplate("welcome_email",
@@ -127,8 +125,9 @@ public class AccountController {
 
     public static ModelAndView editProfile(Request req, Response res) {
 
+        int userId = getUserIdFromSession(req);
         Map<String, String> profileInput = collectEditData(req);
-        List<String> errorMessages = validateProfileInput(profileInput);
+        List<String> errorMessages = DaoFactory.getUserDao().update(userId, profileInput);
 
         if (errorMessages.size() > 0) {
             Map<String, Object> params = new HashMap<>();
@@ -138,8 +137,6 @@ public class AccountController {
             return new ModelAndView(params, "profile");
         }
 
-        int userId = getUserIdFromSession(req);
-        userDao.update(userId, profileInput);
         res.redirect("/profile");
         return null;
     }
@@ -152,7 +149,7 @@ public class AccountController {
 
     private static Map<String, String> getUserData(int userId) {
 
-        User user = userDao.find(userId);
+        User user = DaoFactory.getUserDao().find(userId);
         Map<String, String> modUser = new HashMap<>();
         modUser.put("phone", user.getPhone());
 
@@ -173,7 +170,7 @@ public class AccountController {
 
         // Or simply return orderDao.getAllPaidOrders(userId)... will see!
 
-        List<Order> ordersData = orderDao.getAllPaid(userId); // or just get all and then stream.filter?
+        List<Order> ordersData = DaoFactory.getOrderDao().getAllPaid(userId); // or just get all and then stream.filter?
 
         List<HashMap<String, Object>> orders = new ArrayList<>();
         for (Order o : ordersData) {
@@ -217,7 +214,7 @@ public class AccountController {
         }
         if (!InputField.EMAIL.validate(regInput.get("email"))) {
             errorMessages.add("E-mail field is wrong.");
-        } else if (userDao.getUserEmails().contains(regInput.get("email"))) {
+        } else if (DaoFactory.getUserDao().getAllEmails().contains(regInput.get("email"))) {
             errorMessages.add("E-mail field is already registered.");
         }
         if (!regInput.get("password1").equals(regInput.get("password2"))) {
@@ -240,7 +237,7 @@ public class AccountController {
     private static int validateLoginCredentials(Map<String, String> loginInput) {
         String email = loginInput.get("email");
         String password = loginInput.get("password");
-        User user = userDao.find(email);
+        User user = DaoFactory.getUserDao().find(email);
         if (user == null) {
             return -1;
         }
@@ -270,38 +267,6 @@ public class AccountController {
         profileInfo.put("shipzip", req.queryParams("ship-zip"));
         profileInfo.put("shipaddress", req.queryParams("ship-address"));
         return profileInfo;
-    }
-
-    private static List<String> validateProfileInput(Map<String, String> profileInput) {
-        List<String> errorMessages = new ArrayList<>();
-        if (!InputField.PHONE.validate(profileInput.get("phone"))) {
-            errorMessages.add("Phone field is invalid.");
-        }
-        if (!InputField.COUNTRY.validate(profileInput.get("billcountry"))) {
-            errorMessages.add("Invalid billing country");
-        }
-        if (!InputField.CITY.validate(profileInput.get("billcity"))) {
-            errorMessages.add("Invalid billing city");
-        }
-        if (!InputField.ZIP_CODE.validate(profileInput.get("billzip"))) {
-            errorMessages.add("Invalid billing ZIP code");
-        }
-        if (!InputField.ADDRESS.validate(profileInput.get("billaddress"))) {
-            errorMessages.add("Invalid billing address");
-        }
-        if (!InputField.COUNTRY.validate(profileInput.get("shipcountry"))) {
-            errorMessages.add("Invalid shipping country");
-        }
-        if (!InputField.CITY.validate(profileInput.get("shipcity"))) {
-            errorMessages.add("Invalid shipping city");
-        }
-        if (!InputField.ZIP_CODE.validate(profileInput.get("shipzip"))) {
-            errorMessages.add("Invalid shipping ZIP code");
-        }
-        if (!InputField.ADDRESS.validate(profileInput.get("shipaddress"))) {
-            errorMessages.add("Invalid shipping address");
-        }
-        return errorMessages;
     }
 
 }

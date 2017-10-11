@@ -1,5 +1,9 @@
 package com.codecool.shop.user;
 
+import com.codecool.shop.order.InputField;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class User {
@@ -58,16 +62,53 @@ public class User {
                 shippingZipCode, shippingAddress);
     }
 
-    public void setProfileInformation(Map<String, String> profileInput) {
-        this.phone = profileInput.get("phone");
-        this.billingCountry = profileInput.get("billcountry");
-        this.billingCity = profileInput.get("billcity");
-        this.billingZipCode = profileInput.get("billzip");
-        this.billingAddress = profileInput.get("billaddress");
-        this.shippingCountry = profileInput.get("shipcountry");
-        this.shippingCity = profileInput.get("shipcity");
-        this.shippingZipCode = profileInput.get("shipzip");
-        this.shippingAddress = profileInput.get("shipaddress");
+    public List<String> setProfileInformation(Map<String, String> profileInput) {
+        List<String> errorMessages = validateProfileInput(profileInput);
+
+        if (errorMessages.size() == 0) {
+            this.phone = profileInput.get("phone");
+            this.billingCountry = profileInput.get("billcountry");
+            this.billingCity = profileInput.get("billcity");
+            this.billingZipCode = profileInput.get("billzip");
+            this.billingAddress = profileInput.get("billaddress");
+            this.shippingCountry = profileInput.get("shipcountry");
+            this.shippingCity = profileInput.get("shipcity");
+            this.shippingZipCode = profileInput.get("shipzip");
+            this.shippingAddress = profileInput.get("shipaddress");
+        }
+        return errorMessages;
+    }
+
+    private static List<String> validateProfileInput(Map<String, String> profileInput) {
+        List<String> errorMessages = new ArrayList<>();
+        if (!InputField.PHONE.validate(profileInput.get("phone"))) {
+            errorMessages.add("Phone field is invalid.");
+        }
+        if (!InputField.COUNTRY.validate(profileInput.get("billcountry"))) {
+            errorMessages.add("Invalid billing country");
+        }
+        if (!InputField.CITY.validate(profileInput.get("billcity"))) {
+            errorMessages.add("Invalid billing city");
+        }
+        if (!InputField.ZIP_CODE.validate(profileInput.get("billzip"))) {
+            errorMessages.add("Invalid billing ZIP code");
+        }
+        if (!InputField.ADDRESS.validate(profileInput.get("billaddress"))) {
+            errorMessages.add("Invalid billing address");
+        }
+        if (!InputField.COUNTRY.validate(profileInput.get("shipcountry"))) {
+            errorMessages.add("Invalid shipping country");
+        }
+        if (!InputField.CITY.validate(profileInput.get("shipcity"))) {
+            errorMessages.add("Invalid shipping city");
+        }
+        if (!InputField.ZIP_CODE.validate(profileInput.get("shipzip"))) {
+            errorMessages.add("Invalid shipping ZIP code");
+        }
+        if (!InputField.ADDRESS.validate(profileInput.get("shipaddress"))) {
+            errorMessages.add("Invalid shipping address");
+        }
+        return errorMessages;
     }
 
     public void setUserId(int userId) {
