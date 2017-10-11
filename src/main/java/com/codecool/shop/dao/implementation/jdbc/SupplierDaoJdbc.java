@@ -42,6 +42,7 @@ public class SupplierDaoJdbc implements SupplierDao {
             if(resultSet.next()){
                 Supplier supplier = new Supplier(resultSet.getString("name"),
                         resultSet.getString("description"));
+                supplier.setId(id);
                 return supplier;
             }
         } catch (SQLException e) {
@@ -78,9 +79,11 @@ public class SupplierDaoJdbc implements SupplierDao {
         ){
             ResultSet resultSet = stmt.executeQuery();
             while (resultSet.next()){
-                resultList.add(new Supplier(
+                Supplier supplier = new Supplier(
                         resultSet.getString("name"),
-                        resultSet.getString("description")));
+                        resultSet.getString("description"));
+                supplier.setId(resultSet.getInt("id"));
+                resultList.add(supplier);
             }
             return resultList;
         } catch (SQLException e) {
