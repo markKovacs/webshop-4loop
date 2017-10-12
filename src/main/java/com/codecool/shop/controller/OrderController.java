@@ -8,6 +8,7 @@ import com.codecool.shop.order.LineItem;
 import com.codecool.shop.order.Order;
 import com.codecool.shop.order.Status;
 import com.codecool.shop.processing.PaymentProcess;
+import com.codecool.shop.user.User;
 import com.codecool.shop.utility.Email;
 import com.codecool.shop.utility.Log;
 import com.google.gson.Gson;
@@ -88,24 +89,26 @@ public class OrderController {
     }
 
     public static String removeLineItem(Request req, Response res) {
-        Order order = OrderUtils.getOrderFromSessionInfo(req);
+        int userId = req.session().attribute("user_id");
+        Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
+
         int productId = Integer.parseInt(req.queryParams("product_id"));
 
-        order.removeLineItem(productId);
+        //order.removeLineItem(productId);
+        DaoFactory.getOrderDao().removeLineItemFromCart(productId, order);
         order.updateTotal();
 
         boolean cartIsEmpty = order.getItems().isEmpty();
-        if (cartIsEmpty) {
+/*        if (cartIsEmpty) {
             DaoFactory.getOrderDao().remove(order.getId());
-            req.session().removeAttribute("order_id");
-        }
+        }*/
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("total", order.getTotalPrice());
-        response.put("cartIsEmpty", cartIsEmpty);
+        Map<String, Object> newPrices = new HashMap<>();
+        newPrices.put("total", order.getTotalPrice());
+        newPrices.put("cartIsEmpty", cartIsEmpty);
 
         Gson gson = new Gson();
-        return gson.toJson(response);
+        return gson.toJson(newPrices);
     }
 
     public static ModelAndView finalizeOrder(Request req, Response res) {
@@ -113,8 +116,7 @@ public class OrderController {
         int userId = req.session().attribute("user_id");
         Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
 
-        order.getItems().removeIf(item -> item.getQuantity() == 0);
-        // TODO: remove lineitems from order if 0... PETI IMPLEMENTED
+        DaoFactory.getOrderDao().removeZeroQuantityItems(order);
 
         if (order.getItems().size() < 1) {
             //DaoFactory.getOrderDao().remove(order.getId());
@@ -128,12 +130,22 @@ public class OrderController {
     }
 
     public static ModelAndView renderCheckout(Request req, Response res) {
-        OrderUtils.setOrderStatus(req);
+        Order order = OrderUtils.setOrderStatus(req);
+        int userId = req.session().attribute("user_id");
+
+        int cartItems = 0;
+        if (order != null) {
+            cartItems = order.countCartItems();
+        }
+
+        User user = DaoFactory.getUserDao().find(userId);
+        // TODO: template check if user object and keys in template match each other!!!
 
         Map<String, Object> params = new HashMap<>();
-        params.put("user", new HashMap<>());
+        params.put("user", user);
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
         params.put("loggedIn", req.session().attribute("user_id") != null);
+        params.put("cartItems", cartItems);
         return new ModelAndView(params, "checkout");
     }
 
@@ -141,18 +153,29 @@ public class OrderController {
         Map<String, String> userData = collectCheckoutInfo(req);
         List<String> errorMessages = checkForInvalidInput(userData);
 
+        int userId = req.session().attribute("user_id");
+        Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
+
+        int cartItems = 0;
+        if (order != null) {
+            cartItems = order.countCartItems();
+        }
+
         if (errorMessages.size() > 0) {
             Map<String, Object> params = new HashMap<>();
             params.put("user", userData);
             params.put("errors", errorMessages);
             params.put("balance", String.format("%.2f", Main.balanceInUSD));
+            params.put("loggedIn", req.session().attribute("user_id") != null);
+            params.put("cartItems", cartItems);
             return new ModelAndView(params, "checkout");
         }
 
-        Order order = OrderUtils.getOrderFromSessionInfo(req);
-        order.setCheckoutInfo(userData);
-        Log.saveActionToOrderLog(order.getOrderLogFilename(), "checkedout");
+        // TODO: Through DAO
+        DaoFactory.getOrderDao().setCheckoutInfo(order);
+        //order.setCheckoutInfo(userData);
 
+        Log.saveActionToOrderLog(order.getOrderLogFilename(), "checkedout");
         res.redirect("/payment?next=process");
         return null;
     }

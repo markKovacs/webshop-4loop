@@ -128,4 +128,8 @@ public class OrderDaoMem implements OrderDao {
         }
     }
 
+    @Override
+    public void removeZeroQuantityItems(Order order) {
+        order.getItems().removeIf(item -> item.getQuantity() == 0);
+    }
 }

@@ -446,4 +446,26 @@ public class OrderDaoJdbc implements OrderDao {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void removeZeroQuantityItems(Order order) {
+        String query = "DELETE FROM lineitems " +
+                "       WHERE order_id = ? AND quantity = 0;";
+
+        try (DB db = new DB();
+             PreparedStatement stmt = db.getPreparedStatement(query)
+        ) {
+            stmt.setInt(1, order.getId());
+
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0){
+                System.out.println("Order has been cleaned from zero quantity items.");
+            } else {
+                System.out.println("No items had zero quantity.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

@@ -4,6 +4,7 @@ import com.codecool.shop.model.Product;
 import com.codecool.shop.order.Order;
 import com.codecool.shop.order.Status;
 import com.codecool.shop.order.LineItem;
+import com.sun.org.apache.xpath.internal.operations.Or;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -27,6 +28,7 @@ public interface OrderDao {
 
     void remove(int id);
     void removeLineItemFromCart(int productId, Order order);
+    void removeZeroQuantityItems(Order order);
 
     List<Order> getAll();
     List<Order> getBy(Status status);
