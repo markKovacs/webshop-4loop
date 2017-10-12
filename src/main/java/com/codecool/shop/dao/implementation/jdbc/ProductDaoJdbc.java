@@ -16,10 +16,13 @@ public class ProductDaoJdbc implements ProductDao {
 
     @Override
     public void add(Product product) {
+
+        String query = "INSERT INTO products (name, description, category_id," +
+                        "supplier_id, price, currency, image_filename) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?);";
+
         try (DB db = new DB();
-             PreparedStatement stmt = db.getPreparedStatement(
-                     "INSERT INTO products (name, description, category_id," +
-                             "supplier_id, price, currency, image_filename) VALUES (?, ?, ?, ?, ?, ?, ?);")
+             PreparedStatement stmt = db.getPreparedStatement(query)
         ){
             stmt.setString(1, product.getName());
             stmt.setString(2, product.getDescription());
