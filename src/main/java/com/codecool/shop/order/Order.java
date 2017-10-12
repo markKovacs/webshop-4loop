@@ -1,11 +1,13 @@
 package com.codecool.shop.order;
 
+import com.codecool.shop.dao.DaoFactory;
 import com.codecool.shop.dao.implementation.memory.OrderDaoMem;
 import com.codecool.shop.dao.implementation.memory.ProductDaoMem;
 import com.codecool.shop.model.Product;
 import com.codecool.shop.utility.Log;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -18,8 +20,10 @@ public class Order {
 
     // Basic fields
     private int id;
+    private int user_id;
     private Status status;
     private List<LineItem> items;
+    private Date closedDate;
 
     // Checkout (billing/shipping) information
     private float totalPrice;
@@ -36,12 +40,18 @@ public class Order {
     private String shippingAddress;
     private String orderLogFilename;
 
-    public Order() {
+    public Order(int id, int user_id, String orderLogFileName) {
+        this.id = id;
+        this.user_id = user_id;
         this.items = new ArrayList<>();
         this.status = Status.NEW;
+        this.orderLogFilename = orderLogFileName;
+    }
 
-        int temporaryId = OrderDaoMem.getInstance().getAll().size();
-        this.orderLogFilename = Log.getNowAsString() + "_" + temporaryId + "_order";
+    public Order(int id, int user_id, Status status, List<LineItem> items, Date closedDate, float totalPrice, String fullName, String email,
+                 String phone, String billingCountry, String billingCity, String billingZipCode, String billingAddress,
+                 String shippingCountry, String shippingCity, String shippingZipCode, String shippingAddress, String orderLogFilename) {
+        // TODO: implement setters
     }
 
     public String addToCart(int productId, int quantity) {
