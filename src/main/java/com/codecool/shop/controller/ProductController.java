@@ -48,6 +48,7 @@ public class ProductController {
         params.put("actualSelection", selected);
         params.put("products", products);
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
+        params.put("loggedIn", req.session().attribute("user_id") != null);
 
         Order order = OrderUtils.getOrderFromSessionInfo(req);
         int cartItems = order != null ? order.countCartItems() : 0;

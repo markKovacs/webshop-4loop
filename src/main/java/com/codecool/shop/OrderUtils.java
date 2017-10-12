@@ -17,10 +17,16 @@ public class OrderUtils {
         }
     }
 
-    public static void setOrderStatus(Request req) {
-        Order order = getOrderFromSessionInfo(req);
+    public static Order setOrderStatus(Request req) {
 
-        if (req.queryParams("back") != null && order != null) {
+        int userId = req.session().attribute("user_id");
+        Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
+
+        if (order == null) {
+            return null;
+        }
+
+        if (req.queryParams("back") != null) {
             switch (order.getStatus()) {
                 case CHECKEDOUT:
                     order.setStatus(Status.REVIEWED);
@@ -29,7 +35,7 @@ public class OrderUtils {
                     order.setStatus(Status.NEW);
                     break;
             }
-        } else if (order != null) {
+        } else {
             Status orderStatus = order.getStatus();
             if (orderStatus.equals(Status.NEW) && req.pathInfo().equals("/checkout")) {
                 order.setStatus(Status.REVIEWED);
@@ -37,6 +43,9 @@ public class OrderUtils {
                 order.setStatus(Status.CHECKEDOUT);
             }
         }
+
+        DaoFactory.getOrderDao().setStatus(order);
+        return order;
     }
 
 }

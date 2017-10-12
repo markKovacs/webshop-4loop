@@ -36,7 +36,7 @@ public class Main {
         enableDebugScreen();
 
         // POPULATE DATA FOR MEMORY STORAGE
-        populateData();
+        if (!Config.USE_PRODUCTION_DB) { populateData(); }
 
         // BEFORE REQUEST CHECK
         before(orderInProgressFilter);
@@ -77,13 +77,34 @@ public class Main {
     }
 
     private static Filter orderInProgressFilter = (Request req, Response res) -> {
-        Order order = OrderUtils.getOrderFromSessionInfo(req);
+        // TODO: if not logged in, allow route only to /, /login and /register
+        // TODO: if logged in, try to get order, rest is the same, but allow /logout
+
+        boolean loggedIn = req.session().attribute("user_id") != null;
+        if (!loggedIn) {
+            if (!(req.pathInfo().equals("/") || req.pathInfo().equals("/login") || req.pathInfo().equals("/register"))) {
+                res.redirect("/login");
+                halt(401);
+            } else {
+                return;
+            }
+        }
+
+        Order order = null;
+        if (req.session().attribute("user_id") != null) {
+            int userId = req.session().attribute("user_id");
+            order = DaoFactory.getOrderDao().findOpenByUserId(userId);
+        }
+
         if (order != null) {
             Status status = order.getStatus();
             switch (status) {
                 case NEW:
                     if (!(req.pathInfo().equals("/") || req.pathInfo().equals("/cart") ||
                             req.pathInfo().startsWith("/api/") ||
+                            req.pathInfo().equals("/logout") ||
+                            req.pathInfo().equals("/history") ||
+                            req.pathInfo().equals("/profile") ||
                             (req.pathInfo().equals("/checkout") && req.queryParams("next") != null))) {
                         res.redirect("/?error=restricted");
                         halt(401);
@@ -91,6 +112,7 @@ public class Main {
                     break;
                 case REVIEWED:
                     if (!(req.pathInfo().equals("/checkout") ||
+                            req.pathInfo().equals("/logout") ||
                             (req.pathInfo().equals("/cart") && req.queryParams("back") != null) ||
                             (req.pathInfo().equals("/payment") && req.queryParams("next") != null))) {
                         res.redirect("/checkout");
@@ -99,6 +121,7 @@ public class Main {
                     break;
                 case CHECKEDOUT:
                     if ( !(req.pathInfo().equals("/payment") ||
+                            req.pathInfo().equals("/logout") ||
                             req.pathInfo().equals("/payment/bank") ||
                             req.pathInfo().equals("/payment/paypal") ||
                             (req.pathInfo().equals("/checkout") && req.queryParams("back") != null) ) ) {
@@ -108,6 +131,9 @@ public class Main {
                     break;
             }
         } else if (!(req.pathInfo().equals("/") || req.pathInfo().equals("/cart") ||
+                req.pathInfo().equals("/logout") ||
+                req.pathInfo().equals("/history") ||
+                req.pathInfo().equals("/profile") ||
                 req.pathInfo().equals("/api/add-to-cart"))) {
             res.redirect("/?error=restricted");
             halt(401);

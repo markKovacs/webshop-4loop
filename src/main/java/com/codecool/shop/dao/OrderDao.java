@@ -19,4 +19,6 @@ public interface OrderDao {
 
     List<Order> getAllPaid(int userId);
 
+    void setStatus(Order order);
+
 }

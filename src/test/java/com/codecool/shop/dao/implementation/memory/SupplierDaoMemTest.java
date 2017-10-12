@@ -1,5 +1,6 @@
 package com.codecool.shop.dao.implementation.memory;
 
+import com.codecool.shop.dao.DaoFactory;
 import com.codecool.shop.dao.SupplierDao;
 import com.codecool.shop.model.Product;
 import com.codecool.shop.model.ProductCategory;
@@ -31,7 +32,7 @@ class SupplierDaoMemTest {
 
     @BeforeEach
     public void setUp() {
-        dao = SupplierDaoMem.getInstance();
+        dao = DaoFactory.getSupplierDao();
         dao.getAll().clear();
         productCategory = new ProductCategory("Some name", "Some department", "Some description");
         supplier = new Supplier("Something", "Something");

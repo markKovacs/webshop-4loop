@@ -41,6 +41,10 @@ public class OrderDaoMem implements OrderDao {
         return DATA.stream().filter(t -> t.getId() == id).findFirst().orElse(null);
     }
 
+    @Override
+    public Order findOpenByUserId(int userId) {
+        return null;
+    }
 
     @Override
     public void remove(int id) {
@@ -61,5 +65,11 @@ public class OrderDaoMem implements OrderDao {
     @Override
     public List<Order> getAllPaid(int userId) {
         return null;
+    }
+
+
+    @Override
+    public void setStatus(Order order) {
+
     }
 }

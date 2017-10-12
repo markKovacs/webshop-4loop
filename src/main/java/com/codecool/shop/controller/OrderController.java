@@ -47,9 +47,8 @@ public class OrderController {
     }
 
     public static ModelAndView renderReview(Request req, Response res) {
-        OrderUtils.setOrderStatus(req);
+        Order order = OrderUtils.setOrderStatus(req);
 
-        Order order = OrderUtils.getOrderFromSessionInfo(req);
         List<LineItem> orderItems = new ArrayList<>();
         float totalPrice = 0f;
         int cartItems = 0;
@@ -66,6 +65,7 @@ public class OrderController {
         params.put("grandTotal", String.format("%.2f", totalPrice));
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
         params.put("cartItems", cartItems);
+        params.put("loggedIn", req.session().attribute("user_id") != null);
 
         return new ModelAndView(params, "review");
     }
@@ -130,6 +130,7 @@ public class OrderController {
         Map<String, Object> params = new HashMap<>();
         params.put("user", new HashMap<>());
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
+        params.put("loggedIn", req.session().attribute("user_id") != null);
         return new ModelAndView(params, "checkout");
     }
 
@@ -162,6 +163,7 @@ public class OrderController {
         int cartItems = order != null ? order.countCartItems() : 0;
         params.put("cartItems", cartItems);
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
+        params.put("loggedIn", req.session().attribute("user_id") != null);
         return new ModelAndView(params, "payment");
     }
 
@@ -173,6 +175,7 @@ public class OrderController {
         params.put("cartItems", cartItems);
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
         params.put("payment", new HashMap<String, String>());
+        params.put("loggedIn", req.session().attribute("user_id") != null);
 
         return new ModelAndView(params, "bank");
     }
@@ -185,6 +188,7 @@ public class OrderController {
         params.put("cartItems", cartItems);
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
         params.put("payment", new HashMap<String, String>());
+        params.put("loggedIn", req.session().attribute("user_id") != null);
 
         return new ModelAndView(params, "paypal");
     }
@@ -218,6 +222,7 @@ public class OrderController {
             params.put("balance", String.format("%.2f", Main.balanceInUSD));
             params.put("payment", paymentData);
             params.put("errors", errorMessages);
+            params.put("loggedIn", req.session().attribute("user_id") != null);
             String view = req.pathInfo().contains("bank") ? "bank" : "paypal";
             return new ModelAndView(params, view);
         }
@@ -229,6 +234,7 @@ public class OrderController {
 
         Map<String, Object> params = new HashMap<>();
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
+        params.put("loggedIn", req.session().attribute("user_id") != null);
 
         return new ModelAndView(params, "success");
     }

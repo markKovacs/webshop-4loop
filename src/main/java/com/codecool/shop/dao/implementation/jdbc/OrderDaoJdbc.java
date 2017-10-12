@@ -25,8 +25,7 @@ public class OrderDaoJdbc implements OrderDao {
         Order order = null;
 
         String query = "INSERT INTO orders (user_id) " +
-                       "VALUES (?)" +
-                       "RETURNING id;";
+                       "VALUES (?);";
 
 
         try (DB db = new DB();
@@ -69,102 +68,94 @@ public class OrderDaoJdbc implements OrderDao {
 
     @Override
     public Order findOpenByUserId(int userId) {
-
         Order order = null;
-
         String query = "SELECT o.id order_id," +
-                       "       o.user_id," +
-                       "       o.closed_date," +
-                       "       o.status order_status," +
-                       "       o.log_filename orderlog_filename," +
-                       "       u.name user_name," +
-                       "       u.phone_number," +
-                       "       u.email," +
-                       "       l.product_id," +
-                       "       l.quantity," +
-                       "       l.actual_price," +
-                       "       l.currency," +
-                       "       p.name product_name," +
-                       "       p.image_filename," +
-                       "       COALESCE(o.billing_country, u.billing_country) billing_country," +
-                       "       COALESCE(o.billing_city, u.billing_city) billing_city," +
-                       "       COALESCE(o.billing_zip, u.billing_zip) billing_zip," +
-                       "       COALESCE(o.billing_address, u.billing_address) billing_address," +
-                       "       COALESCE(o.shipping_country, u.shipping_country) shipping_country," +
-                       "       COALESCE(o.shipping_city, u.shipping_city) shipping_city," +
-                       "       COALESCE(o.shipping_zip, u.shipping_zip) shipping_zip," +
-                       "       COALESCE(o.shipping_address, u.shipping_address) shipping_address " +
-                       "FROM orders o " +
-                       "JOIN users u ON u.id = o.user_id " +
-                       "JOIN lineitems l ON o.id = l.order_id " +
-                       "JOIN products p ON p.id = l.Product_id " +
-                       "WHERE o.user_id = ? AND o.status != 'paid' AND o.deleted != 1;";
-
+                "       o.user_id," +
+                "       o.closed_date," +
+                "       o.status order_status," +
+                "       o.log_filename orderlog_filename," +
+                "       u.name user_name," +
+                "       u.phone_number," +
+                "       u.email," +
+                "       l.product_id," +
+                "       l.quantity," +
+                "       l.actual_price," +
+                "       l.currency," +
+                "       p.name product_name," +
+                "       p.image_filename," +
+                "       COALESCE(o.billing_country, u.billing_country) billing_country," +
+                "       COALESCE(o.billing_city, u.billing_city) billing_city," +
+                "       COALESCE(o.billing_zip, u.billing_zip) billing_zip," +
+                "       COALESCE(o.billing_address, u.billing_address) billing_address," +
+                "       COALESCE(o.shipping_country, u.shipping_country) shipping_country," +
+                "       COALESCE(o.shipping_city, u.shipping_city) shipping_city," +
+                "       COALESCE(o.shipping_zip, u.shipping_zip) shipping_zip," +
+                "       COALESCE(o.shipping_address, u.shipping_address) shipping_address " +
+                "FROM orders o " +
+                "JOIN users u ON u.id = o.user_id " +
+                "JOIN lineitems l ON o.id = l.order_id " +
+                "JOIN products p ON p.id = l.Product_id " +
+                "WHERE o.user_id = ? AND o.status != 'paid' AND o.deleted != 1;";
         try (DB db = new DB();
              PreparedStatement stmt = db.getPreparedStatement(query.trim())
         ) {
             stmt.setInt(1, userId);
             ResultSet resultSet = stmt.executeQuery();
-
-            if(resultSet != null) {
-                List<LineItem> items = new ArrayList<>();
-                float totalPrice = 0;
-                Status status;
-
-                while (resultSet.next()) {
-
-                    int quantity = resultSet.getInt("quantity");
-                    float actual_price = resultSet.getFloat("actual_price");
-                    totalPrice += quantity * actual_price;
-
-                    items.add(new LineItem(
+            List<LineItem> items = new ArrayList<>();
+            float totalPrice = 0;
+            Status status;
+            while (resultSet.next()) {
+                int quantity = resultSet.getInt("quantity");
+                float actual_price = resultSet.getFloat("actual_price");
+                totalPrice += quantity * actual_price;
+                items.add(new LineItem(
                         resultSet.getInt("product_id"),
                         resultSet.getString("product_name"),
                         resultSet.getString("image_filename"),
                         quantity,
                         actual_price
-                    ));
+                ));
+                if (resultSet.last()) {
+                    switch (resultSet.getString("order_status")) {
+                        case "reviewed":
+                            status = Status.REVIEWED;
+                            break;
+                        case "checked":
+                            status = Status.CHECKEDOUT;
+                            break;
+                        case "paid":
+                            status = Status.PAID;
+                            break;
+                        default:
+                            status = Status.NEW;
+                            break;
+                    }
+                    order = new Order(
+                            resultSet.getInt("order_id"),
+                            userId,
+                            status,
+                            items,
+                            resultSet.getDate("closed_date"),
+                            totalPrice,
+                            resultSet.getString("user_name"),
+                            resultSet.getString("email"),
+                            resultSet.getString("phone_number"),
+                            resultSet.getString("billing_country"),
+                            resultSet.getString("billing_city"),
+                            resultSet.getString("billing_zip"),
+                            resultSet.getString("billing_address"),
+                            resultSet.getString("shipping_country"),
+                            resultSet.getString("shipping_city"),
+                            resultSet.getString("shipping_zip"),
+                            resultSet.getString("shipping_address"),
+                            resultSet.getString("orderlog_filename")
+                    );
                 }
-
-                switch (resultSet.getString("order_status")) {
-                    case "reviewed":
-                        status = Status.REVIEWED;
-                        break;
-                    case "checked":
-                        status = Status.CHECKEDOUT;
-                        break;
-                    case "paid":
-                        status = Status.PAID;
-                        break;
-                    default:
-                        status = Status.NEW;
-                }
-
-                order = new Order(
-                        resultSet.getInt("order_id"),
-                        resultSet.getInt("user_id"),
-                        status,
-                        items,
-                        resultSet.getDate("closed_date"),
-                        totalPrice,
-                        resultSet.getString("user_name"),
-                        resultSet.getString("email"),
-                        resultSet.getString("phone_number"),
-                        resultSet.getString("billing_country"),
-                        resultSet.getString("billing_city"),
-                        resultSet.getString("billing_zip"),
-                        resultSet.getString("billing_address"),
-                        resultSet.getString("shipping_country"),
-                        resultSet.getString("shipping_city"),
-                        resultSet.getString("shipping_zip"),
-                        resultSet.getString("shipping_address"),
-                        resultSet.getString("orderlog_filename")
-                        );
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
+        System.out.println(order);
         return order;
     }
 
@@ -211,4 +202,40 @@ public class OrderDaoJdbc implements OrderDao {
         }
     }*/
 
+    @Override
+    public void setStatus(Order order) {
+        String query = "UPDATE orders SET status = ? WHERE id = ?;";
+
+        String status;
+        switch (order.getStatus()) {
+            case REVIEWED:
+                status = "reviewed";
+                break;
+            case CHECKEDOUT:
+                status = "checked";
+                break;
+            case PAID:
+                status = "paid";
+                break;
+            default:
+                status = null;
+                break;
+        }
+
+        try (DB db = new DB();
+             PreparedStatement stmt = db.getPreparedStatement(query)
+        ) {
+            stmt.setString(1, status);
+            stmt.setInt(2, order.getId());
+
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0){
+                System.out.println("Order status updated in database to " + order.getStatus());
+            } else {
+                System.out.println("Order status update failed.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

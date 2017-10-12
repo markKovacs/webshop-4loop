@@ -55,7 +55,7 @@ public class Order {
     }
 
     public String addToCart(int productId, int quantity) {
-        Product product = ProductDaoMem.getInstance().find(productId);
+        Product product = DaoFactory.getProductDao().find(productId);
 
         if (product == null || quantity < 1 || quantity > 99) {
             return "invalid_params";
@@ -63,7 +63,7 @@ public class Order {
 
         LineItem lineItemToAdd = findLineItem(product);
         if (lineItemToAdd == null) {
-            lineItemToAdd = new LineItem(product, quantity, product.getDefaultPrice());
+            lineItemToAdd = new LineItem(productId, product.getName(), product.getImageFileName(), quantity, product.getDefaultPrice());
             items.add(lineItemToAdd);
             updateTotal();
             return "new_item";
@@ -76,7 +76,7 @@ public class Order {
     }
 
     public float changeProductQuantity(int productId, int quantity) {
-        Product product = ProductDaoMem.getInstance().find(productId);
+        Product product = DaoFactory.getProductDao().find(productId);
         if (product == null || quantity < 0 || quantity > 99) {
             return -1f;
         }
@@ -99,12 +99,13 @@ public class Order {
     }
 
     public void removeLineItem(int productId) {
-        LineItem foundLineItem = items.stream().filter(i -> i.getProduct().getId() == productId).findFirst().orElse(null);
+        LineItem foundLineItem = items.stream().filter(i -> i.getProductId() == productId).findFirst().orElse(null);
         items.remove(foundLineItem);
     }
 
     private LineItem findLineItem(Product product) {
-        return items.stream().filter(t -> t.getProduct().equals(product)).findFirst().orElse(null);
+        return items.stream().filter(t -> DaoFactory.getProductDao().find(t.getProductId())
+                .equals(product)).findFirst().orElse(null);
     }
 
     public int countCartItems() {
@@ -215,6 +216,10 @@ public class Order {
 
     public String getShippingAddress() {
         return shippingAddress;
+    }
+
+    public Date getClosedDate() {
+        return closedDate;
     }
 
     @Override

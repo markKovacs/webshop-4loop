@@ -82,6 +82,7 @@ public class UserDaoJdbc implements UserDao {
         String query = "SELECT id, name, email, password, phone_number, " +
                 "billing_country, billing_city, billing_zip, billing_address, " +
                 "shipping_country, shipping_city, shipping_zip, shipping_address " +
+                "FROM users " +
                 "WHERE id = ?;";
         try (DB db = new DB();
              PreparedStatement stmt = db.getPreparedStatement(query)
@@ -118,6 +119,7 @@ public class UserDaoJdbc implements UserDao {
         String query = "SELECT id, name, email, password, phone_number, " +
                 "billing_country, billing_city, billing_zip, billing_address, " +
                 "shipping_country, shipping_city, shipping_zip, shipping_address " +
+                "FROM users " +
                 "WHERE email = ?;";
         try (DB db = new DB();
              PreparedStatement stmt = db.getPreparedStatement(query)

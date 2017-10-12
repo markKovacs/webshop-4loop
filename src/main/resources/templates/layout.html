@@ -54,12 +54,15 @@
                 <th:block>
                     <span class="col-xs-8 text-left">
                         <!-- NAVBAR -->
-                        <th:block layout:fragment="navbar"></th:block>
-                        <th:block th:with="loggedIn=${session.attribute('user_id')}">
+                        <a class="btn" th:href="@{~/}">Products</a>
+                        <th:block th:with="loggedIn=${loggedIn}">
                             <th:block th:if="${loggedIn}">
+                                <a class="btn" th:href="@{~/cart}">Cart(<span id="cart-item-count">[[${cartItems}]]</span>)</a>
                                 <a th:href="@{~/history}" class="btn">History</a>
                                 <a th:href="@{~/profile}" class="btn">Profile</a>
-                                <a th:href="@{~/logout}" class="btn">Logout</a>
+                                <form th:action="@{~/logout}" method="POST" class="btn">
+                                    <input type="submit" value="Logout">
+                                </form>
                             </th:block>
                             <th:block th:unless="${loggedIn}">
                                 <a th:href="@{~/register}" class="btn">Register</a>

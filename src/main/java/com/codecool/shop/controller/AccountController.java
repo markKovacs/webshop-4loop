@@ -2,8 +2,6 @@ package com.codecool.shop.controller;
 
 import com.codecool.shop.Main;
 import com.codecool.shop.dao.DaoFactory;
-import com.codecool.shop.dao.OrderDao;
-import com.codecool.shop.dao.implementation.jdbc.OrderDaoJdbc;
 import com.codecool.shop.order.InputField;
 import com.codecool.shop.order.LineItem;
 import com.codecool.shop.order.Order;
@@ -25,6 +23,7 @@ public class AccountController {
         Map<String, Object> params = new HashMap<>();
         params.put("user", new HashMap<>()); // required to be passed in to register.html
         params.put("balance", Main.balanceInUSD);
+        params.put("loggedIn", req.session().attribute("user_id") != null);
 
         return new ModelAndView(params, "register");
     }
@@ -33,6 +32,7 @@ public class AccountController {
 
         Map<String, Object> params = new HashMap<>();
         params.put("balance", Main.balanceInUSD);
+        params.put("loggedIn", req.session().attribute("user_id") != null);
 
         return new ModelAndView(params, "login");
     }
@@ -45,6 +45,7 @@ public class AccountController {
         Map<String, Object> params = new HashMap<>();
         params.put("orders", orders);
         params.put("balance", Main.balanceInUSD);
+        params.put("loggedIn", req.session().attribute("user_id") != null);
 
         return new ModelAndView(params, "history");
     }
@@ -56,6 +57,10 @@ public class AccountController {
         Map<String, Object> params = new HashMap<>();
         params.put("user", getUserData(userId));
         params.put("balance", Main.balanceInUSD);
+        params.put("loggedIn", req.session().attribute("user_id") != null);
+        if (req.queryParams("edited") != null) {
+            params.put("success", new ArrayList<>(Arrays.asList("Profile successfully edited.")));
+        }
 
         return new ModelAndView(params, "profile");
     }
@@ -69,18 +74,18 @@ public class AccountController {
         if (errorMessages.size() > 0) {
             Map<String, Object> params = new HashMap<>();
             params.put("balance", Main.balanceInUSD);
-            params.put("error-messages", errorMessages);
+            params.put("errors", errorMessages);
             params.put("user", inputData);
             return new ModelAndView(params, "register");
         }
 
         String hashedPasswordAndSalt;
         try {
-            hashedPasswordAndSalt = PasswordStorage.createHash(inputData.get("password"));
+            hashedPasswordAndSalt = PasswordStorage.createHash(inputData.get("password1"));
         } catch (PasswordStorage.CannotPerformOperationException e) {
             Map<String, Object> params = new HashMap<>();
             params.put("balance", Main.balanceInUSD);
-            params.put("error-messages", new ArrayList<>(Arrays.asList("Cannot save account, try again later.")));
+            params.put("errors", new ArrayList<>(Arrays.asList("Cannot save account, try again later.")));
             params.put("user", inputData);
             return new ModelAndView(params, "register");
         }
@@ -108,7 +113,7 @@ public class AccountController {
         if (userId == -1) {
             Map<String, Object> params = new HashMap<>();
             params.put("balance", Main.balanceInUSD);
-            params.put("error-messages", new ArrayList<>(Arrays.asList("Invalid credentials.")));
+            params.put("errors", new ArrayList<>(Arrays.asList("Invalid credentials.")));
             return new ModelAndView(params, "login");
         }
 
@@ -134,19 +139,19 @@ public class AccountController {
         if (errorMessages.size() > 0) {
             Map<String, Object> params = new HashMap<>();
             params.put("balance", Main.balanceInUSD);
-            params.put("error-messages", errorMessages);
+            params.put("errors", errorMessages);
             params.put("user", profileInput);
             return new ModelAndView(params, "profile");
         }
 
-        res.redirect("/profile");
+        res.redirect("/profile?edited=successful");
         return null;
     }
 
     // ACCESSORY METHODS
 
-    private static int getUserIdFromSession(Request req) {
-        return Integer.parseInt(req.session().attribute("user_id"));
+    private static Integer getUserIdFromSession(Request req) {
+        return req.session().attribute("user_id");
     }
 
     private static Map<String, String> getUserData(int userId) {
@@ -173,8 +178,12 @@ public class AccountController {
         // Or simply return orderDao.getAllPaidOrders(userId)... will see!
 
         List<Order> ordersData = DaoFactory.getOrderDao().getAllPaid(userId); // or just get all and then stream.filter?
-
         List<HashMap<String, Object>> orders = new ArrayList<>();
+
+        if (ordersData == null || ordersData.size() < 1) {
+            return orders;
+        }
+
         for (Order o : ordersData) {
             HashMap<String, Object> order = new HashMap<>();
             order.put("id", o.getId());
