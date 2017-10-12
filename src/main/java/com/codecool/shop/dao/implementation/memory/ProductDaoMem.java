@@ -56,4 +56,9 @@ public class ProductDaoMem implements ProductDao {
     public List<Product> getBy(ProductCategory productCategory) {
         return DATA.stream().filter(product -> product.getProductCategory().equals(productCategory)).collect(Collectors.toList());
     }
+
+    @Override
+    public void clearAll() {
+        getAll().clear();
+    }
 }

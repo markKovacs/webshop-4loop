@@ -102,4 +102,20 @@ public class SupplierDaoJdbc implements SupplierDao {
 
         return null;
     }
+
+    @Override
+    public void clearAll() {
+        try (DB db = new DB();
+             PreparedStatement stmt = db.getPreparedStatement("DELETE FROM suppliers;")
+        ){
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0){
+                System.out.println("Suppliers deleted.");
+            } else {
+                System.out.println("Deletion failed.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

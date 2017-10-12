@@ -22,6 +22,9 @@ public class Main {
 
     public static void main(String[] args) {
 
+        // DATABASE
+        Config.USE_PRODUCTION_DB = true;
+
         // SERVER SETTINGS
         exception(Exception.class, (e, req, res) -> e.printStackTrace());
         staticFileLocation("/public");

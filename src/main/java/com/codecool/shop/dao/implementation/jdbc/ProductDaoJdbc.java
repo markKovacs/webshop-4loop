@@ -262,5 +262,20 @@ public class ProductDaoJdbc implements ProductDao {
         return null;
     }
 
+    @Override
+    public void clearAll() {
+        try (DB db = new DB();
+             PreparedStatement stmt = db.getPreparedStatement("DELETE FROM products;")
+        ){
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0){
+                System.out.println("Products deleted.");
+            } else {
+                System.out.println("Deletion failed.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 }

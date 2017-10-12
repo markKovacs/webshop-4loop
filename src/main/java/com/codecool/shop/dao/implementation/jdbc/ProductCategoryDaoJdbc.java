@@ -96,4 +96,20 @@ public class ProductCategoryDaoJdbc implements ProductCategoryDao {
 
         return null;
     }
+
+    @Override
+    public void clearAll() {
+        try (DB db = new DB();
+             PreparedStatement stmt = db.getPreparedStatement("DELETE FROM categories;")
+        ){
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0){
+                System.out.println("Categories deleted.");
+            } else {
+                System.out.println("Deletion failed.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
