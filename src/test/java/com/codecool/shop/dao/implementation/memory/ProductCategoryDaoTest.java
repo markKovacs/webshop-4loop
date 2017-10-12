@@ -13,7 +13,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ProductCategoryDaoMemTest {
+class ProductCategoryDaoTest {
 
     private ProductCategoryDao dao;
     private ProductCategory productCategory;

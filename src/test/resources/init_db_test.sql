@@ -5,7 +5,7 @@
 -- Dumped from database version 9.5.8
 -- Dumped by pg_dump version 9.5.8
 
--- Started on 2017-10-12 11:15:19 CEST
+-- Started on 2017-10-13 00:58:00 CEST
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -137,7 +137,10 @@ CREATE TABLE orders (
     shipping_zip character varying(20),
     shipping_address character varying(255),
     created timestamp without time zone DEFAULT now() NOT NULL,
-    modified timestamp without time zone DEFAULT now() NOT NULL
+    modified timestamp without time zone DEFAULT now() NOT NULL,
+    billing_name character varying(255),
+    billing_phone character varying(50),
+    billing_email character varying(255)
 );
 
 
@@ -364,11 +367,6 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regcl
 -- Data for Name: categories; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO categories (id, name, department, description, created, modified) VALUES (1, 'Famous Artifacts', 'Article', 'Tangible memories from popular musicians, athletes etc.', '2017-10-09 19:37:59.356189', '2017-10-09 19:37:59.356189');
-INSERT INTO categories (id, name, department, description, created, modified) VALUES (2, 'Historical', 'Article', 'Tangible memories from emperors, generals etc.', '2017-10-09 19:37:59.356189', '2017-10-09 19:37:59.356189');
-INSERT INTO categories (id, name, department, description, created, modified) VALUES (3, 'Movies', 'Entertainment', 'Vehicles, weapons and other famous objects from great movies.', '2017-10-09 19:37:59.356189', '2017-10-09 19:37:59.356189');
-
-
 --
 -- TOC entry 2235 (class 0 OID 0)
 -- Dependencies: 181
@@ -392,27 +390,6 @@ SELECT pg_catalog.setval('categories_id_seq', 1, false);
 -- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (21, 1, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 11:07:01.361802', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (14, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:59:08.649291', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (13, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:57:46.937634', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (12, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:57:36.737797', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (8, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:55:14.372658', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (1, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:47:51.146097', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (2, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:49:12.728404', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (3, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:49:59.625156', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (4, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:50:47.723015', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (5, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:51:55.312794', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (6, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:52:04.790464', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (7, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:52:46.289449', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (9, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:55:55.934394', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (10, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:56:16.67315', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (11, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:56:38.378919', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (15, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 11:04:22.802027', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (16, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 11:05:18.624698', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (17, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 11:05:20.44815', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (18, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 11:05:27.129695', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (19, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 11:06:18.326433', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (20, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 11:06:21.730328', '2017-10-12 11:07:01.361802');
 
 
 --
@@ -421,7 +398,7 @@ INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, bil
 -- Name: orders_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('orders_id_seq', 21, true);
+SELECT pg_catalog.setval('orders_id_seq', 30, true);
 
 
 --
@@ -439,38 +416,6 @@ SELECT pg_catalog.setval('orders_user_id_seq', 1, false);
 -- Data for Name: products; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (1, 'Luke''s Lightsaber', 'Fantastic price. Good ecosystem and controls. Helpful technical support.', 3, 5, 49.90, 'USD', 'lightsaber.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (2, 'Bud Spencer''s pan', 'Old tool from az old friend. Old tool from az old friend.', 3, 2, 20.00, 'USD', 'bud_pan.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (3, 'The last soap from Fight Club', 'Be clean. Be a fighter. Be a weapon.', 3, 13, 25.00, 'USD', 'soap.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (4, 'The Ring', 'One Ring to rule them all, One Ring to find them, One Ring to bring them all and in the darkness bind them.', 3, 6, 3000.00, 'USD', 'ring.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (5, 'Carbonite Han Solo', 'This cold piece of carbonite was Jabba''s favorite knick-knackery.', 3, 5, 500.00, 'USD', 'hansolo.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (6, 'Jockey Ewing''s whiskey glass', 'A glass cup from the famous oil tycoon.', 3, 1, 200.00, 'USD', 'whiskeycup.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (7, 'Chewbacca''s crossbow', 'Dependable weapon from a good guy.', 3, 5, 89.00, 'USD', 'chewbaccabow.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (8, 'Terminator''s endoskeleton', 'Your new personal coach and trainer', 3, 7, 2000.00, 'USD', 'terminator.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (9, 'AT-ST', 'Good old vehicle from the dark side.', 3, 5, 479.00, 'USD', 'atst.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (10, 'The Helmet of Darth Vader', 'Black hat from the dark side.', 3, 5, 500.00, 'USD', 'vaderhelmet.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (11, 'R2D2', 'Faithful personal assistant. Faithful personal assistant.', 3, 5, 400.00, 'USD', 'r2d2.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (12, 'Millennium Falcon', 'Good vehicle instead of a dull car.', 3, 5, 1500.00, 'USD', 'falcon.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (13, 'Titanic Wreck', 'A sad wreck in the deep sea. A sad wreck in the deep sea. A sad wreck in the deep sea.', 2, 12, 10000.00, 'USD', 'titanic.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (14, 'The Dagger of the Killers of Iulius Caesar', 'This weapon was used by Brutus too. This weapon was used by Brutus too.', 2, 11, 89.00, 'USD', 'dagger.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (15, 'Death Star', 'Your new flat. Your new flat. Your new flat. Your new flat.', 3, 5, 4000.00, 'USD', 'deathstar.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (16, 'The Holy Right', 'The blissful hand of King Saint Stephen. The blissful hand of King Saint Stephen.', 2, 10, 3000.00, 'USD', 'holyright.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (17, 'The Horse of Attila the Hun', 'Original and entire skeleton,  it has every bones.', 2, 10, 3000.00, 'USD', 'attila.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (18, 'The Holy Crown', 'Crown jewel from the ancient times of Hungary.', 2, 10, 3000.00, 'USD', 'crown.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (19, 'Elvis Jacket', 'Elvis went on the stage in this jacket many times.', 1, 3, 1230.00, 'USD', 'elvis.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (20, 'Donald Trump''s necktie', 'Trump wore this necktie when he discussed some problems with Kim Jong-un.', 1, 8, 90.00, 'USD', 'trump.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (21, 'Anita Gorbicz''s first ball', 'Gorbicz played her first handball match with this ball. She was only 6 years old.', 1, 9, 200.00, 'USD', 'gorbicz.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (22, 'Neymar''s shoes', 'Neymar scored 4 goals against Mozambique in this special sport equipment.', 1, 9, 170.00, 'USD', 'neymar.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (23, 'Mohamed Ali''s boxing gloves', 'Ali won against a lot of opponents in this gloves.', 1, 9, 800.00, 'USD', 'ali.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (24, 'Zsolt Erdei''s boxing gloves', 'Erdei won against a lot of opponents in this gloves.', 1, 9, 100.00, 'USD', 'erdei.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (25, 'Federer''s tennis racket', 'Federer won his last US Open with this racket.', 1, 9, 200.00, 'USD', 'federer.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (26, 'The piano of John Lennon', 'Lennon played Imagine on this instrument.', 1, 3, 500.00, 'USD', 'lennon.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (27, 'The shirt of Ferenc Puskas', 'Puskas scored 3 goals against England in this jersey.', 1, 9, 820.00, 'USD', 'puskas.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (28, 'Mona Lisa', 'Leonardo''s original painting, it''s a very exclusive offer.', 2, 4, 3000.00, 'USD', 'monalisa.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (29, 'Sebastian Vettel''s helmet', 'Vettel won 4 Formula-1 GP with this helmet.', 1, 9, 330.00, 'USD', 'vettel.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-INSERT INTO products (id, name, description, category_id, supplier_id, price, currency, image_filename, created, modified) VALUES (30, 'Brian May''s Red Special', 'A guitar made by the famous member of Queen, he played in this instrument for example We Will Rock You.', 1, 3, 1000.00, 'USD', 'brianmay.jpg', '2017-10-09 20:34:45.333209', '2017-10-09 20:34:45.333209');
-
-
 --
 -- TOC entry 2238 (class 0 OID 0)
 -- Dependencies: 185
@@ -485,21 +430,6 @@ SELECT pg_catalog.setval('products_id_seq', 1, false);
 -- Dependencies: 184
 -- Data for Name: suppliers; Type: TABLE DATA; Schema: public; Owner: -
 --
-
-INSERT INTO suppliers (id, name, description, created, modified) VALUES (1, 'CBS', ' Television series', '2017-10-09 20:01:13.424155', '2017-10-09 20:01:13.424155');
-INSERT INTO suppliers (id, name, description, created, modified) VALUES (2, 'Columbia Pictures', ' Movie making', '2017-10-09 20:01:13.424155', '2017-10-09 20:01:13.424155');
-INSERT INTO suppliers (id, name, description, created, modified) VALUES (3, 'EMI Music', ' CD and LP publishing etc.', '2017-10-09 20:01:13.424155', '2017-10-09 20:01:13.424155');
-INSERT INTO suppliers (id, name, description, created, modified) VALUES (4, 'Louvre', ' Museum in Paris, France', '2017-10-09 20:01:13.424155', '2017-10-09 20:01:13.424155');
-INSERT INTO suppliers (id, name, description, created, modified) VALUES (5, 'Lucasarts', ' Movie and dream making', '2017-10-09 20:01:13.424155', '2017-10-09 20:01:13.424155');
-INSERT INTO suppliers (id, name, description, created, modified) VALUES (6, 'New Line Cinema', ' Movie making', '2017-10-09 20:01:13.424155', '2017-10-09 20:01:13.424155');
-INSERT INTO suppliers (id, name, description, created, modified) VALUES (7, 'Orion Pictures', ' Movie making, change the future', '2017-10-09 20:01:13.424155', '2017-10-09 20:01:13.424155');
-INSERT INTO suppliers (id, name, description, created, modified) VALUES (8, 'Pentagon', ' The headquarters of the US Department of Defense', '2017-10-09 20:01:13.424155', '2017-10-09 20:01:13.424155');
-INSERT INTO suppliers (id, name, description, created, modified) VALUES (9, 'Sport Museum', ' Sport equipment', '2017-10-09 20:01:13.424155', '2017-10-09 20:01:13.424155');
-INSERT INTO suppliers (id, name, description, created, modified) VALUES (10, 'State of Hungary', ' Our beautiful homeland', '2017-10-09 20:01:13.424155', '2017-10-09 20:01:13.424155');
-INSERT INTO suppliers (id, name, description, created, modified) VALUES (11, 'Uffizi', ' Museum in Italy', '2017-10-09 20:01:13.424155', '2017-10-09 20:01:13.424155');
-INSERT INTO suppliers (id, name, description, created, modified) VALUES (12, 'White Star Line', ' Ship building', '2017-10-09 20:01:13.424155', '2017-10-09 20:01:13.424155');
-INSERT INTO suppliers (id, name, description, created, modified) VALUES (13, '20th Century Fox', ' Movie making', '2017-10-09 20:01:13.424155', '2017-10-09 20:01:13.424155');
-
 
 --
 -- TOC entry 2239 (class 0 OID 0)
@@ -516,7 +446,6 @@ SELECT pg_catalog.setval('suppliers_id_seq', 1, false);
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO users (id, name, phone_number, email, password, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, active, created, modified) VALUES (1, 'TESZT Elek', NULL, 'fnejkfnaek@fjewijf.com', 'fmkfneqjf', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2017-10-12 10:40:20.283828', '2017-10-12 10:40:20.283828');
 
 
 --
@@ -525,7 +454,7 @@ INSERT INTO users (id, name, phone_number, email, password, billing_country, bil
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('users_id_seq', 1, true);
+SELECT pg_catalog.setval('users_id_seq', 2, true);
 
 
 --
@@ -658,7 +587,7 @@ ALTER TABLE ONLY products
     ADD CONSTRAINT products_supplier_id_fk FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
--- Completed on 2017-10-12 11:15:19 CEST
+-- Completed on 2017-10-13 00:58:01 CEST
 
 --
 -- PostgreSQL database dump complete

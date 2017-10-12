@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Currency;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ProductDaoMemTest {
+public class ProductDaoTest {
 
     private ProductDao dao;
     private ProductCategory productCategory;

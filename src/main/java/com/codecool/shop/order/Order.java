@@ -151,34 +151,34 @@ public class Order {
 
     public boolean setCheckoutInfo(Map<String, String> inputValues) {
         if (allInputValuesAreValid(inputValues)) {
-            this.fullName = inputValues.get("username");
+            this.fullName = inputValues.get("fullName");
             this.email = inputValues.get("email");
             this.phone = inputValues.get("phone");
-            this.billingCountry = inputValues.get("billcountry");
-            this.billingCity = inputValues.get("billcity");
-            this.billingZipCode = inputValues.get("billzip");
-            this.billingAddress = inputValues.get("billaddress");
-            this.shippingCountry = inputValues.get("shipcountry");
-            this.shippingCity = inputValues.get("shipcity");
-            this.shippingZipCode = inputValues.get("shipzip");
-            this.shippingAddress = inputValues.get("shipaddress");
+            this.billingCountry = inputValues.get("billingCountry");
+            this.billingCity = inputValues.get("billingCity");
+            this.billingZipCode = inputValues.get("billingZipCode");
+            this.billingAddress = inputValues.get("billingAddress");
+            this.shippingCountry = inputValues.get("shippingCountry");
+            this.shippingCity = inputValues.get("shippingCity");
+            this.shippingZipCode = inputValues.get("shippingZipCode");
+            this.shippingAddress = inputValues.get("shippingAddress");
             return true;
         }
         return false;
     }
 
     private static boolean allInputValuesAreValid(Map<String, String> inputValues) {
-        if (InputField.FULL_NAME.validate(inputValues.get("username")) &&
+        if (InputField.FULL_NAME.validate(inputValues.get("fullName")) &&
                 InputField.EMAIL.validate(inputValues.get("email")) &&
                 InputField.PHONE.validate(inputValues.get("phone")) &&
-                InputField.COUNTRY.validate(inputValues.get("billcountry")) &&
-                InputField.CITY.validate(inputValues.get("billcity")) &&
-                InputField.ZIP_CODE.validate(inputValues.get("billzip")) &&
-                InputField.ADDRESS.validate(inputValues.get("billaddress")) &&
-                InputField.COUNTRY.validate(inputValues.get("shipcountry")) &&
-                InputField.CITY.validate(inputValues.get("shipcity")) &&
-                InputField.ZIP_CODE.validate(inputValues.get("shipzip")) &&
-                InputField.ADDRESS.validate(inputValues.get("shipaddress"))) {
+                InputField.COUNTRY.validate(inputValues.get("billingCountry")) &&
+                InputField.CITY.validate(inputValues.get("billingCity")) &&
+                InputField.ZIP_CODE.validate(inputValues.get("billingZipCode")) &&
+                InputField.ADDRESS.validate(inputValues.get("billingAddress")) &&
+                InputField.COUNTRY.validate(inputValues.get("shippingCountry")) &&
+                InputField.CITY.validate(inputValues.get("shippingCity")) &&
+                InputField.ZIP_CODE.validate(inputValues.get("shippingZipCode")) &&
+                InputField.ADDRESS.validate(inputValues.get("shippingAddress"))) {
             return true;
         }
         return false;
