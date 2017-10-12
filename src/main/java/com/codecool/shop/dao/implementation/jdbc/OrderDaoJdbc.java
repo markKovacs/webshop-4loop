@@ -94,10 +94,10 @@ public class OrderDaoJdbc implements OrderDao {
                        "       COALESCE(o.shipping_zip, u.shipping_zip) shipping_zip," +
                        "       COALESCE(o.shipping_address, u.shipping_address) shipping_address " +
                        "FROM orders o " +
-                       "JOIN users u ON u.id = o.user_id " +
-                       "JOIN lineitems l ON o.id = l.order_id " +
-                       "JOIN products p ON p.id = l.Product_id " +
-                       "WHERE o.user_id = ? AND o.status != 'paid' AND o.deleted != 1;";
+                       "LEFT JOIN users u ON u.id = o.user_id " +
+                       "LEFT JOIN lineitems l ON o.id = l.order_id " +
+                       "LEFT JOIN products p ON p.id = l.product_id " +
+                       "WHERE o.user_id = ? AND o.status IS NULL OR o.status IN ('reviewed', 'checked') AND o.deleted != 1;";
 
         try (DB db = new DB();
              PreparedStatement stmt = db.getPreparedStatement(query.trim())
@@ -125,7 +125,11 @@ public class OrderDaoJdbc implements OrderDao {
                     Currency.getInstance(resultSet.getString("currency"))
                 ));
 
-                if (resultSet.last()) {
+                System.out.println("STARTTTTTTTT");
+                items.forEach(System.out::println);
+                System.out.println("ENDDDDDDDDDDd");
+
+                if (resultSet.isLast()) {
 
                     switch (resultSet.getString("order_status")) {
                         case "reviewed":
@@ -291,8 +295,8 @@ public class OrderDaoJdbc implements OrderDao {
 
     public void addLineItemToCart(LineItem lineItem, Order order) {
 
-        String query = "INSERT INTO lineitems (product_id, order_id, quantity, actual_price, currency, product_name, image_filename) " +
-                       "VALUES (?, ?, ?, ?, ?, ?, ?);";
+        String query = "INSERT INTO lineitems (product_id, order_id, quantity, actual_price, currency) " +
+                       "VALUES (?, ?, ?, ?, ?);";
 
         try (DB db = new DB();
              PreparedStatement stmt = db.getPreparedStatement(query)
@@ -302,8 +306,6 @@ public class OrderDaoJdbc implements OrderDao {
             stmt.setInt(3, lineItem.getQuantity());
             stmt.setFloat(4, lineItem.getActualPrice());
             stmt.setString(5, lineItem.getCurrency().toString());
-            stmt.setString(6, lineItem.getProductName());
-            stmt.setString(7, lineItem.getProductImage());
 
             int affectedRows = stmt.executeUpdate();
 

@@ -38,8 +38,9 @@ public class ProductController {
             products = productDao.getBy(supplier);
             selected = supplier.getName();
         } else {
-            products = productDao.getBy(Config.DEFAULT_CATEGORY);
-            selected = Config.DEFAULT_CATEGORY.getName();
+            ProductCategory defaultCategory = DaoFactory.getProductCategoryDao().find(1);
+            products = productDao.getBy(defaultCategory);
+            selected = defaultCategory.getName();
         }
 
         Map<String, Object> params = new HashMap<>();

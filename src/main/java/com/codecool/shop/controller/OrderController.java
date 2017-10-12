@@ -38,6 +38,7 @@ public class OrderController {
 
         if (order == null) {
             order = DaoFactory.getOrderDao().createNewOrder(userId);
+            System.out.println("NEW ORDERRRRRRRRRRRRRRR: \n" + order);
         }
 
 

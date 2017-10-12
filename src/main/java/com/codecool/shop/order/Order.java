@@ -121,10 +121,12 @@ public class Order {
         items.remove(foundLineItem);
     }
 
-    /*private LineItem findLineItem(Product product) {
+
+    // TODO: COMMENT OUT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    private LineItem findLineItem(Product product) {
         return items.stream().filter(t -> DaoFactory.getProductDao().find(t.getProductId())
                 .equals(product)).findFirst().orElse(null);
-    }*/
+    }
 
 
     public int countCartItems() {
