@@ -133,13 +133,9 @@ public class OrderController {
         Order order = OrderUtils.setOrderStatus(req);
         int userId = req.session().attribute("user_id");
 
-        int cartItems = 0;
-        if (order != null) {
-            cartItems = order.countCartItems();
-        }
+        int cartItems = order != null ? order.countCartItems() : 0;
 
         User user = DaoFactory.getUserDao().find(userId);
-        // TODO: template check if user object and keys in template match each other!!!
 
         Map<String, Object> params = new HashMap<>();
         params.put("user", user);
@@ -155,11 +151,7 @@ public class OrderController {
 
         int userId = req.session().attribute("user_id");
         Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
-
-        int cartItems = 0;
-        if (order != null) {
-            cartItems = order.countCartItems();
-        }
+        int cartItems = order != null ? order.countCartItems() : 0;
 
         if (errorMessages.size() > 0) {
             Map<String, Object> params = new HashMap<>();
@@ -181,9 +173,7 @@ public class OrderController {
     }
 
     public static ModelAndView renderPayment(Request req, Response res) {
-        setOrderStatus(req);
-        Order order = OrderUtils.getOrderFromSessionInfo(req);
-
+        Order order = setOrderStatus(req);
         Map<String, Object> params = new HashMap<>();
         params.put("order", order);
         int cartItems = order != null ? order.countCartItems() : 0;
@@ -194,7 +184,8 @@ public class OrderController {
     }
 
     public static ModelAndView renderBankPayment(Request req, Response res) {
-        Order order = OrderUtils.getOrderFromSessionInfo(req);
+        int userId = req.session().attribute("user_id");
+        Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
         int cartItems = order != null ? order.countCartItems() : 0;
 
         Map<String, Object> params = new HashMap<>();
@@ -207,7 +198,8 @@ public class OrderController {
     }
 
     public static ModelAndView renderPayPalPayment(Request req, Response res) {
-        Order order = OrderUtils.getOrderFromSessionInfo(req);
+        int userId = req.session().attribute("user_id");
+        Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
         int cartItems = order != null ? order.countCartItems() : 0;
 
         Map<String, Object> params = new HashMap<>();
@@ -220,7 +212,9 @@ public class OrderController {
     }
 
     public static ModelAndView payWithChosenMethod(Request req, Response res) {
-        Order order = OrderUtils.getOrderFromSessionInfo(req);
+        int userId = req.session().attribute("user_id");
+        Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
+
         Map<String, String> paymentData = collectPaymentInfo(req);
         String paymentType = getPaymentType(req);
 
@@ -229,6 +223,7 @@ public class OrderController {
 
         if (errorMessages.size() == 0) {
             order.setStatus(Status.PAID);
+            DaoFactory.getOrderDao().setStatus(order);
 
             Log.saveActionToOrderLog(order.getOrderLogFilename(), "paid");
             Log.saveOrderToJson(order);
@@ -239,7 +234,6 @@ public class OrderController {
             String subject = "Order Confirmation";
             Email.send(to, body, subject);
 
-            req.session().removeAttribute("order_id");
             res.redirect("/payment/success");
         } else {
             int cartItems = order != null ? order.countCartItems() : 0;
@@ -258,9 +252,14 @@ public class OrderController {
 
     public static ModelAndView renderSuccess(Request req, Response res) {
 
+        int userId = req.session().attribute("user_id");
+        Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
+        int cartItems = order != null ? order.countCartItems() : 0;
+
         Map<String, Object> params = new HashMap<>();
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
         params.put("loggedIn", req.session().attribute("user_id") != null);
+        params.put("cartItems", cartItems);
 
         return new ModelAndView(params, "success");
     }
@@ -284,17 +283,17 @@ public class OrderController {
 
     private static Map<String, String> collectCheckoutInfo(Request req) {
         Map<String, String> userData = new HashMap<>();
-        userData.put("username", req.queryParams("username"));
+        userData.put("fullName", req.queryParams("username"));
         userData.put("email", req.queryParams("email"));
         userData.put("phone", req.queryParams("phone"));
-        userData.put("billcountry", req.queryParams("bill-country"));
-        userData.put("billcity", req.queryParams("bill-city"));
-        userData.put("billzip", req.queryParams("bill-zip"));
-        userData.put("billaddress", req.queryParams("bill-address"));
-        userData.put("shipcountry", req.queryParams("ship-country"));
-        userData.put("shipcity", req.queryParams("ship-city"));
-        userData.put("shipzip", req.queryParams("ship-zip"));
-        userData.put("shipaddress", req.queryParams("ship-address"));
+        userData.put("billingCountry", req.queryParams("bill-country"));
+        userData.put("billingCity", req.queryParams("bill-city"));
+        userData.put("billingZipCode", req.queryParams("bill-zip"));
+        userData.put("billingAddress", req.queryParams("bill-address"));
+        userData.put("shippingCountry", req.queryParams("ship-country"));
+        userData.put("shippingCity", req.queryParams("ship-city"));
+        userData.put("shippingZipCode", req.queryParams("ship-zip"));
+        userData.put("shippingAddress", req.queryParams("ship-address"));
         return userData;
     }
 
@@ -309,7 +308,7 @@ public class OrderController {
 
     private static List<String> checkForInvalidInput(Map<String, String> userData) {
         List<String> errorMessages = new ArrayList<>();
-        if (!InputField.FULL_NAME.validate(userData.get("username"))) {
+        if (!InputField.FULL_NAME.validate(userData.get("fullName"))) {
             errorMessages.add("Invalid username.");
         }
         if (!InputField.EMAIL.validate(userData.get("email"))) {
@@ -318,28 +317,28 @@ public class OrderController {
         if (!InputField.PHONE.validate(userData.get("phone"))) {
             errorMessages.add("Invalid phone number");
         }
-        if (!InputField.COUNTRY.validate(userData.get("billcountry"))) {
+        if (!InputField.COUNTRY.validate(userData.get("billingCountry"))) {
             errorMessages.add("Invalid billing country");
         }
-        if (!InputField.CITY.validate(userData.get("billcity"))) {
+        if (!InputField.CITY.validate(userData.get("billingCity"))) {
             errorMessages.add("Invalid billing city");
         }
-        if (!InputField.ZIP_CODE.validate(userData.get("billzip"))) {
+        if (!InputField.ZIP_CODE.validate(userData.get("billingZipCode"))) {
             errorMessages.add("Invalid billing ZIP code");
         }
-        if (!InputField.ADDRESS.validate(userData.get("billaddress"))) {
+        if (!InputField.ADDRESS.validate(userData.get("billingAddress"))) {
             errorMessages.add("Invalid billing address");
         }
-        if (!InputField.COUNTRY.validate(userData.get("shipcountry"))) {
+        if (!InputField.COUNTRY.validate(userData.get("shippingCountry"))) {
             errorMessages.add("Invalid shipping country");
         }
-        if (!InputField.CITY.validate(userData.get("shipcity"))) {
+        if (!InputField.CITY.validate(userData.get("shippingCity"))) {
             errorMessages.add("Invalid shipping city");
         }
-        if (!InputField.ZIP_CODE.validate(userData.get("shipzip"))) {
+        if (!InputField.ZIP_CODE.validate(userData.get("shippingZipCode"))) {
             errorMessages.add("Invalid shipping ZIP code");
         }
-        if (!InputField.ADDRESS.validate(userData.get("shipaddress"))) {
+        if (!InputField.ADDRESS.validate(userData.get("shippingAddress"))) {
             errorMessages.add("Invalid shipping address");
         }
         return errorMessages;
