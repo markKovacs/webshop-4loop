@@ -107,7 +107,7 @@ public class OrderDaoJdbc implements OrderDao {
 
             List<LineItem> items = new ArrayList<>();
             float totalPrice = 0;
-            Status status;
+            Status status = null;
 
             while (resultSet.next()) {
 
@@ -125,13 +125,14 @@ public class OrderDaoJdbc implements OrderDao {
                     Currency.getInstance(resultSet.getString("currency"))
                 ));
 
-                System.out.println("STARTTTTTTTT");
-                items.forEach(System.out::println);
-                System.out.println("ENDDDDDDDDDDd");
-
                 if (resultSet.isLast()) {
 
-                    switch (resultSet.getString("order_status")) {
+                    String statusStr = resultSet.getString("order_status");
+                    if (statusStr == null) {
+                        statusStr = "new";
+                    }
+
+                    switch (statusStr) {
                         case "reviewed":
                             status = Status.REVIEWED;
                             break;
@@ -141,7 +142,7 @@ public class OrderDaoJdbc implements OrderDao {
                         case "paid":
                             status = Status.PAID;
                             break;
-                        default:
+                        case "new":
                             status = Status.NEW;
                             break;
                     }
@@ -367,7 +368,7 @@ public class OrderDaoJdbc implements OrderDao {
 
     @Override
     public void setStatus(Order order) {
-        String query = "UPDATE orders SET status = ? WHERE id = ?;";
+        String query = "UPDATE orders SET status = CAST(? AS order_status) WHERE id = ?;";
 
         String status;
         switch (order.getStatus()) {

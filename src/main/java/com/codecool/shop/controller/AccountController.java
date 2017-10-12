@@ -101,7 +101,7 @@ public class AccountController {
         String subject = "Welcome " + user.getFullName() + " in the 4loop Shop!";
         Email.send(to, body, subject);
 
-        res.redirect("/");
+        res.redirect("/login");
         return null;
     }
 

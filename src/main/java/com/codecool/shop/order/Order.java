@@ -51,7 +51,24 @@ public class Order {
     public Order(int id, int userId, Status status, List<LineItem> items, Date closedDate, float totalPrice, String fullName, String email,
                  String phone, String billingCountry, String billingCity, String billingZipCode, String billingAddress,
                  String shippingCountry, String shippingCity, String shippingZipCode, String shippingAddress, String orderLogFilename) {
-        // TODO: implement setters
+        this.id = id;
+        this.userId = userId;
+        this.status = status;
+        this.items = items;
+        this.closedDate = closedDate;
+        this.totalPrice = totalPrice;
+        this.fullName = fullName;
+        this.email = email;
+        this.phone = phone;
+        this.billingCountry = billingCountry;
+        this.billingCity = billingCity;
+        this.billingZipCode = billingZipCode;
+        this.billingAddress = billingAddress;
+        this.shippingCountry = shippingCountry;
+        this.shippingCity = shippingCity;
+        this.shippingZipCode = shippingZipCode;
+        this.shippingAddress = shippingAddress;
+        this.orderLogFilename = orderLogFilename;
     }
 
     public String addToCart(int productId, int quantity) {
@@ -245,7 +262,6 @@ public class Order {
 
     @Override
     public String toString() {
-
         String itemsStringified = "[";
         for (LineItem item : items) {
             itemsStringified += '\n' + item.toString();
@@ -258,6 +274,7 @@ public class Order {
                 "\"items\": " + itemsStringified + ",\n" +
                 "\"fullName\": \"" + fullName + "\",\n" +
                 "\"email\": \"" + email + "\",\n" +
+                "\"email\": \"" + phone + "\",\n" +
                 "\"billingCountry\": \"" + billingCountry + "\",\n" +
                 "\"billingCity\": \"" + billingCity + "\",\n" +
                 "\"billingZipCode\": \"" + billingZipCode + "\",\n" +

@@ -25,21 +25,21 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each="item : ${items}" th:object="${item}" th:attr="id=*{'line-item-' + product.id}">
+                        <tr th:each="item : ${items}" th:object="${item}" th:attr="id=*{'line-item-' + productId}">
                             <td>
-                                <img class="remove-img" th:attr="data-product-id=*{product.id}" src="/accessories/remove.png" alt="DEL" />
+                                <img class="remove-img" th:attr="data-product-id=*{productId}" src="/accessories/remove.png" alt="DEL" />
                             </td>
                             <td class="center">
-                                <img class="cart-img" src="http://placehold.it/400x250/000/fff" th:attr="src='/img/' + *{product.imageFileName}" alt="IMG" />
+                                <img class="cart-img" src="http://placehold.it/400x250/000/fff" th:attr="src='/img/' + *{productImage}" alt="IMG" />
                             </td>
-                            <td th:text="*{getProductName()}">Light Sabre from Star Wars</td>
+                            <td th:text="*{productName}">Light Sabre from Star Wars</td>
                             <td class="center">
                                 <form action="/change-quantity" method="post">
-                                    <input class="review-quantity center" name="quantity-mod" type="number" min="0" max="99" value="1" th:attr="value=*{quantity}, data-product-id=*{product.id}">
+                                    <input class="review-quantity center" name="quantity-mod" type="number" min="0" max="99" value="1" th:attr="value=*{quantity}, data-product-id=*{productId}">
                                 </form>
                             </td>
                             <td class="right price-width" th:text="*{#numbers.formatDecimal(actualPrice, 0, 'COMMA', 2, 'POINT')} + ' USD'">200 USD</td>
-                            <td th:attr="id=${'subtotal-' + item.product.id}" class="right subtotal-width" th:text="*{#numbers.formatDecimal(subTotalPrice, 0, 'COMMA', 2, 'POINT') + ' USD'}">8400 USD</td>
+                            <td th:attr="id=${'subtotal-' + item.productId}" class="right subtotal-width" th:text="*{#numbers.formatDecimal(subTotalPrice, 0, 'COMMA', 2, 'POINT') + ' USD'}">8400 USD</td>
                         </tr>
                     </tbody>
                     <tfoot>

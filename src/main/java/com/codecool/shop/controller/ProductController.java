@@ -25,6 +25,9 @@ import java.util.Map;
 public class ProductController {
 
     public static ModelAndView renderProducts(Request req, Response res) {
+
+        Integer userId = req.session().attribute("user_id");
+
         ProductDao productDao = DaoFactory.getProductDao();
         ProductCategory productCategory = getSelectedProductCategory(req);
         Supplier supplier = getSelectedSupplier(req);
@@ -49,9 +52,12 @@ public class ProductController {
         params.put("actualSelection", selected);
         params.put("products", products);
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
-        params.put("loggedIn", req.session().attribute("user_id") != null);
+        params.put("loggedIn", userId != null);
 
-        Order order = OrderUtils.getOrderFromSessionInfo(req);
+        if (userId == null) {
+            userId = -1;
+        }
+        Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
         int cartItems = order != null ? order.countCartItems() : 0;
         params.put("cartItems", cartItems);
 
