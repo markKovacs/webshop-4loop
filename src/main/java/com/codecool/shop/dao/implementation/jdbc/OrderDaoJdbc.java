@@ -98,9 +98,9 @@ public class OrderDaoJdbc implements OrderDao {
                        "       o.closed_date," +
                        "       o.status order_status," +
                        "       o.log_filename orderlog_filename," +
-                       "       u.name user_name," +
-                       "       u.phone_number," +
-                       "       u.email," +
+                       "       COALESCE(o.billing_name, u.name) user_name," +
+                       "       COALESCE(o.billing_phone, u.phone_number) phone_number," +
+                       "       COALESCE(o.billing_email, u.email) email," +
                        "       l.product_id," +
                        "       l.quantity," +
                        "       l.actual_price," +
@@ -466,6 +466,51 @@ public class OrderDaoJdbc implements OrderDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    public void saveCheckoutInfo(Order order) {
+
+        String query =  "UPDATE orders " +
+                        "SET billing_name = ?," +
+                        "    billing_email = ?," +
+                        "    billing_phone = ?," +
+                        "    billing_country = ?," +
+                        "    billing_city = ?," +
+                        "    billing_zip = ?," +
+                        "    billing_address = ?," +
+                        "    shipping_country = ?," +
+                        "    shipping_city = ?," +
+                        "    shipping_zip = ?," +
+                        "    shipping_address = ?" +
+                        "WHERE id = ?;";
+
+        try (DB db = new DB();
+             PreparedStatement stmt = db.getPreparedStatement(query)
+        ) {
+            stmt.setString(1, order.getFullName());
+            stmt.setString(2, order.getEmail());
+            stmt.setString(3, order.getPhone());
+            stmt.setString(4, order.getBillingCountry());
+            stmt.setString(5, order.getBillingCity());
+            stmt.setString(6, order.getBillingZipCode());
+            stmt.setString(7, order.getBillingAddress());
+            stmt.setString(8, order.getShippingCountry());
+            stmt.setString(9, order.getShippingCity());
+            stmt.setString(10, order.getShippingZipCode());
+            stmt.setString(11, order.getShippingAddress());
+            stmt.setInt(12, order.getId());
+
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                System.out.println("Checkout info updated successfully.");
+            } else {
+                System.out.println("An error occured when saving checkout info.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

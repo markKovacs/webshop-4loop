@@ -37,4 +37,6 @@ public interface OrderDao {
 
     void setStatus(Order order);
 
+    void saveCheckoutInfo(Order order);
+
 }
