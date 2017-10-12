@@ -20,7 +20,7 @@ public class Order {
 
     // Basic fields
     private int id;
-    private int user_id;
+    private int userId;
     private Status status;
     private List<LineItem> items;
     private Date closedDate;
@@ -40,36 +40,54 @@ public class Order {
     private String shippingAddress;
     private String orderLogFilename;
 
-    public Order(int id, int user_id, String orderLogFileName) {
+    public Order(int id, int userId, String orderLogFileName) {
         this.id = id;
-        this.user_id = user_id;
+        this.userId = userId;
         this.items = new ArrayList<>();
         this.status = Status.NEW;
         this.orderLogFilename = orderLogFileName;
     }
 
-    public Order(int id, int user_id, Status status, List<LineItem> items, Date closedDate, float totalPrice, String fullName, String email,
+    public Order(int id, int userId, Status status, List<LineItem> items, Date closedDate, float totalPrice, String fullName, String email,
                  String phone, String billingCountry, String billingCity, String billingZipCode, String billingAddress,
                  String shippingCountry, String shippingCity, String shippingZipCode, String shippingAddress, String orderLogFilename) {
         // TODO: implement setters
     }
 
     public String addToCart(int productId, int quantity) {
-        Product product = ProductDaoMem.getInstance().find(productId);
+
+        // FIND PRODUCT BASED ON productId
+        Product product = DaoFactory.getProductDao().find(productId);
 
         if (product == null || quantity < 1 || quantity > 99) {
             return "invalid_params";
         }
 
-        LineItem lineItemToAdd = findLineItem(product);
+        // CHECK IF WE ALREADY HAVE THE LINEITEM IN OUR CART
+        LineItem lineItemToAdd = DaoFactory.getOrderDao().findLineItemInCart(productId, this);
+
+        // IF WE WANT TO ADD A NEW ITEM TO THE CART
         if (lineItemToAdd == null) {
-            lineItemToAdd = new LineItem(product, quantity, product.getDefaultPrice());
-            items.add(lineItemToAdd);
+
+            lineItemToAdd = new LineItem(
+                    this.id,
+                    productId,
+                    product.getName(),
+                    product.getImageFileName(),
+                    quantity,
+                    product.getDefaultPrice(),
+                    product.getDefaultCurrency()
+            );
+
+            DaoFactory.getOrderDao().addLineItemToCart(lineItemToAdd, this);
             updateTotal();
+
             return "new_item";
         }
 
-        lineItemToAdd.changeQuantity(quantity);
+        // THE LINEITEM IS ALREADY IN THE CART, JUST UPDATE QUANTITY
+        DaoFactory.getOrderDao().changeQuantity(lineItemToAdd);
+        // lineItemToAdd.changeQuantity(quantity);
         updateTotal();
 
         return "quantity_change";
@@ -103,9 +121,9 @@ public class Order {
         items.remove(foundLineItem);
     }
 
-    private LineItem findLineItem(Product product) {
+    /*private LineItem findLineItem(Product product) {
         return items.stream().filter(t -> t.getProduct().equals(product)).findFirst().orElse(null);
-    }
+    }*/
 
     public int countCartItems() {
         return items.size();
@@ -245,6 +263,14 @@ public class Order {
 
     public String getOrderLogFilename() {
         return orderLogFilename;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public Date getClosedDate() {
+        return closedDate;
     }
 
 }
