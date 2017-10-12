@@ -7,11 +7,6 @@ import com.codecool.shop.controller.AccountController;
 import com.codecool.shop.controller.OrderController;
 import com.codecool.shop.controller.ProductController;
 import com.codecool.shop.dao.*;
-import com.codecool.shop.dao.implementation.jdbc.OrderDaoJdbc;
-import com.codecool.shop.dao.implementation.jdbc.SupplierDaoJdbc;
-import com.codecool.shop.dao.implementation.memory.ProductCategoryDaoMem;
-import com.codecool.shop.dao.implementation.memory.ProductDaoMem;
-import com.codecool.shop.dao.implementation.memory.SupplierDaoMem;
 import com.codecool.shop.model.*;
 import com.codecool.shop.order.Order;
 import com.codecool.shop.order.Status;
@@ -43,7 +38,7 @@ public class Main {
 
         // API ENDPOINTS
         Gson gson = new Gson();
-        post("/api/add-to-cart", OrderController::addToCart, gson::toJson);
+        post("/api/add-to-cart", OrderController::handleAddToCart, gson::toJson);
         post("/api/change-product-quantity", OrderController::changeQuantity, gson::toJson);
         post("/api/remove-line-item", OrderController::removeLineItem, gson::toJson);
 
