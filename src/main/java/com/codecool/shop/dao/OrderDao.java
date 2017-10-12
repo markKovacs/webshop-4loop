@@ -1,7 +1,9 @@
 package com.codecool.shop.dao;
 
+import com.codecool.shop.model.Product;
 import com.codecool.shop.order.Order;
 import com.codecool.shop.order.Status;
+import com.codecool.shop.order.LineItem;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -12,6 +14,17 @@ public interface OrderDao {
     // void add(Order order);
     Order findByID(int id);
     Order findOpenByUserId(int userId);
+    LineItem findLineItemInCart(int productId, Order order);
+    void addLineItemToCart(LineItem lineItem, Order order);
+    void changeQuantity(LineItem lineItem, int newQuantity);
+
+
+    //void addLineItemToOrder(int productId, Order order, int quantity, float actualPrice, String currency);
+    //void updateLineItemInOrder(int productId, Order order, int quantity);
+
+    void addLineItemToOrder(Order order, Product product, int quantity);
+    void updateLineItemInOrder(Order order, Product product, int quantity);
+
     void remove(int id);
 
     List<Order> getAll();

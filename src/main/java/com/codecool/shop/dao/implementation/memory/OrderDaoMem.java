@@ -1,11 +1,14 @@
 package com.codecool.shop.dao.implementation.memory;
 
 import com.codecool.shop.dao.OrderDao;
+import com.codecool.shop.model.Product;
+import com.codecool.shop.order.LineItem;
 import com.codecool.shop.order.Order;
 import com.codecool.shop.order.Status;
 import com.codecool.shop.utility.Log;
 
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -43,7 +46,10 @@ public class OrderDaoMem implements OrderDao {
 
     @Override
     public Order findOpenByUserId(int userId) {
-        return null;
+
+        return DATA.stream().filter(order -> order.getUserId() == userId && order.getStatus() != Status.PAID)
+                            .findFirst()
+                            .orElse(null);
     }
 
     @Override
@@ -67,6 +73,46 @@ public class OrderDaoMem implements OrderDao {
         return null;
     }
 
+    @Override
+    public void addLineItemToOrder(Order order, Product product, int quantity) {
+        LineItem lineItemToAdd = new LineItem(
+                order.getId(),
+                product.getId(),
+                product.getName(),
+                product.getImageFileName(),
+                quantity,
+                product.getDefaultPrice(),
+                product.getDefaultCurrency()
+        );
+        order.getItems().add(lineItemToAdd);
+    }
+
+    @Override
+    public void updateLineItemInOrder(Order order, Product product, int quantity) {
+        for (LineItem lineItem : order.getItems()) {
+            if (lineItem.getProductId() == product.getId()) {
+                lineItem.setQuantity(quantity);
+            }
+        }
+    }
+
+    @Override
+    public LineItem findLineItemInCart(int productId, Order order) {
+        return order.getItems().stream()
+                               .filter(lineItem -> lineItem.getProductId() == productId)
+                               .findFirst()
+                               .orElse(null);
+    }
+
+    @Override
+    public void addLineItemToCart(LineItem lineItem, Order order) {
+        order.getItems().add(lineItem);
+    }
+
+    public void changeQuantity(LineItem lineItem, int quantity) {
+        lineItem.setQuantity(lineItem.getQuantity() + quantity);
+        lineItem.setSubTotalPrice(lineItem.getSubTotalPrice() + quantity * lineItem.getActualPrice());
+    }
 
     @Override
     public void setStatus(Order order) {

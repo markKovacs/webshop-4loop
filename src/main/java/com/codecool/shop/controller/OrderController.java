@@ -27,7 +27,7 @@ public class OrderController {
 
     // METHODS RETURNING RAW RESPONSE
 
-    public static String addToCart(Request req, Response res) {
+    public static String handleAddToCart(Request req, Response res) {
 
         int quantity = Integer.parseInt(req.queryParams("quantity"));
         int productId = Integer.parseInt(req.queryParams("product_id"));
@@ -40,11 +40,16 @@ public class OrderController {
             order = DaoFactory.getOrderDao().createNewOrder(userId);
         }
 
+
+
         String statusMessage = order.addToCart(productId, quantity);
+
         req.session().attribute("order_id", order.getId());
 
         return statusMessage;
     }
+
+
 
     public static ModelAndView renderReview(Request req, Response res) {
         Order order = OrderUtils.setOrderStatus(req);
