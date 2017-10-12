@@ -178,8 +178,25 @@ public class OrderDaoJdbc implements OrderDao {
     }
 
     @Override
-    public void remove(int id) {
+    public void removeLineItemFromCart(int productId, Order order) {
+        String query = "DELETE FROM lineitems " +
+                       "WHERE product_id = ? AND order_id = ?;";
 
+        try (DB db = new DB();
+             PreparedStatement stmt = db.getPreparedStatement(query)
+        ) {
+            stmt.setInt(1, productId);
+            stmt.setInt(2, order.getId());
+
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Deleting lineitem failed!");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -251,6 +268,11 @@ public class OrderDaoJdbc implements OrderDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void remove(int id) {
+
     }
 
     @Override

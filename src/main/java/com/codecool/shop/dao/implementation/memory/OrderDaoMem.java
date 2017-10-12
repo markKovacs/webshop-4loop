@@ -118,4 +118,14 @@ public class OrderDaoMem implements OrderDao {
     public void setStatus(Order order) {
 
     }
+
+    @Override
+    public void removeLineItemFromCart(int productId, Order order) {
+        for (LineItem lineItem : order.getItems()) {
+            if (lineItem.getProductId() == productId) {
+                order.getItems().remove(lineItem);
+            }
+        }
+    }
+
 }

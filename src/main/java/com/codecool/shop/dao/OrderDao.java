@@ -26,6 +26,7 @@ public interface OrderDao {
     void updateLineItemInOrder(Order order, Product product, int quantity);
 
     void remove(int id);
+    void removeLineItemFromCart(int productId, Order order);
 
     List<Order> getAll();
     List<Order> getBy(Status status);
