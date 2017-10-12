@@ -51,10 +51,12 @@ public class User {
     }
 
     public static User create(String fullName, String email, String password) {
+        // TODO: used for registration purposes, so validation could be moved here
         return new User(fullName, email, password);
     }
 
     public static User create(int id, String fullName, String email, String password,
+                 // Used for the two find methods in User class.
                  String phone, String billingCountry, String billingCity,
                  String billingZipCode, String billingAddress, String shippingCountry,
                  String shippingCity, String shippingZipCode, String shippingAddress) {

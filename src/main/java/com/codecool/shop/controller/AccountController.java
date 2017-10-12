@@ -85,6 +85,8 @@ public class AccountController {
             return new ModelAndView(params, "register");
         }
 
+        // TODO: first we should add the user, using input data, there doing the validation, inside user,
+        // TODO: giving back error messages if invalid any input, otherwise we can also find the user by email or something
         User user = User.create(inputData.get("fullname"), inputData.get("email"), hashedPasswordAndSalt);
         DaoFactory.getUserDao().add(user);
 

@@ -15,8 +15,15 @@ public class UserDaoJdbc implements UserDao {
 
     @Override
     public List<String> update(int userId, Map<String, String> profileInput) {
+        List<String> errorMessages = new ArrayList<>();
+
         User user = find(userId);
-        List<String> errorMessages = user.setProfileInformation(profileInput);
+        if (user == null) {
+            errorMessages.add("Could not find user profile.");
+            return errorMessages;
+        }
+
+        errorMessages = user.setProfileInformation(profileInput);
         if (errorMessages.size() == 0) {
             String query = "UPDATE users SET phone_number = ?, " +
                     "billing_country = ?, billing_city = ?, billing_zip = ?, billing_address = ?, " +
