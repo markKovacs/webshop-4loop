@@ -19,7 +19,7 @@ public class ProductDaoMemTest {
     /**
      * Methods to test:
      * void add(ProductCategory category);
-     * ProductCategory find(int id);
+     * ProductCategory findByID(int id);
      * void remove(int id);
      * List<ProductCategory> getAll();
      * List<Product> getBy(Supplier supplier);
@@ -29,7 +29,7 @@ public class ProductDaoMemTest {
     // TODO - FURTHER TEST IDEAS
     // TODO - > adding the same ProductCategory multiple times should not be allowed
     // TODO - > adding Product to DAO that is null
-    // TODO - > creating more products and test getBy in cases it should not find products
+    // TODO - > creating more products and test getBy in cases it should not findByID products
 
     @BeforeEach
     public void setUp() {
@@ -54,7 +54,7 @@ public class ProductDaoMemTest {
 
         Product foundProduct = dao.find(id);
 
-        assertAll("add-and-find",
+        assertAll("add-and-findByID",
                 () -> {
                     assertNotNull(foundProduct);
                     assertAll("found-equals-original",

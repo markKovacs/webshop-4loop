@@ -21,7 +21,7 @@ class ProductCategoryDaoJdbcTest {
     /**
      * Methods to test:
      * void add(ProductCategory category);
-     * ProductCategory find(int id);
+     * ProductCategory findByID(int id);
      * void remove(int id);
      * List<ProductCategory> getAll();
      */
@@ -49,7 +49,7 @@ class ProductCategoryDaoJdbcTest {
 
         ProductCategory foundCategory = dao.find(id);
 
-        assertAll("add-and-find",
+        assertAll("add-and-findByID",
                 () -> {
                     assertNotNull(foundCategory);
                     assertAll("found-equals-original",
