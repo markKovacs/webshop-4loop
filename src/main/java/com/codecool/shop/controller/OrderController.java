@@ -163,8 +163,9 @@ public class OrderController {
             return new ModelAndView(params, "checkout");
         }
 
-        order.setCheckoutInfo(userData);
-        //DaoFactory.getOrderDao().setCheckoutInfo(order);
+        // TODO: Through DAO
+        DaoFactory.getOrderDao().saveCheckoutInfo(order);
+        //order.setCheckoutInfo(userData);
 
         Log.saveActionToOrderLog(order.getOrderLogFilename(), "checkedout");
         res.redirect("/payment?next=process");
