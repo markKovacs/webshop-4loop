@@ -14,9 +14,12 @@ public class SupplierDaoJdbc implements SupplierDao {
 
     @Override
     public void add(Supplier supplier) {
+
+        String query = "INSERT INTO suppliers (name, description) VALUES (?, ?);";
+
         try (DB db = new DB();
-             PreparedStatement stmt = db.getPreparedStatement("INSERT INTO suppliers (name, description) VALUES (?, ?);")
-        ){
+             PreparedStatement stmt = db.getPreparedStatement(query)
+        ) {
             stmt.setString(1, supplier.getName());
             stmt.setString(2, supplier.getDescription());
             int affectedRows = stmt.executeUpdate();
@@ -34,8 +37,10 @@ public class SupplierDaoJdbc implements SupplierDao {
     @Override
     public Supplier find(int id) {
 
+        String query = "SELECT name, description FROM suppliers WHERE id = ?;";
+
         try (DB db = new DB();
-            PreparedStatement stmt = db.getPreparedStatement("SELECT name, description FROM suppliers WHERE id = ?;")
+            PreparedStatement stmt = db.getPreparedStatement(query)
         ){
             stmt.setInt(1, id);
             ResultSet resultSet = stmt.executeQuery();
@@ -54,8 +59,11 @@ public class SupplierDaoJdbc implements SupplierDao {
 
     @Override
     public void remove(int id) {
+
+        String query = "DELETE FROM suppliers WHERE id = ?;";
+
         try (DB db = new DB();
-             PreparedStatement stmt = db.getPreparedStatement("DELETE FROM suppliers WHERE id = ?;")
+             PreparedStatement stmt = db.getPreparedStatement(query)
         ){
             stmt.setInt(1, id);
             int affectedRows = stmt.executeUpdate();
@@ -74,8 +82,10 @@ public class SupplierDaoJdbc implements SupplierDao {
 
         List resultList = new ArrayList();
 
+        String query = "SELECT id, name, description FROM suppliers;";
+
         try (DB db = new DB();
-             PreparedStatement stmt = db.getPreparedStatement("SELECT id, name, description FROM suppliers;")
+             PreparedStatement stmt = db.getPreparedStatement(query)
         ){
             ResultSet resultSet = stmt.executeQuery();
             while (resultSet.next()){
