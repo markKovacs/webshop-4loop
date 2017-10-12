@@ -5,7 +5,7 @@
 -- Dumped from database version 9.5.8
 -- Dumped by pg_dump version 9.5.8
 
--- Started on 2017-10-12 11:15:19 CEST
+-- Started on 2017-10-13 00:58:00 CEST
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -137,7 +137,10 @@ CREATE TABLE orders (
     shipping_zip character varying(20),
     shipping_address character varying(255),
     created timestamp without time zone DEFAULT now() NOT NULL,
-    modified timestamp without time zone DEFAULT now() NOT NULL
+    modified timestamp without time zone DEFAULT now() NOT NULL,
+    billing_name character varying(255),
+    billing_phone character varying(50),
+    billing_email character varying(255)
 );
 
 
@@ -384,6 +387,7 @@ SELECT pg_catalog.setval('categories_id_seq', 1, false);
 -- Data for Name: lineitems; Type: TABLE DATA; Schema: public; Owner: -
 --
 
+INSERT INTO lineitems (product_id, order_id, quantity, actual_price, currency) VALUES (27, 30, 1, 820.00, 'USD');
 
 
 --
@@ -392,27 +396,7 @@ SELECT pg_catalog.setval('categories_id_seq', 1, false);
 -- Data for Name: orders; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (21, 1, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 11:07:01.361802', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (14, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:59:08.649291', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (13, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:57:46.937634', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (12, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:57:36.737797', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (8, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:55:14.372658', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (1, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:47:51.146097', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (2, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:49:12.728404', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (3, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:49:59.625156', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (4, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:50:47.723015', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (5, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:51:55.312794', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (6, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:52:04.790464', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (7, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:52:46.289449', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (9, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:55:55.934394', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (10, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:56:16.67315', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (11, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 10:56:38.378919', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (15, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 11:04:22.802027', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (16, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 11:05:18.624698', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (17, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 11:05:20.44815', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (18, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 11:05:27.129695', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (19, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 11:06:18.326433', '2017-10-12 11:07:01.361802');
-INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified) VALUES (20, 1, NULL, NULL, 0, 'teszt_log21', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 11:06:21.730328', '2017-10-12 11:07:01.361802');
+INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, created, modified, billing_name, billing_phone, billing_email) VALUES (30, 2, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2017-10-12 21:21:52.507211', '2017-10-12 21:21:52.507211', NULL, NULL, NULL);
 
 
 --
@@ -421,7 +405,7 @@ INSERT INTO orders (id, user_id, closed_date, status, deleted, log_filename, bil
 -- Name: orders_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('orders_id_seq', 21, true);
+SELECT pg_catalog.setval('orders_id_seq', 30, true);
 
 
 --
@@ -517,6 +501,7 @@ SELECT pg_catalog.setval('suppliers_id_seq', 1, false);
 --
 
 INSERT INTO users (id, name, phone_number, email, password, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, active, created, modified) VALUES (1, 'TESZT Elek', NULL, 'fnejkfnaek@fjewijf.com', 'fmkfneqjf', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2017-10-12 10:40:20.283828', '2017-10-12 10:40:20.283828');
+INSERT INTO users (id, name, phone_number, email, password, billing_country, billing_city, billing_zip, billing_address, shipping_country, shipping_city, shipping_zip, shipping_address, active, created, modified) VALUES (2, 'gwkerjfkek', NULL, 'jpeter82@gmail.com', 'sha1:64000:18:agYAGcb5WACFwutCfucSqsRsRy3gpndc:QqEjYS42cbumQHxfmvV1OGuN', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0, '2017-10-12 20:15:39.510406', '2017-10-12 20:15:39.510406');
 
 
 --
@@ -525,7 +510,7 @@ INSERT INTO users (id, name, phone_number, email, password, billing_country, bil
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('users_id_seq', 1, true);
+SELECT pg_catalog.setval('users_id_seq', 2, true);
 
 
 --
@@ -658,7 +643,7 @@ ALTER TABLE ONLY products
     ADD CONSTRAINT products_supplier_id_fk FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
--- Completed on 2017-10-12 11:15:19 CEST
+-- Completed on 2017-10-13 00:58:01 CEST
 
 --
 -- PostgreSQL database dump complete
