@@ -172,7 +172,7 @@ public class OrderController {
         }
 
         // TODO: Through DAO
-        DaoFactory.getOrderDao().setCheckoutInfo(order);
+        DaoFactory.getOrderDao().saveCheckoutInfo(order);
         //order.setCheckoutInfo(userData);
 
         Log.saveActionToOrderLog(order.getOrderLogFilename(), "checkedout");
