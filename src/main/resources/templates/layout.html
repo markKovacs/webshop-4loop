@@ -71,7 +71,7 @@
                         </th:block>
                     </span>
                 </th:block>
-                <div class="col-xs-4 text-right">
+                <div th:if="${loggedIn}" class="col-xs-4 text-right">
                     <p class="balance">Balance: <span th:text="${balance}">95200.00</span> USD</p>
                 </div>
             </div>

@@ -22,7 +22,6 @@ public class AccountController {
 
         Map<String, Object> params = new HashMap<>();
         params.put("user", new HashMap<>()); // required to be passed in to register.html
-        params.put("balance", Main.balanceInUSD);
         params.put("loggedIn", req.session().attribute("user_id") != null);
 
         return new ModelAndView(params, "register");
@@ -31,7 +30,6 @@ public class AccountController {
     public static ModelAndView renderLogin(Request req, Response res) {
 
         Map<String, Object> params = new HashMap<>();
-        params.put("balance", Main.balanceInUSD);
         params.put("loggedIn", req.session().attribute("user_id") != null);
 
         return new ModelAndView(params, "login");
@@ -40,12 +38,14 @@ public class AccountController {
     public static ModelAndView renderOrderHistory(Request req, Response res) {
 
         int userId = getUserIdFromSession(req);
+        Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
 
-        List<HashMap<String, Object>> orders = getPaidOrders(userId); // TODO: maybe this needs refactoring
+        List<HashMap<String, Object>> orders = getPaidOrders(userId); // TODO: maybe this could be simplified
         Map<String, Object> params = new HashMap<>();
         params.put("orders", orders);
         params.put("balance", Main.balanceInUSD);
         params.put("loggedIn", req.session().attribute("user_id") != null);
+        // params.put("cartItems", order.countCartItems()); TODO: nullpointer while findOpenByUserId is corrected
 
         return new ModelAndView(params, "history");
     }
@@ -53,11 +53,13 @@ public class AccountController {
     public static ModelAndView renderProfile(Request req, Response res) {
 
         int userId = getUserIdFromSession(req);
+        Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
 
         Map<String, Object> params = new HashMap<>();
         params.put("user", getUserData(userId));
         params.put("balance", Main.balanceInUSD);
         params.put("loggedIn", req.session().attribute("user_id") != null);
+        // params.put("cartItems", order.countCartItems()); TODO: nullpointer while findOpenByUserId is corrected
         if (req.queryParams("edited") != null) {
             params.put("success", new ArrayList<>(Arrays.asList("Profile successfully edited.")));
         }
@@ -73,9 +75,9 @@ public class AccountController {
 
         if (errorMessages.size() > 0) {
             Map<String, Object> params = new HashMap<>();
-            params.put("balance", Main.balanceInUSD);
             params.put("errors", errorMessages);
             params.put("user", inputData);
+            params.put("loggedIn", req.session().attribute("user_id") != null);
             return new ModelAndView(params, "register");
         }
 
@@ -84,14 +86,12 @@ public class AccountController {
             hashedPasswordAndSalt = PasswordStorage.createHash(inputData.get("password1"));
         } catch (PasswordStorage.CannotPerformOperationException e) {
             Map<String, Object> params = new HashMap<>();
-            params.put("balance", Main.balanceInUSD);
             params.put("errors", new ArrayList<>(Arrays.asList("Cannot save account, try again later.")));
             params.put("user", inputData);
+            params.put("loggedIn", req.session().attribute("user_id") != null);
             return new ModelAndView(params, "register");
         }
 
-        // TODO: first we should add the user, using input data, there doing the validation, inside user,
-        // TODO: giving back error messages if invalid any input, otherwise we can also find the user by email or something
         User user = User.create(inputData.get("fullname"), inputData.get("email"), hashedPasswordAndSalt);
         DaoFactory.getUserDao().add(user);
 
@@ -112,8 +112,8 @@ public class AccountController {
         int userId = validateLoginCredentials(inputData);
         if (userId == -1) {
             Map<String, Object> params = new HashMap<>();
-            params.put("balance", Main.balanceInUSD);
             params.put("errors", new ArrayList<>(Arrays.asList("Invalid credentials.")));
+            params.put("loggedIn", req.session().attribute("user_id") != null);
             return new ModelAndView(params, "login");
         }
 
@@ -133,6 +133,8 @@ public class AccountController {
     public static ModelAndView editProfile(Request req, Response res) {
 
         int userId = getUserIdFromSession(req);
+        Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
+
         Map<String, String> profileInput = collectEditData(req);
         List<String> errorMessages = DaoFactory.getUserDao().update(userId, profileInput);
 
@@ -141,6 +143,9 @@ public class AccountController {
             params.put("balance", Main.balanceInUSD);
             params.put("errors", errorMessages);
             params.put("user", profileInput);
+            params.put("loggedIn", req.session().attribute("user_id") != null);
+            // params.put("cartItems", order.countCartItems()); TODO: nullpointer while findOpenByUserId is corrected
+
             return new ModelAndView(params, "profile");
         }
 
