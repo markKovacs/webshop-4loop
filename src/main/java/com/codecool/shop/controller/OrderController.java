@@ -32,25 +32,17 @@ public class OrderController {
         int quantity = Integer.parseInt(req.queryParams("quantity"));
         int productId = Integer.parseInt(req.queryParams("product_id"));
 
-        // Order order = OrderUtils.getOrderFromSessionInfo(req);
         int userId = req.session().attribute("user_id");
         Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
 
         if (order == null) {
             order = DaoFactory.getOrderDao().createNewOrder(userId);
-            System.out.println("NEW ORDERRRRRRRRRRRRRRR: \n" + order);
         }
-
-
 
         String statusMessage = order.addToCart(productId, quantity);
 
-        req.session().attribute("order_id", order.getId());
-
         return statusMessage;
     }
-
-
 
     public static ModelAndView renderReview(Request req, Response res) {
         Order order = OrderUtils.setOrderStatus(req);
@@ -77,19 +69,22 @@ public class OrderController {
     }
 
     public static String changeQuantity(Request req, Response res) {
-        Order order = OrderUtils.getOrderFromSessionInfo(req);
+
+        int userId = req.session().attribute("user_id");
+        Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
+
         int quantity = Integer.parseInt(req.queryParams("quantity"));
         int productId = Integer.parseInt(req.queryParams("product_id"));
 
         float newSubtotal = order.changeProductQuantity(productId, quantity);
         order.updateTotal();
 
-        Map<String, Float> response = new HashMap<>();
-        response.put("total", order.getTotalPrice());
-        response.put("subtotal", newSubtotal);
+        Map<String, Float> newPrices = new HashMap<>();
+        newPrices.put("total", order.getTotalPrice());
+        newPrices.put("subtotal", newSubtotal);
 
         Gson gson = new Gson();
-        return gson.toJson(response);
+        return gson.toJson(newPrices);
     }
 
     public static String removeLineItem(Request req, Response res) {
@@ -114,13 +109,15 @@ public class OrderController {
     }
 
     public static ModelAndView finalizeOrder(Request req, Response res) {
-        Order order = OrderUtils.getOrderFromSessionInfo(req);
+
+        int userId = req.session().attribute("user_id");
+        Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
 
         order.getItems().removeIf(item -> item.getQuantity() == 0);
+        // TODO: remove lineitems from order if 0... PETI IMPLEMENTED
 
         if (order.getItems().size() < 1) {
-            DaoFactory.getOrderDao().remove(order.getId());
-            req.session().removeAttribute("order_id");
+            //DaoFactory.getOrderDao().remove(order.getId());
             res.redirect("/cart");
         } else {
             Log.saveActionToOrderLog(order.getOrderLogFilename(), "reviewed");

@@ -115,14 +115,16 @@ public class Order {
         if (product == null || quantity < 0 || quantity > 99) {
             return -1f;
         }
-        LineItem lineItem = findLineItem(product);
+        //LineItem lineItem = findLineItem(product);
+        LineItem lineItem = DaoFactory.getOrderDao().findLineItemInCart(productId, this);
         if (lineItem == null) {
             return -1f;
         }
 
-        float newSubtotal = lineItem.changeQuantityToValue(quantity);
-        updateTotal();
-        return newSubtotal;
+        //float newSubtotal = lineItem.changeQuantityToValue(quantity);
+        DaoFactory.getOrderDao().changeQuantity(lineItem, quantity);
+
+        return lineItem.getActualPrice()*quantity;
     }
 
     public void updateTotal() {
@@ -138,13 +140,10 @@ public class Order {
         items.remove(foundLineItem);
     }
 
-
-    // TODO: COMMENT OUT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    private LineItem findLineItem(Product product) {
+/*    private LineItem findLineItem(Product product) {
         return items.stream().filter(t -> DaoFactory.getProductDao().find(t.getProductId())
                 .equals(product)).findFirst().orElse(null);
-    }
-
+    }*/
 
     public int countCartItems() {
         return items.size();

@@ -21,8 +21,6 @@ public class OrderDaoJdbc implements OrderDao {
     @Override
     public Order createNewOrder(int userId) {
 
-        // TODO: update log_filename!!!
-
         Order order = null;
 
         String query = "INSERT INTO orders (user_id) " +
@@ -44,6 +42,7 @@ public class OrderDaoJdbc implements OrderDao {
                     int lastInsertId = generatedKeys.getInt(1);
                     String orderLogFilename = Log.getNowAsString() + "_" + lastInsertId + "_order";
                     order = new Order(lastInsertId, userId, orderLogFilename);
+                    updateLogFileName(order);
                 } else {
                     throw new SQLException("Creating order failed! No id returned!");
                 }
@@ -54,6 +53,29 @@ public class OrderDaoJdbc implements OrderDao {
         }
 
         return order;
+    }
+
+    private static void updateLogFileName(Order order) {
+        String query = "UPDATE orders SET log_filename = ?" +
+                "       WHERE id = ?;";
+
+        try (DB db = new DB();
+             PreparedStatement stmt = db.getPreparedStatement(query)
+        ) {
+            stmt.setString(1, order.getOrderLogFilename());
+            stmt.setInt(2, order.getId());
+
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows > 0){
+                System.out.println("Log filename saved to database.");
+            } else {
+                System.out.println("Log filename saving failed.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     /*@Override
@@ -344,7 +366,7 @@ public class OrderDaoJdbc implements OrderDao {
 
     public void changeQuantity(LineItem lineItem, int quantity) {
         String query = "UPDATE lineitems " +
-                       "SET quantity = (quantity + ?) " +
+                       "SET quantity = ? " +
                        "WHERE product_id= ? AND order_id = ?;";
 
         try (DB db = new DB();
