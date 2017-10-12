@@ -1,7 +1,6 @@
 package com.codecool.shop;
 
 import com.codecool.shop.dao.DaoFactory;
-import com.codecool.shop.dao.implementation.memory.OrderDaoMem;
 import com.codecool.shop.order.Order;
 import com.codecool.shop.order.Status;
 import spark.Request;
@@ -12,7 +11,7 @@ public class OrderUtils {
         int orderId = req.session().attribute("order_id") == null ? -1 :
                 Integer.valueOf(req.session().attribute("order_id") + "");
         if (orderId != -1) {
-            return DaoFactory.getOrderDao().find(orderId);
+            return DaoFactory.getOrderDao().findByID(orderId);
         } else {
             return null;
         }

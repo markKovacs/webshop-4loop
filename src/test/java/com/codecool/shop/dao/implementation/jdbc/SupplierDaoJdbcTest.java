@@ -17,7 +17,7 @@ class SupplierDaoJdbcTest {
     /**
      * Methods to test:
      * void add(Supplier supplier);
-     * Supplier find(int id);
+     * Supplier findByID(int id);
      * void remove(int id);
      * List<Supplier> getAll();
      */
@@ -49,7 +49,7 @@ class SupplierDaoJdbcTest {
 
         Supplier foundSupplier = dao.find(id);
 
-        assertAll("add-and-find",
+        assertAll("add-and-findByID",
                 () -> {
                     assertNotNull(foundSupplier);
                     assertAll("found-equals-original",

@@ -3,6 +3,7 @@ package com.codecool.shop.dao.implementation.memory;
 import com.codecool.shop.dao.OrderDao;
 import com.codecool.shop.order.Order;
 import com.codecool.shop.order.Status;
+import com.codecool.shop.utility.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,28 +21,30 @@ public class OrderDaoMem implements OrderDao {
     public OrderDaoMem() {
     }
 
-/*    public static OrderDaoMem getInstance() {
-        if (instance == null) {
-            instance = new OrderDaoMem();
-        }
-        return instance;
+    @Override
+    public Order createNewOrder(int userId) {
+        int id = DATA.size() + 1;
+        String orderLogFilename = Log.getNowAsString() + "_" + id + "_order";
+        Order order = new Order(id, userId, orderLogFilename);
+        DATA.add(order);
+        return order;
+    }
+
+    /*@Override
+    public void add(Order order) {
+        //order.setId(DATA.size() + 1);
+        DATA.add(order);
     }*/
 
     @Override
-    public void add(Order order) {
-        order.setId(DATA.size() + 1);
-        DATA.add(order);
-    }
-
-    @Override
-    public Order find(int id) {
+    public Order findByID(int id) {
         return DATA.stream().filter(t -> t.getId() == id).findFirst().orElse(null);
     }
 
 
     @Override
     public void remove(int id) {
-        DATA.remove(find(id));
+        DATA.remove(findByID(id));
 
     }
 

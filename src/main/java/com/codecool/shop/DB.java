@@ -1,6 +1,8 @@
 package com.codecool.shop;
 
 import java.sql.*;
+import java.util.Optional;
+import java.util.OptionalInt;
 
 public class DB implements AutoCloseable {
 
@@ -38,10 +40,24 @@ public class DB implements AutoCloseable {
     }
 
     public PreparedStatement getPreparedStatement(String query) {
+
         try {
             this.connection = getConnection();
             this.connection.setAutoCommit(true);
             PreparedStatement pstmt = this.connection.prepareStatement(query);
+            return pstmt;
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public PreparedStatement getPreparedStatement(String query, OptionalInt autoGenKeys) {
+
+        try {
+            this.connection = getConnection();
+            this.connection.setAutoCommit(true);
+            PreparedStatement pstmt = this.connection.prepareStatement(query, autoGenKeys.getAsInt());
             return pstmt;
         } catch (SQLException e){
             e.printStackTrace();

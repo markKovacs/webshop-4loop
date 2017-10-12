@@ -15,6 +15,7 @@ import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,14 +28,16 @@ public class OrderController {
     // METHODS RETURNING RAW RESPONSE
 
     public static String addToCart(Request req, Response res) {
+
         int quantity = Integer.parseInt(req.queryParams("quantity"));
         int productId = Integer.parseInt(req.queryParams("product_id"));
 
-        Order order = OrderUtils.getOrderFromSessionInfo(req);
-        req.session(true).attribute("user");
+        // Order order = OrderUtils.getOrderFromSessionInfo(req);
+        int userId = req.session().attribute("user_id");
+        Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
+
         if (order == null) {
-            order = new Order();
-            DaoFactory.getOrderDao().add(order);
+            order = DaoFactory.getOrderDao().createNewOrder(userId);
         }
 
         String statusMessage = order.addToCart(productId, quantity);
