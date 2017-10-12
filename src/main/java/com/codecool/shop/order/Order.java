@@ -86,7 +86,7 @@ public class Order {
         }
 
         // THE LINEITEM IS ALREADY IN THE CART, JUST UPDATE QUANTITY
-        DaoFactory.getOrderDao().changeQuantity(lineItemToAdd);
+        DaoFactory.getOrderDao().changeQuantity(lineItemToAdd, quantity);
         // lineItemToAdd.changeQuantity(quantity);
         updateTotal();
 

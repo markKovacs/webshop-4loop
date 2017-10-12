@@ -16,7 +16,7 @@ public interface OrderDao {
     Order findOpenByUserId(int userId);
     LineItem findLineItemInCart(int productId, Order order);
     void addLineItemToCart(LineItem lineItem, Order order);
-    void changeQuantity(LineItem lineItem, int newQuantity);
+    void changeQuantity(LineItem lineItem, int quantity);
 
 
     //void addLineItemToOrder(int productId, Order order, int quantity, float actualPrice, String currency);
