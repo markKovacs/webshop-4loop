@@ -41,6 +41,11 @@ public class AccountController {
         Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
 
         List<Order> orders = DaoFactory.getOrderDao().getAllPaid(userId);
+
+        System.out.println("ALL PAID:");
+        System.out.println(orders.size());
+        orders.forEach(System.out::println);
+
         Map<String, Object> params = new HashMap<>();
         params.put("orders", orders);
         params.put("balance", Main.balanceInUSD);

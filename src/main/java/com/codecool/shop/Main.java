@@ -132,7 +132,8 @@ public class Main {
                 req.pathInfo().equals("/logout") ||
                 req.pathInfo().equals("/history") ||
                 req.pathInfo().equals("/profile") ||
-                req.pathInfo().equals("/api/add-to-cart"))) {
+                req.pathInfo().equals("/api/add-to-cart") ||
+                req.pathInfo().equals("/payment/success"))) {
             res.redirect("/?error=restricted");
             halt(401);
         }

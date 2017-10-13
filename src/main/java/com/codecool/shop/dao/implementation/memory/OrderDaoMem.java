@@ -70,7 +70,8 @@ public class OrderDaoMem implements OrderDao {
 
     @Override
     public List<Order> getAllPaid(int userId) {
-        return null;
+        return DATA.stream().filter(order -> order.getUserId() == userId && order.getStatus().equals(Status.PAID))
+                .collect(Collectors.toList());
     }
 
     @Override

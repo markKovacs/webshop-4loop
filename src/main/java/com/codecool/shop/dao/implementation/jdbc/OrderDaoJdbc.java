@@ -195,7 +195,7 @@ public class OrderDaoJdbc implements OrderDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        System.out.println(order);
+        //System.out.println(order);
         return order;
     }
 
@@ -233,7 +233,101 @@ public class OrderDaoJdbc implements OrderDao {
 
     @Override
     public List<Order> getAllPaid(int userId) {
-        return null;
+        List<Order> paidOrders = new ArrayList();
+        String query =  "SELECT o.id order_id," +
+                "       o.user_id," +
+                "       o.closed_date," +
+                "       o.status order_status," +
+                "       o.log_filename orderlog_filename," +
+                "       o.billing_name user_name," +
+                "       o.billing_phone phone_number," +
+                "       o.billing_email email," +
+                "       l.product_id," +
+                "       l.quantity," +
+                "       l.actual_price," +
+                "       l.currency," +
+                "       p.name product_name," +
+                "       p.image_filename," +
+                "       o.billing_country billing_country," +
+                "       o.billing_city billing_city," +
+                "       o.billing_zip billing_zip," +
+                "       o.billing_address billing_address," +
+                "       o.shipping_country shipping_country," +
+                "       o.shipping_city shipping_city," +
+                "       o.shipping_zip shipping_zip," +
+                "       o.shipping_address shipping_address " +
+                "FROM orders o " +
+                "LEFT JOIN lineitems l ON o.id = l.order_id " +
+                "LEFT JOIN products p ON p.id = l.product_id " +
+                "WHERE o.user_id = ? AND o.status = 'paid' AND o.deleted != 1 " +
+                "ORDER BY o.id DESC;";
+        try (DB db = new DB();
+             PreparedStatement stmt = db.getPreparedStatement(query.trim())
+        ) {
+            stmt.setInt(1, userId);
+            ResultSet resultSet = stmt.executeQuery();
+            int oldOrderId = -1;
+            float totalPrice = 0.0f;
+            Order order = null;
+            List<LineItem> lineItemsInOrder = new ArrayList<>();
+            while (resultSet.next()) {
+                int actualOrderId = resultSet.getInt("order_id");
+                int quantity = resultSet.getInt("quantity");
+                float actualPrice = resultSet.getFloat("actual_price");
+                totalPrice += quantity * actualPrice;
+                if (oldOrderId == actualOrderId) {
+                    lineItemsInOrder.add(new LineItem(
+                            resultSet.getInt("order_id"),
+                            resultSet.getInt("product_id"),
+                            resultSet.getString("product_name"),
+                            resultSet.getString("image_filename"),
+                            quantity,
+                            actualPrice,
+                            Currency.getInstance(resultSet.getString("currency"))
+                    ));
+                    order.updateTotal();
+                } else {
+                    if (order != null) {
+                        paidOrders.add(order);
+                        totalPrice = 0;
+                    }
+                    order = new Order(
+                            resultSet.getInt("order_id"),
+                            userId,
+                            Status.PAID,
+                            lineItemsInOrder,
+                            resultSet.getDate("closed_date"),
+                            totalPrice,
+                            resultSet.getString("user_name"),
+                            resultSet.getString("email"),
+                            resultSet.getString("phone_number"),
+                            resultSet.getString("billing_country"),
+                            resultSet.getString("billing_city"),
+                            resultSet.getString("billing_zip"),
+                            resultSet.getString("billing_address"),
+                            resultSet.getString("shipping_country"),
+                            resultSet.getString("shipping_city"),
+                            resultSet.getString("shipping_zip"),
+                            resultSet.getString("shipping_address"),
+                            resultSet.getString("orderlog_filename")
+                    );
+                    //lineItemsInOrder = new ArrayList<>();
+                    lineItemsInOrder.add(new LineItem(
+                            resultSet.getInt("order_id"),
+                            resultSet.getInt("product_id"),
+                            resultSet.getString("product_name"),
+                            resultSet.getString("image_filename"),
+                            quantity,
+                            actualPrice,
+                            Currency.getInstance(resultSet.getString("currency"))
+                    ));
+                }
+                oldOrderId = actualOrderId;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return paidOrders;
     }
 
     @Override

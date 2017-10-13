@@ -26,7 +26,7 @@
 
                         <div id="orders">
 
-                        <th:block th:if="${#lists.size(orders) > 0}" th:each="order : ${orders}" th:object="${order}">
+                        <th:block th:if="${orders != null && orders.size() > 0}" th:each="order : ${orders}" th:object="${order}">
 
                             <div class="order">
                                 <h4 th:text="*{'Order ID #' + id}" class="order-title" th:attr="id=*{'order-' + id}">Order ID #1</h4>
@@ -68,7 +68,7 @@
 
                         </th:block>
 
-                        <th:block th:if="${#lists.size(orders) <= 0}">
+                        <th:block th:if="${orders == null || orders.size() < 1}">
 
                             <p>There are no orders in history.</p>
 
