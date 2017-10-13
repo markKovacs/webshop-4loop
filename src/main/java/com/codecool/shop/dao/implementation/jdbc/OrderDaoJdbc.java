@@ -259,7 +259,7 @@ public class OrderDaoJdbc implements OrderDao {
                 "FROM orders o " +
                 "LEFT JOIN lineitems l ON o.id = l.order_id " +
                 "LEFT JOIN products p ON p.id = l.product_id " +
-                "WHERE o.user_id = ? AND o.status = 'paid' AND o.deleted != 1 " +
+                "WHERE o.user_id = ? AND o.status = 'paid' AND o.deleted != 1" +
                 "ORDER BY o.id DESC;";
         try (DB db = new DB();
              PreparedStatement stmt = db.getPreparedStatement(query.trim())

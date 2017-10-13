@@ -50,8 +50,8 @@
                                         </td>
                                         <td th:text="${item.productName}">Light Sabre from Star Wars</td>
                                         <td th:text="${item.quantity}">67</td>
-                                        <td class="right price-width" th:text="${#numbers.formatDecimal(item.actualPrice, 0, 'COMMA', 2, 'POINT')} + ' ' + ${item.currency}">200 USD</td>
-                                        <td class="right subtotal-width" th:text="${#numbers.formatDecimal(item.subTotalPrice, 0, 'COMMA', 2, 'POINT') + ' ' + ${item.currency}">8400 USD</td>
+                                        <td class="right price-width" th:text="${#numbers.formatDecimal(item.actualPrice, 0, 'COMMA', 2, 'POINT') + ' ' + item.currency}">200 USD</td>
+                                        <td class="right subtotal-width" th:text="${#numbers.formatDecimal(item.subTotalPrice, 0, 'COMMA', 2, 'POINT') + ' ' + item.currency}">8400 USD</td>
                                     </tr>
                                     </tbody>
                                     <tfoot>
