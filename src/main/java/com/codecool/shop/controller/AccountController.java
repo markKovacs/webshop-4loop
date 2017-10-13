@@ -40,12 +40,13 @@ public class AccountController {
         int userId = getUserIdFromSession(req);
         Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
 
-        List<HashMap<String, Object>> orders = getPaidOrders(userId); // TODO: maybe this could be simplified
+        List<Order> orders = DaoFactory.getOrderDao().getAllPaid(userId);
         Map<String, Object> params = new HashMap<>();
         params.put("orders", orders);
         params.put("balance", Main.balanceInUSD);
         params.put("loggedIn", req.session().attribute("user_id") != null);
-        // params.put("cartItems", order.countCartItems()); TODO: nullpointer while findOpenByUserId is corrected
+        int cartItems = order != null ? order.countCartItems() : 0;
+        params.put("cartItems", cartItems);
 
         return new ModelAndView(params, "history");
     }
@@ -59,7 +60,8 @@ public class AccountController {
         params.put("user", getUserData(userId));
         params.put("balance", Main.balanceInUSD);
         params.put("loggedIn", req.session().attribute("user_id") != null);
-        // params.put("cartItems", order.countCartItems()); TODO: nullpointer while findOpenByUserId is corrected
+        int cartItems = order != null ? order.countCartItems() : 0;
+        params.put("cartItems", cartItems);
         if (req.queryParams("edited") != null) {
             params.put("success", new ArrayList<>(Arrays.asList("Profile successfully edited.")));
         }
@@ -144,7 +146,7 @@ public class AccountController {
             params.put("errors", errorMessages);
             params.put("user", profileInput);
             params.put("loggedIn", req.session().attribute("user_id") != null);
-            // params.put("cartItems", order.countCartItems()); TODO: nullpointer while findOpenByUserId is corrected
+            params.put("cartItems", order.countCartItems());
 
             return new ModelAndView(params, "profile");
         }
@@ -198,7 +200,7 @@ public class AccountController {
             List<LineItem> lineItems = o.getItems();
             for (LineItem li : lineItems) {
                 HashMap<String, Object> lineItem = new HashMap<>();
-                lineItem.put("productImageFileName", li.getProductImage());
+                lineItem.put("productImage", li.getProductImage());
                 lineItem.put("productName", li.getProductName());
                 lineItem.put("quantity", li.getQuantity());
                 lineItem.put("actualPrice", li.getActualPrice());
