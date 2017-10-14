@@ -11,24 +11,24 @@ import java.util.stream.Collectors;
 
 public class ProductDaoMem implements ProductDao {
 
-    private List<Product> DATA = new ArrayList<>();
-    // private static ProductDaoMem instance = null;
+    private static ProductDaoMem instance = null;
 
-    /* A private Constructor prevents any other class from instantiating.
-     */
-    public ProductDaoMem() {
+    private List<Product> DATA = new ArrayList<>();
+    private int productSequence = 0;
+
+    private ProductDaoMem() {
     }
 
-    /*public static ProductDaoMem getInstance() {
+    public static ProductDaoMem getInstance() {
         if (instance == null) {
             instance = new ProductDaoMem();
         }
         return instance;
-    }*/
+    }
 
     @Override
     public void add(Product product) {
-        product.setId(DATA.size() + 1);
+        product.setId(++productSequence);
         DATA.add(product);
     }
 
@@ -58,7 +58,7 @@ public class ProductDaoMem implements ProductDao {
     }
 
     @Override
-    public void clearAll() {
+    public void removeAll() {
         getAll().clear();
     }
 }

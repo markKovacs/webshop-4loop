@@ -9,7 +9,20 @@ import java.util.stream.Collectors;
 
 public class UserDaoMem implements UserDao {
 
+    private static UserDaoMem instance = null;
+
     private List<User> DATA = new ArrayList<>();
+    private int userSequence = 0;
+
+    private UserDaoMem() {
+    }
+
+    public static UserDaoMem getInstance() {
+        if (instance == null) {
+            instance = new UserDaoMem();
+        }
+        return instance;
+    }
 
     @Override
     public List<String> update(int userId, Map<String, String> profileInput) {
@@ -27,7 +40,7 @@ public class UserDaoMem implements UserDao {
 
     @Override
     public void add(User user) {
-        user.setUserId(DATA.size() + 1);
+        user.setUserId(++userSequence);
         DATA.add(user);
     }
 

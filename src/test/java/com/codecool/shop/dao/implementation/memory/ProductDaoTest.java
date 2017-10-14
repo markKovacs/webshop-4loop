@@ -22,7 +22,7 @@ public class ProductDaoTest {
      * Methods to test:
      * void add(ProductCategory category);
      * ProductCategory findByID(int id);
-     * void remove(int id);
+     * void removeOrder(int id);
      * List<ProductCategory> getAll();
      * List<Product> getBy(Supplier supplier);
      * List<Product> getBy(ProductCategory productCategory);
@@ -37,7 +37,7 @@ public class ProductDaoTest {
     public void setUp() {
         Config.USE_PRODUCTION_DB = false;
         dao = DaoFactory.getProductDao();
-        dao.clearAll();
+        dao.removeAll();
         productCategory = new ProductCategory("Some name", "Some department", "Some description");
         supplier = new Supplier("Something", "Something");
         product = new Product("Product name", 5f, "USD", "masdassd", productCategory, supplier, "filename");
@@ -86,7 +86,7 @@ public class ProductDaoTest {
         dao.remove(id);
         Product foundProductAfterRemove = dao.find(id);
 
-        assertAll("remove",
+        assertAll("removeOrder",
                 () -> assertNull(foundProductAfterRemove),
                 () -> assertNotNull(foundProductBeforeRemove)
         );

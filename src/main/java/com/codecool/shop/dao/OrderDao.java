@@ -19,24 +19,21 @@ public interface OrderDao {
     void addLineItemToCart(LineItem lineItem, Order order);
     void changeQuantity(LineItem lineItem, int quantity);
 
-
     //void addLineItemToOrder(int productId, Order order, int quantity, float actualPrice, String currency);
     //void updateLineItemInOrder(int productId, Order order, int quantity);
 
     void addLineItemToOrder(Order order, Product product, int quantity);
     void updateLineItemInOrder(Order order, Product product, int quantity);
 
-    void remove(int id);
+    void removeOrder(int id);
     void removeLineItemFromCart(int productId, Order order);
     void removeZeroQuantityItems(Order order);
 
     List<Order> getAll();
     List<Order> getBy(Status status);
-
     List<Order> getAllPaid(int userId);
 
     void setStatus(Order order);
-
     void saveCheckoutInfo(Order order);
 
 }

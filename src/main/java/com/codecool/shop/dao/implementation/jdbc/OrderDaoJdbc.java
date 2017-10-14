@@ -387,7 +387,7 @@ public class OrderDaoJdbc implements OrderDao {
     }
 
     @Override
-    public void remove(int id) {
+    public void removeOrder(int id) {
 
     }
 

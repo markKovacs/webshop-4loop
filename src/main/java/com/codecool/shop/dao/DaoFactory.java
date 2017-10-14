@@ -9,43 +9,39 @@ public class DaoFactory {
     private DaoFactory() {
     }
 
-    public static DaoFactory getInstance() {
-        return new DaoFactory();
-    }
-
     public static OrderDao getOrderDao() {
         if (Config.USE_DB) {
             return new OrderDaoJdbc();
         }
-        return new OrderDaoMem();
+        return OrderDaoMem.getInstance();
     }
 
     public static UserDao getUserDao() {
         if (Config.USE_DB) {
             return new UserDaoJdbc();
         }
-        return new UserDaoMem();
+        return UserDaoMem.getInstance();
     }
 
     public static ProductCategoryDao getProductCategoryDao() {
         if (Config.USE_DB) {
             return new ProductCategoryDaoJdbc();
         }
-        return new ProductCategoryDaoMem();
+        return ProductCategoryDaoMem.getInstance();
     }
 
     public static SupplierDao getSupplierDao() {
         if (Config.USE_DB) {
             return new SupplierDaoJdbc();
         }
-        return new SupplierDaoMem();
+        return SupplierDaoMem.getInstance();
     }
 
     public static ProductDao getProductDao() {
         if (Config.USE_DB) {
             return new ProductDaoJdbc();
         }
-        return new ProductDaoMem();
+        return ProductDaoMem.getInstance();
     }
 
 }

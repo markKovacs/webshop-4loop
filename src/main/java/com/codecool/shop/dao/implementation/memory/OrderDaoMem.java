@@ -8,25 +8,29 @@ import com.codecool.shop.order.Status;
 import com.codecool.shop.utility.Log;
 
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class OrderDaoMem implements OrderDao {
 
-    private List<Order> DATA = new ArrayList<>();
-/*
     private static OrderDaoMem instance = null;
-*/
 
-    /* A private Constructor prevents any other class from instantiating.
-     */
-    public OrderDaoMem() {
+    private List<Order> DATA = new ArrayList<>();
+    private int orderSequence = 0;
+
+    private OrderDaoMem() {
+    }
+
+    public static OrderDaoMem getInstance() {
+        if (instance == null) {
+            instance = new OrderDaoMem();
+        }
+        return instance;
     }
 
     @Override
     public Order createNewOrder(int userId) {
-        int id = DATA.size() + 1;
+        int id = ++orderSequence;
         String orderLogFilename = Log.getNowAsString() + "_" + id + "_order";
         Order order = new Order(id, userId, orderLogFilename);
         DATA.add(order);
@@ -53,7 +57,7 @@ public class OrderDaoMem implements OrderDao {
     }
 
     @Override
-    public void remove(int id) {
+    public void removeOrder(int id) {
         DATA.remove(findByID(id));
 
     }
@@ -122,6 +126,7 @@ public class OrderDaoMem implements OrderDao {
 
     @Override
     public void removeLineItemFromCart(int productId, Order order) {
+        order.getItems().removeIf(lineItem -> lineItem.getProductId() == productId);
         for (LineItem lineItem : order.getItems()) {
             if (lineItem.getProductId() == productId) {
                 order.getItems().remove(lineItem);

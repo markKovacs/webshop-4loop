@@ -263,7 +263,7 @@ public class ProductDaoJdbc implements ProductDao {
     }
 
     @Override
-    public void clearAll() {
+    public void removeAll() {
         try (DB db = new DB();
              PreparedStatement stmt = db.getPreparedStatement("DELETE FROM products;")
         ){

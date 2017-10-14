@@ -106,7 +106,7 @@ public class AccountController {
         String body = Email.renderEmailTemplate("welcome_email",
                 new HashMap<String, Object>(){{ put("user", user); }});
         String subject = "Welcome " + user.getFullName() + " in the 4loop Shop!";
-        Email.send(to, body, subject);
+        // Email.send(to, body, subject);
 
         res.redirect("/login");
         return null;

@@ -19,7 +19,7 @@ class SupplierDaoTest {
      * Methods to test:
      * void add(Supplier supplier);
      * Supplier findByID(int id);
-     * void remove(int id);
+     * void removeOrder(int id);
      * List<Supplier> getAll();
      */
 
@@ -35,7 +35,7 @@ class SupplierDaoTest {
     public void setUp() {
         Config.USE_PRODUCTION_DB = false;
         dao = DaoFactory.getSupplierDao();
-        dao.clearAll();
+        dao.removeAll();
         productCategory = new ProductCategory("Some name", "Some department", "Some description");
         supplier = new Supplier("Something", "Something");
         product = new Product("Product name", 5f, "USD", "masdassd", productCategory, supplier, null);
@@ -79,7 +79,7 @@ class SupplierDaoTest {
         dao.remove(id);
         Supplier foundSupplierAfterRemove = dao.find(id);
 
-        assertAll("remove",
+        assertAll("removeOrder",
                 () -> assertNull(foundSupplierAfterRemove),
                 () -> assertNotNull(foundSupplierBeforeRemove)
         );

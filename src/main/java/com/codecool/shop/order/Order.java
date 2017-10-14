@@ -1,10 +1,7 @@
 package com.codecool.shop.order;
 
 import com.codecool.shop.dao.DaoFactory;
-import com.codecool.shop.dao.implementation.memory.OrderDaoMem;
-import com.codecool.shop.dao.implementation.memory.ProductDaoMem;
 import com.codecool.shop.model.Product;
-import com.codecool.shop.utility.Log;
 
 import java.util.ArrayList;
 import java.util.Date;

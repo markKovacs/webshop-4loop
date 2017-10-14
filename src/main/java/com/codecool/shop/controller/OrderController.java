@@ -100,7 +100,7 @@ public class OrderController {
 
         boolean cartIsEmpty = order.getItems().isEmpty();
 /*        if (cartIsEmpty) {
-            DaoFactory.getOrderDao().remove(order.getId());
+            DaoFactory.getOrderDao().removeOrder(order.getId());
         }*/
 
         Map<String, Object> newPrices = new HashMap<>();
@@ -116,10 +116,11 @@ public class OrderController {
         int userId = req.session().attribute("user_id");
         Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
 
+        order.getItems().forEach(System.out::println);
         DaoFactory.getOrderDao().removeZeroQuantityItems(order);
 
         if (order.getItems().size() < 1) {
-            //DaoFactory.getOrderDao().remove(order.getId());
+            //DaoFactory.getOrderDao().removeOrder(order.getId());
             res.redirect("/cart");
         } else {
             Log.saveActionToOrderLog(order.getOrderLogFilename(), "reviewed");
@@ -231,7 +232,7 @@ public class OrderController {
             String body = Email.renderEmailTemplate("order_email",
                     new HashMap<String, Object>(){{ put("order", order); }});
             String subject = "Order Confirmation";
-            Email.send(to, body, subject);
+            // Email.send(to, body, subject);
 
             res.redirect("/payment/success");
         } else {
