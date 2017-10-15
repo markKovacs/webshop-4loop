@@ -2,13 +2,10 @@ package com.codecool.shop.dao.implementation.jdbc;
 
 import com.codecool.shop.DB;
 import com.codecool.shop.dao.OrderDao;
-import com.codecool.shop.model.Product;
-import com.codecool.shop.model.Supplier;
 import com.codecool.shop.order.LineItem;
 import com.codecool.shop.order.Order;
 import com.codecool.shop.order.Status;
 import com.codecool.shop.utility.Log;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -78,11 +75,6 @@ public class OrderDaoJdbc implements OrderDao {
         }
     }
 
-    /*@Override
-    public void add(Order order) {
-
-    }*/
-
     @Override
     public Order findByID(int id) {
         return null;
@@ -90,8 +82,6 @@ public class OrderDaoJdbc implements OrderDao {
 
     @Override
     public Order findOpenByUserId(int userId) {
-
-        Order order = null;
 
         String query = "SELECT o.id order_id," +
                        "       o.user_id," +
@@ -120,6 +110,8 @@ public class OrderDaoJdbc implements OrderDao {
                        "LEFT JOIN lineitems l ON o.id = l.order_id " +
                        "LEFT JOIN products p ON p.id = l.product_id " +
                        "WHERE o.user_id = ? AND o.status IS NULL OR o.status IN ('reviewed', 'checked') AND o.deleted != 1;";
+
+        Order order = null;
 
         try (DB db = new DB();
              PreparedStatement stmt = db.getPreparedStatement(query.trim())
@@ -174,7 +166,7 @@ public class OrderDaoJdbc implements OrderDao {
                         userId,
                         status,
                         items,
-                        resultSet.getDate("closed_date"),
+                        resultSet.getTimestamp("closed_date"),
                         totalPrice,
                         resultSet.getString("user_name"),
                         resultSet.getString("email"),
@@ -195,7 +187,6 @@ public class OrderDaoJdbc implements OrderDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        //System.out.println(order);
         return order;
     }
 
@@ -227,13 +218,8 @@ public class OrderDaoJdbc implements OrderDao {
     }
 
     @Override
-    public List<Order> getBy(Status status) {
-        return null;
-    }
-
-    @Override
     public List<Order> getAllPaid(int userId) {
-        List<Order> paidOrders = new ArrayList();
+        List<Order> paidOrders = new ArrayList<>();
         String query =  "SELECT o.id order_id," +
                 "       o.user_id," +
                 "       o.closed_date," +
@@ -259,45 +245,37 @@ public class OrderDaoJdbc implements OrderDao {
                 "FROM orders o " +
                 "LEFT JOIN lineitems l ON o.id = l.order_id " +
                 "LEFT JOIN products p ON p.id = l.product_id " +
-                "WHERE o.user_id = ? AND o.status = 'paid' AND o.deleted != 1" +
+                "WHERE o.user_id = ? AND o.status = 'paid' AND o.deleted != 1 " +
                 "ORDER BY o.id DESC;";
         try (DB db = new DB();
              PreparedStatement stmt = db.getPreparedStatement(query.trim())
         ) {
+
             stmt.setInt(1, userId);
             ResultSet resultSet = stmt.executeQuery();
+
             int oldOrderId = -1;
-            float totalPrice = 0.0f;
             Order order = null;
-            List<LineItem> lineItemsInOrder = new ArrayList<>();
+            List<LineItem> lineItemsInOrder = null;
+
             while (resultSet.next()) {
+
                 int actualOrderId = resultSet.getInt("order_id");
-                int quantity = resultSet.getInt("quantity");
-                float actualPrice = resultSet.getFloat("actual_price");
-                totalPrice += quantity * actualPrice;
-                if (oldOrderId == actualOrderId) {
-                    lineItemsInOrder.add(new LineItem(
-                            resultSet.getInt("order_id"),
-                            resultSet.getInt("product_id"),
-                            resultSet.getString("product_name"),
-                            resultSet.getString("image_filename"),
-                            quantity,
-                            actualPrice,
-                            Currency.getInstance(resultSet.getString("currency"))
-                    ));
-                    order.updateTotal();
-                } else {
+
+                if (oldOrderId != actualOrderId) {
                     if (order != null) {
+                        order.updateTotal();
                         paidOrders.add(order);
-                        totalPrice = 0;
                     }
+
+                    lineItemsInOrder = new ArrayList<>();
                     order = new Order(
                             resultSet.getInt("order_id"),
                             userId,
                             Status.PAID,
                             lineItemsInOrder,
-                            resultSet.getDate("closed_date"),
-                            totalPrice,
+                            resultSet.getTimestamp("closed_date"),
+                            0,
                             resultSet.getString("user_name"),
                             resultSet.getString("email"),
                             resultSet.getString("phone_number"),
@@ -311,84 +289,29 @@ public class OrderDaoJdbc implements OrderDao {
                             resultSet.getString("shipping_address"),
                             resultSet.getString("orderlog_filename")
                     );
-                    //lineItemsInOrder = new ArrayList<>();
-                    lineItemsInOrder.add(new LineItem(
-                            resultSet.getInt("order_id"),
-                            resultSet.getInt("product_id"),
-                            resultSet.getString("product_name"),
-                            resultSet.getString("image_filename"),
-                            quantity,
-                            actualPrice,
-                            Currency.getInstance(resultSet.getString("currency"))
-                    ));
+
+                    oldOrderId = actualOrderId;
                 }
-                oldOrderId = actualOrderId;
+
+                lineItemsInOrder.add(new LineItem(
+                        resultSet.getInt("order_id"),
+                        resultSet.getInt("product_id"),
+                        resultSet.getString("product_name"),
+                        resultSet.getString("image_filename"),
+                        resultSet.getInt("quantity"),
+                        resultSet.getFloat("actual_price"),
+                        Currency.getInstance(resultSet.getString("currency"))
+                ));
+
+                if (resultSet.isLast() && order != null) {
+                    order.updateTotal();
+                    paidOrders.add(order);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return paidOrders;
-    }
-
-    @Override
-    public void addLineItemToOrder(Order order, Product product, int quantity) {
-
-        String query = "INSERT INTO lineitems (product_id, order_id, quantity, actual_price, currency) " +
-                       "VALUES (?, ?, ?, ?, ?);";
-
-        try (DB db = new DB();
-             PreparedStatement stmt = db.getPreparedStatement(query.trim())
-        ) {
-            stmt.setInt(1, product.getId());
-            stmt.setInt(2, order.getId());
-            stmt.setInt(3, quantity);
-            stmt.setFloat(4, product.getDefaultPrice());
-            stmt.setString(5, product.getDefaultCurrency().toString());
-
-            int affectedRows = stmt.executeUpdate();
-
-            if (affectedRows > 0){
-                System.out.println("New product added to database.");
-            } else {
-                System.out.println("New product addition failed.");
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    @Override
-    public void updateLineItemInOrder(Order order, Product product, int quantity) {
-
-        String query = "UPDATE lineitems " +
-                       "SET quantity = ? " +
-                       "WHERE product_id = ? AND order_id = ?;";
-
-        try (DB db = new DB();
-             PreparedStatement stmt = db.getPreparedStatement(query)
-        ) {
-            stmt.setInt(1, quantity);
-            stmt.setInt(2, product.getId());
-            stmt.setInt(3, order.getId());
-
-            int affectedRows = stmt.executeUpdate();
-
-            if (affectedRows > 0){
-                System.out.println("New product added to database.");
-            } else {
-                System.out.println("New product addition failed.");
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void removeOrder(int id) {
-
     }
 
     @Override
@@ -458,22 +381,46 @@ public class OrderDaoJdbc implements OrderDao {
 
     }
 
-    public void changeQuantity(LineItem lineItem, int quantity) {
+    @Override
+    public void increaseLineItemQuantity(Order order, LineItem lineItem, int quantity) {
+        String query = "UPDATE lineitems " +
+                       "SET quantity = quantity + ? " +
+                       "WHERE product_id = ? AND order_id = ?;";
+        try (DB db = new DB();
+             PreparedStatement stmt = db.getPreparedStatement(query)
+        ) {
+            stmt.setInt(1, quantity);
+            stmt.setInt(2, lineItem.getProductId());
+            stmt.setInt(3, order.getId());
+
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Additional quantity to lineitem could not be added.");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void changeQuantity(Order order, LineItem lineItem, int quantity) {
         String query = "UPDATE lineitems " +
                        "SET quantity = ? " +
-                       "WHERE product_id= ? AND order_id = ?;";
+                       "WHERE product_id = ? AND order_id = ?;";
 
         try (DB db = new DB();
              PreparedStatement stmt = db.getPreparedStatement(query)
         ) {
             stmt.setInt(1, quantity);
             stmt.setInt(2, lineItem.getProductId());
-            stmt.setInt(3, lineItem.getOrderId());
+            stmt.setInt(3, order.getId());
 
             int affectedRows = stmt.executeUpdate();
 
             if (affectedRows == 0) {
-                throw new SQLException("Creating order failed!");
+                throw new SQLException("Quantity change of lineitem failed.");
             }
 
         } catch (SQLException e) {
@@ -481,28 +428,6 @@ public class OrderDaoJdbc implements OrderDao {
         }
 
     }
-
-
-    /*@Override
-    public void add(Order order) {
-
-        String query = "INSERT INTO orders (user_id) VALUES (?);";
-
-        try (DB db = new DB();
-             PreparedStatement stmt = db.getPreparedStatement(query)
-        ){
-            stmt.setString(1, supplier.getName());
-            stmt.setString(2, supplier.getDescription());
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows > 0){
-                System.out.println("New supplier added to database.");
-            } else {
-                System.out.println("New supplier addition failed.");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }*/
 
     @Override
     public void setStatus(Order order) {
@@ -535,6 +460,29 @@ public class OrderDaoJdbc implements OrderDao {
                 System.out.println("Order status updated in database to " + order.getStatus());
             } else {
                 System.out.println("Order status update failed.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void closeOrder(Order order) {
+        String query = "UPDATE orders SET status = CAST('paid' AS order_status), " +
+                "                         closed_date = ? " +
+                "       WHERE id = ?;";
+
+        try (DB db = new DB();
+             PreparedStatement stmt = db.getPreparedStatement(query)
+        ) {
+            stmt.setTimestamp(1, new java.sql.Timestamp(new java.util.Date().getTime()));
+            stmt.setInt(2, order.getId());
+
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows > 0){
+                System.out.println("Order status updated in database to paid, closed date set.");
+            } else {
+                System.out.println("Order status update to paid has failed.");
             }
         } catch (SQLException e) {
             e.printStackTrace();

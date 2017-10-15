@@ -1,8 +1,7 @@
 package com.codecool.shop.order;
 
-import com.codecool.shop.dao.DaoFactory;
-import com.codecool.shop.model.Product;
-
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -68,62 +67,6 @@ public class Order {
         this.orderLogFilename = orderLogFilename;
     }
 
-    public String addToCart(int productId, int quantity) {
-
-        // FIND PRODUCT BASED ON productId
-        Product product = DaoFactory.getProductDao().find(productId);
-
-        if (product == null || quantity < 1 || quantity > 99) {
-            return "invalid_params";
-        }
-
-        // CHECK IF WE ALREADY HAVE THE LINEITEM IN OUR CART
-        LineItem lineItemToAdd = DaoFactory.getOrderDao().findLineItemInCart(productId, this);
-
-        // IF WE WANT TO ADD A NEW ITEM TO THE CART
-        if (lineItemToAdd == null) {
-
-            lineItemToAdd = new LineItem(
-                    this.id,
-                    productId,
-                    product.getName(),
-                    product.getImageFileName(),
-                    quantity,
-                    product.getDefaultPrice(),
-                    product.getDefaultCurrency()
-            );
-
-            DaoFactory.getOrderDao().addLineItemToCart(lineItemToAdd, this);
-            updateTotal();
-
-            return "new_item";
-        }
-
-        // THE LINEITEM IS ALREADY IN THE CART, JUST UPDATE QUANTITY
-        DaoFactory.getOrderDao().changeQuantity(lineItemToAdd, quantity);
-        // lineItemToAdd.changeQuantity(quantity);
-        updateTotal();
-
-        return "quantity_change";
-    }
-
-    public float changeProductQuantity(int productId, int quantity) {
-        Product product = DaoFactory.getProductDao().find(productId);
-        if (product == null || quantity < 0 || quantity > 99) {
-            return -1f;
-        }
-        //LineItem lineItem = findLineItem(product);
-        LineItem lineItem = DaoFactory.getOrderDao().findLineItemInCart(productId, this);
-        if (lineItem == null) {
-            return -1f;
-        }
-
-        //float newSubtotal = lineItem.changeQuantityToValue(quantity);
-        DaoFactory.getOrderDao().changeQuantity(lineItem, quantity);
-
-        return lineItem.getActualPrice()*quantity;
-    }
-
     public void updateTotal() {
         float total = 0.0f;
         for (LineItem lineItem : items) {
@@ -131,16 +74,6 @@ public class Order {
         }
         this.totalPrice = total;
     }
-
-    public void removeLineItem(int productId) {
-        LineItem foundLineItem = items.stream().filter(i -> i.getProductId() == productId).findFirst().orElse(null);
-        items.remove(foundLineItem);
-    }
-
-/*    private LineItem findLineItem(Product product) {
-        return items.stream().filter(t -> DaoFactory.getProductDao().find(t.getProductId())
-                .equals(product)).findFirst().orElse(null);
-    }*/
 
     public int countCartItems() {
         return items.size();
@@ -254,6 +187,18 @@ public class Order {
 
     public Date getClosedDate() {
         return closedDate;
+    }
+
+    public String getClosedDateString() {
+        if (closedDate == null) {
+            return "N/A";
+        }
+        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        return df.format(closedDate);
+    }
+
+    public void setClosedDate(Date closedDate) {
+        this.closedDate = closedDate;
     }
 
     @Override

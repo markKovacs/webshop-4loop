@@ -1,8 +1,8 @@
 package com.codecool.shop.controller;
 
 import com.codecool.shop.Main;
-import com.codecool.shop.OrderUtils;
 import com.codecool.shop.dao.DaoFactory;
+import com.codecool.shop.model.Product;
 import com.codecool.shop.order.InputField;
 import com.codecool.shop.order.LineItem;
 import com.codecool.shop.order.Order;
@@ -15,14 +15,10 @@ import com.google.gson.Gson;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
-
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.codecool.shop.OrderUtils.setOrderStatus;
 
 public class OrderController {
 
@@ -32,21 +28,45 @@ public class OrderController {
 
         int quantity = Integer.parseInt(req.queryParams("quantity"));
         int productId = Integer.parseInt(req.queryParams("product_id"));
-
         int userId = req.session().attribute("user_id");
-        Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
 
+        Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
         if (order == null) {
             order = DaoFactory.getOrderDao().createNewOrder(userId);
         }
 
-        String statusMessage = order.addToCart(productId, quantity);
+        Product product = DaoFactory.getProductDao().find(productId);
+        if (product == null || quantity < 1 || quantity > 99) {
+            return "invalid_params";
+        }
 
-        return statusMessage;
+        LineItem lineItemToAdd = DaoFactory.getOrderDao().findLineItemInCart(productId, order);
+        if (lineItemToAdd == null) {
+
+            lineItemToAdd = new LineItem(
+                    order.getId(),
+                    productId,
+                    product.getName(),
+                    product.getImageFileName(),
+                    quantity,
+                    product.getDefaultPrice(),
+                    product.getDefaultCurrency()
+            );
+
+            DaoFactory.getOrderDao().addLineItemToCart(lineItemToAdd, order);
+            return "new_item";
+        }
+
+        DaoFactory.getOrderDao().increaseLineItemQuantity(order, lineItemToAdd, quantity);
+        return "quantity_change";
     }
 
     public static ModelAndView renderReview(Request req, Response res) {
-        Order order = OrderUtils.setOrderStatus(req);
+
+        int userId = req.session().attribute("user_id");
+        Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
+
+        setOrderStatus(req, order);
 
         List<LineItem> orderItems = new ArrayList<>();
         float totalPrice = 0f;
@@ -71,18 +91,27 @@ public class OrderController {
 
     public static String changeQuantity(Request req, Response res) {
 
-        int userId = req.session().attribute("user_id");
-        Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
-
         int quantity = Integer.parseInt(req.queryParams("quantity"));
         int productId = Integer.parseInt(req.queryParams("product_id"));
+        int userId = req.session().attribute("user_id");
 
-        float newSubtotal = order.changeProductQuantity(productId, quantity);
-        order.updateTotal();
+        Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
+
+        Product product = DaoFactory.getProductDao().find(productId);
+        if (product == null || quantity < 0 || quantity > 99) {
+            return null;
+        }
+
+        LineItem lineItem = DaoFactory.getOrderDao().findLineItemInCart(productId, order);
+        if (lineItem == null) {
+            return null;
+        }
+
+        DaoFactory.getOrderDao().changeQuantity(order, lineItem, quantity);
 
         Map<String, Float> newPrices = new HashMap<>();
         newPrices.put("total", order.getTotalPrice());
-        newPrices.put("subtotal", newSubtotal);
+        newPrices.put("subtotal", lineItem.getSubTotalPrice());
 
         Gson gson = new Gson();
         return gson.toJson(newPrices);
@@ -94,14 +123,10 @@ public class OrderController {
 
         int productId = Integer.parseInt(req.queryParams("product_id"));
 
-        //order.removeLineItem(productId);
         DaoFactory.getOrderDao().removeLineItemFromCart(productId, order);
         order.updateTotal();
 
         boolean cartIsEmpty = order.getItems().isEmpty();
-/*        if (cartIsEmpty) {
-            DaoFactory.getOrderDao().removeOrder(order.getId());
-        }*/
 
         Map<String, Object> newPrices = new HashMap<>();
         newPrices.put("total", order.getTotalPrice());
@@ -116,11 +141,9 @@ public class OrderController {
         int userId = req.session().attribute("user_id");
         Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
 
-        order.getItems().forEach(System.out::println);
         DaoFactory.getOrderDao().removeZeroQuantityItems(order);
 
         if (order.getItems().size() < 1) {
-            //DaoFactory.getOrderDao().removeOrder(order.getId());
             res.redirect("/cart");
         } else {
             Log.saveActionToOrderLog(order.getOrderLogFilename(), "reviewed");
@@ -131,10 +154,15 @@ public class OrderController {
     }
 
     public static ModelAndView renderCheckout(Request req, Response res) {
-        Order order = OrderUtils.setOrderStatus(req);
-        int userId = req.session().attribute("user_id");
 
-        int cartItems = order != null ? order.countCartItems() : 0;
+        int userId = req.session().attribute("user_id");
+        Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
+
+        setOrderStatus(req, order);
+
+        if (order.getItems().size() < 1) {
+            res.redirect("/cart");
+        }
 
         User user = DaoFactory.getUserDao().find(userId);
 
@@ -142,7 +170,9 @@ public class OrderController {
         params.put("user", user);
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
         params.put("loggedIn", req.session().attribute("user_id") != null);
+        int cartItems = order.countCartItems();
         params.put("cartItems", cartItems);
+
         return new ModelAndView(params, "checkout");
     }
 
@@ -152,6 +182,7 @@ public class OrderController {
 
         int userId = req.session().attribute("user_id");
         Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
+
         int cartItems = order != null ? order.countCartItems() : 0;
 
         if (errorMessages.size() > 0) {
@@ -173,7 +204,12 @@ public class OrderController {
     }
 
     public static ModelAndView renderPayment(Request req, Response res) {
-        Order order = setOrderStatus(req);
+
+        int userId = req.session().attribute("user_id");
+        Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
+
+        setOrderStatus(req, order);
+
         Map<String, Object> params = new HashMap<>();
         params.put("order", order);
         int cartItems = order != null ? order.countCartItems() : 0;
@@ -222,8 +258,7 @@ public class OrderController {
         List<String> errorMessages = paymentProcess.process(order, paymentType, paymentData);
 
         if (errorMessages.size() == 0) {
-            order.setStatus(Status.PAID);
-            DaoFactory.getOrderDao().setStatus(order);
+            DaoFactory.getOrderDao().closeOrder(order);
 
             Log.saveActionToOrderLog(order.getOrderLogFilename(), "paid");
             Log.saveOrderToJson(order);
@@ -232,7 +267,7 @@ public class OrderController {
             String body = Email.renderEmailTemplate("order_email",
                     new HashMap<String, Object>(){{ put("order", order); }});
             String subject = "Order Confirmation";
-            // Email.send(to, body, subject);
+            Email.send(to, body, subject);
 
             res.redirect("/payment/success");
         } else {
@@ -342,6 +377,33 @@ public class OrderController {
             errorMessages.add("Invalid shipping address");
         }
         return errorMessages;
+    }
+
+    private static void setOrderStatus(Request req, Order order) {
+
+        if (order == null) {
+            return;
+        }
+
+        if (req.queryParams("back") != null) {
+            switch (order.getStatus()) {
+                case CHECKEDOUT:
+                    order.setStatus(Status.REVIEWED);
+                    break;
+                case REVIEWED:
+                    order.setStatus(Status.NEW);
+                    break;
+            }
+        } else {
+            Status orderStatus = order.getStatus();
+            if (orderStatus.equals(Status.NEW) && req.pathInfo().equals("/checkout")) {
+                order.setStatus(Status.REVIEWED);
+            } else if (orderStatus.equals(Status.REVIEWED) && req.pathInfo().equals("/payment")) {
+                order.setStatus(Status.CHECKEDOUT);
+            }
+        }
+
+        DaoFactory.getOrderDao().setStatus(order);
     }
 
 }

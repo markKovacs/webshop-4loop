@@ -8,12 +8,16 @@ import com.codecool.shop.controller.OrderController;
 import com.codecool.shop.controller.ProductController;
 import com.codecool.shop.dao.*;
 import com.codecool.shop.model.*;
+import com.codecool.shop.order.LineItem;
 import com.codecool.shop.order.Order;
 import com.codecool.shop.order.Status;
+import com.codecool.shop.user.User;
 import com.google.gson.Gson;
 import spark.Filter;
 import spark.Request;
 import spark.Response;
+
+import javax.sound.sampled.Line;
 
 public class Main {
 
@@ -43,7 +47,7 @@ public class Main {
         Gson gson = new Gson();
         post("/api/add-to-cart", OrderController::handleAddToCart, gson::toJson);
         post("/api/change-product-quantity", OrderController::changeQuantity, gson::toJson);
-        post("/api/removeOrder-line-item", OrderController::removeLineItem, gson::toJson);
+        post("/api/remove-line-item", OrderController::removeLineItem, gson::toJson);
 
         // ROUTING (sprint #1)
         get("/payment", OrderController::renderPayment, new ThymeleafTemplateEngine());
@@ -75,8 +79,6 @@ public class Main {
     }
 
     private static Filter orderInProgressFilter = (Request req, Response res) -> {
-        // TODO: if not logged in, allow route only to /, /login and /register
-        // TODO: if logged in, try to get order, rest is the same, but allow /logout
 
         boolean loggedIn = req.session().attribute("user_id") != null;
         if (!loggedIn) {
@@ -146,8 +148,13 @@ public class Main {
         ProductDao productDao = DaoFactory.getProductDao();
         ProductCategoryDao productCategoryDao = DaoFactory.getProductCategoryDao();
         SupplierDao supplierDao = DaoFactory.getSupplierDao();
+        UserDao userDao = DaoFactory.getUserDao();
+        OrderDao orderDao = DaoFactory.getOrderDao();
 
-        //setting up a new supplier
+        // Adding users
+        userDao.add(User.create("Kovacs Mark", "kovacsmark89@gmail.com", "sha1:64000:18:Vz+7J0H9qe1F63JI0vqResqNTP4Rt1XV:LcdRJgUTDCup0gDOFiRzaB/z"));
+
+        // Adding suppliers
         Supplier cbs = new Supplier("CBS", "Television series");
         supplierDao.add(cbs);
         Supplier columbia = new Supplier("Columbia Pictures", "Movie making");
@@ -175,18 +182,15 @@ public class Main {
         Supplier fox = new Supplier("20th Century Fox", "Movie making");
         supplierDao.add(fox);
 
-
-        //setting up a new product category
+        // Adding categories
         ProductCategory movies = new ProductCategory("Movies", "Entertainment", "Vehicles, weapons and other famous objects from great movies.");
         productCategoryDao.add(movies);
-
         ProductCategory historical = new ProductCategory("Historical", "Article", "Tangible memories from emperors, generals etc.");
         productCategoryDao.add(historical);
-
         ProductCategory famous = new ProductCategory("Famous Artifacts", "Article", "Tangible memories from popular musicians, athletes etc.");
         productCategoryDao.add(famous);
 
-        //setting up products and printing it
+        // Adding products
         productDao.add(new Product("Luke's Lightsaber", 49.9f, "USD", "Fantastic price. Good ecosystem and controls. Helpful technical support.", movies, lucas, "lightsaber.jpg"));
         productDao.add(new Product("Bud Spencer's pan", 20, "USD", "Old tool from az old friend. Old tool from az old friend.", movies, columbia, "bud_pan.jpg"));
         productDao.add(new Product("The last soap from Fight Club", 25, "USD", "Be clean. Be a fighter. Be a weapon.", movies, fox, "soap.jpg"));
@@ -217,6 +221,39 @@ public class Main {
         productDao.add(new Product("Mona Lisa", 3000, "USD", "Leonardo's original painting, it's a very exclusive offer.", historical, louvre, "monalisa.jpg"));
         productDao.add(new Product("Sebastian Vettel's helmet", 330, "USD", "Vettel won 4 Formula-1 GP with this helmet.", famous, sportMuseum, "vettel.jpg"));
         productDao.add(new Product("Brian May's Red Special", 1000, "USD", "A guitar made by the famous member of Queen, he played in this instrument for example We Will Rock You.", famous, emi, "brianmay.jpg"));
+
+
+        // Adding orders (without checkout info)
+        Order orderOne = orderDao.createNewOrder(1);
+        LineItem lineItemOne = new LineItem(1, 1, productDao.find(1).getName(), productDao.find(1).getImageFileName(), 3, productDao.find(1).getDefaultPrice(), productDao.find(1).getDefaultCurrency());
+        orderDao.addLineItemToCart(lineItemOne, orderOne);
+        LineItem lineItemTwo = new LineItem(1, 2, productDao.find(2).getName(), productDao.find(2).getImageFileName(), 3, productDao.find(2).getDefaultPrice(), productDao.find(2).getDefaultCurrency());
+        orderDao.addLineItemToCart(lineItemTwo, orderOne);
+        LineItem lineItemThree = new LineItem(1, 3, productDao.find(3).getName(), productDao.find(3).getImageFileName(), 1, productDao.find(3).getDefaultPrice(), productDao.find(3).getDefaultCurrency());
+        orderDao.addLineItemToCart(lineItemThree, orderOne);
+        orderDao.closeOrder(orderOne);
+
+        Order orderTwo = orderDao.createNewOrder(1);
+        LineItem lineItemFour = new LineItem(2, 1, productDao.find(1).getName(), productDao.find(1).getImageFileName(), 3, productDao.find(1).getDefaultPrice(), productDao.find(1).getDefaultCurrency());
+        orderDao.addLineItemToCart(lineItemFour, orderTwo);
+        LineItem lineItemFive = new LineItem(2, 2, productDao.find(2).getName(), productDao.find(2).getImageFileName(), 3, productDao.find(2).getDefaultPrice(), productDao.find(2).getDefaultCurrency());
+        orderDao.addLineItemToCart(lineItemFive, orderTwo);
+        orderDao.closeOrder(orderTwo);
+
+        Order orderThree = orderDao.createNewOrder(1);
+        LineItem lineItemSix = new LineItem(3, 1, productDao.find(1).getName(), productDao.find(1).getImageFileName(), 3, productDao.find(1).getDefaultPrice(), productDao.find(1).getDefaultCurrency());
+        orderDao.addLineItemToCart(lineItemSix, orderThree);
+        orderDao.closeOrder(orderThree);
+
+        Order orderFour = orderDao.createNewOrder(1);
+        LineItem lineItemSeven = new LineItem(4, 1, productDao.find(1).getName(), productDao.find(1).getImageFileName(), 3, productDao.find(1).getDefaultPrice(), productDao.find(1).getDefaultCurrency());
+        orderDao.addLineItemToCart(lineItemSeven, orderFour);
+        orderDao.closeOrder(orderFour);
+
+        Order orderFive = orderDao.createNewOrder(1);
+        LineItem lineItemEight = new LineItem(5, 1, productDao.find(1).getName(), productDao.find(1).getImageFileName(), 3, productDao.find(1).getDefaultPrice(), productDao.find(1).getDefaultCurrency());
+        orderDao.addLineItemToCart(lineItemEight, orderFive);
+        orderDao.closeOrder(orderFive);
     }
 
 }

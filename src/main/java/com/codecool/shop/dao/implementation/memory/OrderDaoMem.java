@@ -1,13 +1,13 @@
 package com.codecool.shop.dao.implementation.memory;
 
 import com.codecool.shop.dao.OrderDao;
-import com.codecool.shop.model.Product;
 import com.codecool.shop.order.LineItem;
 import com.codecool.shop.order.Order;
 import com.codecool.shop.order.Status;
 import com.codecool.shop.utility.Log;
-
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,12 +37,6 @@ public class OrderDaoMem implements OrderDao {
         return order;
     }
 
-    /*@Override
-    public void add(Order order) {
-        //order.setId(DATA.size() + 1);
-        DATA.add(order);
-    }*/
-
     @Override
     public Order findByID(int id) {
         return DATA.stream().filter(t -> t.getId() == id).findFirst().orElse(null);
@@ -57,48 +51,14 @@ public class OrderDaoMem implements OrderDao {
     }
 
     @Override
-    public void removeOrder(int id) {
-        DATA.remove(findByID(id));
-
-    }
-
-    @Override
     public List<Order> getAll() {
         return DATA;
-    }
-
-    @Override
-    public List<Order> getBy(Status status) {
-        return DATA.stream().filter(o -> o.getStatus().equals(status)).collect(Collectors.toList());
     }
 
     @Override
     public List<Order> getAllPaid(int userId) {
         return DATA.stream().filter(order -> order.getUserId() == userId && order.getStatus().equals(Status.PAID))
                 .collect(Collectors.toList());
-    }
-
-    @Override
-    public void addLineItemToOrder(Order order, Product product, int quantity) {
-        LineItem lineItemToAdd = new LineItem(
-                order.getId(),
-                product.getId(),
-                product.getName(),
-                product.getImageFileName(),
-                quantity,
-                product.getDefaultPrice(),
-                product.getDefaultCurrency()
-        );
-        order.getItems().add(lineItemToAdd);
-    }
-
-    @Override
-    public void updateLineItemInOrder(Order order, Product product, int quantity) {
-        for (LineItem lineItem : order.getItems()) {
-            if (lineItem.getProductId() == product.getId()) {
-                lineItem.setQuantity(quantity);
-            }
-        }
     }
 
     @Override
@@ -112,16 +72,30 @@ public class OrderDaoMem implements OrderDao {
     @Override
     public void addLineItemToCart(LineItem lineItem, Order order) {
         order.getItems().add(lineItem);
+        order.updateTotal();
     }
 
-    public void changeQuantity(LineItem lineItem, int quantity) {
+    @Override
+    public void increaseLineItemQuantity(Order order, LineItem lineItem, int quantity) {
         lineItem.setQuantity(lineItem.getQuantity() + quantity);
-        lineItem.setSubTotalPrice(lineItem.getSubTotalPrice() + quantity * lineItem.getActualPrice());
+        lineItem.setSubTotalPrice(lineItem.getQuantity() * lineItem.getActualPrice());
+        order.updateTotal();
+    }
+
+    public void changeQuantity(Order order, LineItem lineItem, int quantity) {
+        lineItem.setQuantity(quantity);
+        lineItem.setSubTotalPrice(quantity * lineItem.getActualPrice());
+        order.updateTotal();
     }
 
     @Override
     public void setStatus(Order order) {
+    }
 
+    @Override
+    public void closeOrder(Order order) {
+        order.setStatus(Status.PAID);
+        order.setClosedDate(new Date());
     }
 
     @Override
@@ -141,6 +115,7 @@ public class OrderDaoMem implements OrderDao {
 
     @Override
     public void saveCheckoutInfo(Order order) {
+
     }
 
 }

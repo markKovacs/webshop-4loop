@@ -1,14 +1,9 @@
 package com.codecool.shop.order;
 
-import com.codecool.shop.model.Product;
-
 import java.util.Currency;
 
 public class LineItem {
-    //private static int idCounter = 0;
-    //private int id;
 
-    //private Product product;
     private int orderId;
     private int productId;
     private String productName;
@@ -20,9 +15,6 @@ public class LineItem {
     private float subTotalPrice;
 
     public LineItem(int orderId, int productId, String productName, String productImage, int quantity, float actualPrice, Currency currency) {
-        //this.id = idCounter;
-        //idCounter++;
-        //this.id = lineItemId;
         this.orderId = orderId;
         this.productId = productId;
         this.productName = productName;
@@ -31,17 +23,6 @@ public class LineItem {
         this.actualPrice = actualPrice;
         this.subTotalPrice = quantity * actualPrice;
         this.currency = currency;
-    }
-
-    /*public void changeQuantity(int amount) {
-        this.quantity += amount;
-        this.subTotalPrice += amount * actualPrice;
-    }*/
-
-    public float changeQuantityToValue(int quantity) {
-        this.quantity = quantity;
-        this.subTotalPrice = quantity * actualPrice;
-        return this.subTotalPrice;
     }
 
     public int getProductId() {

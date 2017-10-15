@@ -38,10 +38,14 @@ app.productLogic = {
     },
 
     handleAddToCartSuccess: function (response, productId) {
-        app.utils.toastMessage("Successfully added to cart.");
         if (response === "new_item") {
+            app.utils.toastMessage("New item successfully added to cart.");
             var cartItemCount = $("#cart-item-count");
             cartItemCount.text(Number(cartItemCount.text()) + 1);
+        } else if (response == "quantity_change") {
+            app.utils.toastMessage("Additional quantity added to cart from select item.");
+        } else {
+            app.utils.toastMessage("Item could not be added to cart.");
         }
         this.resetQuantityInput(productId);
     },

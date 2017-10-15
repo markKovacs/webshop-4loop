@@ -42,16 +42,11 @@ public class AccountController {
 
         List<Order> orders = DaoFactory.getOrderDao().getAllPaid(userId);
 
-        System.out.println("ALL PAID:");
-        System.out.println(orders.size());
-        orders.forEach(System.out::println);
-
         Map<String, Object> params = new HashMap<>();
         params.put("orders", orders);
         params.put("balance", Main.balanceInUSD);
         params.put("loggedIn", req.session().attribute("user_id") != null);
-        int cartItems = order != null ? order.countCartItems() : 0;
-        params.put("cartItems", cartItems);
+        params.put("cartItems", order != null ? order.countCartItems() : 0);
 
         return new ModelAndView(params, "history");
     }
@@ -65,8 +60,7 @@ public class AccountController {
         params.put("user", getUserData(userId));
         params.put("balance", Main.balanceInUSD);
         params.put("loggedIn", req.session().attribute("user_id") != null);
-        int cartItems = order != null ? order.countCartItems() : 0;
-        params.put("cartItems", cartItems);
+        params.put("cartItems", order != null ? order.countCartItems() : 0);
         if (req.queryParams("edited") != null) {
             params.put("success", new ArrayList<>(Arrays.asList("Profile successfully edited.")));
         }
@@ -106,7 +100,7 @@ public class AccountController {
         String body = Email.renderEmailTemplate("welcome_email",
                 new HashMap<String, Object>(){{ put("user", user); }});
         String subject = "Welcome " + user.getFullName() + " in the 4loop Shop!";
-        // Email.send(to, body, subject);
+        Email.send(to, body, subject);
 
         res.redirect("/login");
         return null;
@@ -151,7 +145,7 @@ public class AccountController {
             params.put("errors", errorMessages);
             params.put("user", profileInput);
             params.put("loggedIn", req.session().attribute("user_id") != null);
-            params.put("cartItems", order.countCartItems());
+            params.put("cartItems", order != null ? order.countCartItems() : 0);
 
             return new ModelAndView(params, "profile");
         }
@@ -183,42 +177,6 @@ public class AccountController {
         modUser.put("shipaddress", user.getShippingAddress());
 
         return modUser;
-    }
-
-    private static List<HashMap<String, Object>> getPaidOrders(int userId) {
-
-        // Or simply return orderDao.getAllPaidOrders(userId)... will see!
-
-        List<Order> ordersData = DaoFactory.getOrderDao().getAllPaid(userId); // or just get all and then stream.filter?
-        List<HashMap<String, Object>> orders = new ArrayList<>();
-
-        if (ordersData == null || ordersData.size() < 1) {
-            return orders;
-        }
-
-        for (Order o : ordersData) {
-            HashMap<String, Object> order = new HashMap<>();
-            order.put("id", o.getId());
-            order.put("closed-date", o.getClosedDate());
-
-            List<HashMap<String, Object>> transformedLineItems = new ArrayList<>();
-            List<LineItem> lineItems = o.getItems();
-            for (LineItem li : lineItems) {
-                HashMap<String, Object> lineItem = new HashMap<>();
-                lineItem.put("productImage", li.getProductImage());
-                lineItem.put("productName", li.getProductName());
-                lineItem.put("quantity", li.getQuantity());
-                lineItem.put("actualPrice", li.getActualPrice());
-                lineItem.put("subTotal", li.getSubTotalPrice());
-                transformedLineItems.add(lineItem);
-            }
-
-            order.put("items", transformedLineItems);
-            order.put("grandTotal", o.getTotalPrice());
-            orders.add(order);
-        }
-
-        return orders;
     }
 
     private static Map<String, String> collectRegistrationData(Request req) {
