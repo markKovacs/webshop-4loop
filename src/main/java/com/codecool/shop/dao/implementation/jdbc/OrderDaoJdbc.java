@@ -129,15 +129,17 @@ public class OrderDaoJdbc implements OrderDao {
                 float actualPrice = resultSet.getFloat("actual_price");
                 totalPrice += quantity * actualPrice;
 
-                items.add(new LineItem(
-                    resultSet.getInt("order_id"),
-                    resultSet.getInt("product_id"),
-                    resultSet.getString("product_name"),
-                    resultSet.getString("image_filename"),
-                    quantity,
-                    actualPrice,
-                    Currency.getInstance(resultSet.getString("currency"))
-                ));
+                if (resultSet.getInt("product_id") != 0) {
+                    items.add(new LineItem(
+                            resultSet.getInt("order_id"),
+                            resultSet.getInt("product_id"),
+                            resultSet.getString("product_name"),
+                            resultSet.getString("image_filename"),
+                            quantity,
+                            actualPrice,
+                            Currency.getInstance(resultSet.getString("currency"))
+                    ));
+                }
 
                 if (resultSet.isLast()) {
 

@@ -2,7 +2,6 @@ package com.codecool.shop;
 
 import static spark.Spark.*;
 import static spark.debug.DebugScreen.enableDebugScreen;
-
 import com.codecool.shop.controller.AccountController;
 import com.codecool.shop.controller.OrderController;
 import com.codecool.shop.controller.ProductController;
@@ -16,8 +15,6 @@ import com.google.gson.Gson;
 import spark.Filter;
 import spark.Request;
 import spark.Response;
-
-import javax.sound.sampled.Line;
 
 public class Main {
 
@@ -151,7 +148,7 @@ public class Main {
         UserDao userDao = DaoFactory.getUserDao();
         OrderDao orderDao = DaoFactory.getOrderDao();
 
-        // Adding users
+        // Adding a test user (password: pass)
         userDao.add(User.create("Kovacs Mark", "kovacsmark89@gmail.com", "sha1:64000:18:Vz+7J0H9qe1F63JI0vqResqNTP4Rt1XV:LcdRJgUTDCup0gDOFiRzaB/z"));
 
         // Adding suppliers

@@ -1,16 +1,8 @@
 package com.codecool.shop.controller;
 
-import com.codecool.shop.Config;
 import com.codecool.shop.Main;
-import com.codecool.shop.OrderUtils;
 import com.codecool.shop.dao.DaoFactory;
 import com.codecool.shop.dao.ProductDao;
-import com.codecool.shop.dao.implementation.jdbc.ProductCategoryDaoJdbc;
-import com.codecool.shop.dao.implementation.jdbc.ProductDaoJdbc;
-import com.codecool.shop.dao.implementation.jdbc.SupplierDaoJdbc;
-import com.codecool.shop.dao.implementation.memory.ProductCategoryDaoMem;
-import com.codecool.shop.dao.implementation.memory.ProductDaoMem;
-import com.codecool.shop.dao.implementation.memory.SupplierDaoMem;
 import com.codecool.shop.model.Product;
 import com.codecool.shop.model.ProductCategory;
 import com.codecool.shop.model.Supplier;
@@ -53,6 +45,7 @@ public class ProductController {
         params.put("products", products);
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
         params.put("loggedIn", userId != null);
+        params.put("orderStatus", null);
 
         if (userId == null) {
             userId = -1;

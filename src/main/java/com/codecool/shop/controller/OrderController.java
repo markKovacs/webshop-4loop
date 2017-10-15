@@ -85,6 +85,7 @@ public class OrderController {
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
         params.put("cartItems", cartItems);
         params.put("loggedIn", req.session().attribute("user_id") != null);
+        params.put("orderStatus", order != null ? order.getStatus().toString() : null);
 
         return new ModelAndView(params, "review");
     }
@@ -109,6 +110,12 @@ public class OrderController {
 
         DaoFactory.getOrderDao().changeQuantity(order, lineItem, quantity);
 
+        // Sub and total needs re-calc to respond (not optimal queries to be used here but works)
+        order = DaoFactory.getOrderDao().findOpenByUserId(userId);
+        lineItem = DaoFactory.getOrderDao().findLineItemInCart(productId, order);
+
+        // TODO: check if all items are zero, then do not allow processing
+
         Map<String, Float> newPrices = new HashMap<>();
         newPrices.put("total", order.getTotalPrice());
         newPrices.put("subtotal", lineItem.getSubTotalPrice());
@@ -120,17 +127,16 @@ public class OrderController {
     public static String removeLineItem(Request req, Response res) {
         int userId = req.session().attribute("user_id");
         Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
-
         int productId = Integer.parseInt(req.queryParams("product_id"));
 
         DaoFactory.getOrderDao().removeLineItemFromCart(productId, order);
-        order.updateTotal();
 
-        boolean cartIsEmpty = order.getItems().isEmpty();
+        // Total needs re-calc to respond (not optimal query to be used here but works)
+        order = DaoFactory.getOrderDao().findOpenByUserId(userId);
 
         Map<String, Object> newPrices = new HashMap<>();
         newPrices.put("total", order.getTotalPrice());
-        newPrices.put("cartIsEmpty", cartIsEmpty);
+        newPrices.put("cartIsEmpty", order.getItems().isEmpty());
 
         Gson gson = new Gson();
         return gson.toJson(newPrices);
@@ -142,6 +148,9 @@ public class OrderController {
         Order order = DaoFactory.getOrderDao().findOpenByUserId(userId);
 
         DaoFactory.getOrderDao().removeZeroQuantityItems(order);
+
+        // Re-calc because change:
+        order = DaoFactory.getOrderDao().findOpenByUserId(userId);
 
         if (order.getItems().size() < 1) {
             res.redirect("/cart");
@@ -172,6 +181,7 @@ public class OrderController {
         params.put("loggedIn", req.session().attribute("user_id") != null);
         int cartItems = order.countCartItems();
         params.put("cartItems", cartItems);
+        params.put("orderStatus", order.getStatus().toString());
 
         return new ModelAndView(params, "checkout");
     }
@@ -192,6 +202,8 @@ public class OrderController {
             params.put("balance", String.format("%.2f", Main.balanceInUSD));
             params.put("loggedIn", req.session().attribute("user_id") != null);
             params.put("cartItems", cartItems);
+            params.put("orderStatus", order.getStatus().toString());
+
             return new ModelAndView(params, "checkout");
         }
 
@@ -216,6 +228,7 @@ public class OrderController {
         params.put("cartItems", cartItems);
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
         params.put("loggedIn", req.session().attribute("user_id") != null);
+        params.put("orderStatus", order.getStatus().toString());
         return new ModelAndView(params, "payment");
     }
 
@@ -229,6 +242,7 @@ public class OrderController {
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
         params.put("payment", new HashMap<String, String>());
         params.put("loggedIn", req.session().attribute("user_id") != null);
+        params.put("orderStatus", order.getStatus().toString());
 
         return new ModelAndView(params, "bank");
     }
@@ -243,6 +257,7 @@ public class OrderController {
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
         params.put("payment", new HashMap<String, String>());
         params.put("loggedIn", req.session().attribute("user_id") != null);
+        params.put("orderStatus", order.getStatus().toString());
 
         return new ModelAndView(params, "paypal");
     }
@@ -278,6 +293,7 @@ public class OrderController {
             params.put("payment", paymentData);
             params.put("errors", errorMessages);
             params.put("loggedIn", req.session().attribute("user_id") != null);
+            params.put("orderStatus", order.getStatus().toString());
             String view = req.pathInfo().contains("bank") ? "bank" : "paypal";
             return new ModelAndView(params, view);
         }
@@ -295,6 +311,7 @@ public class OrderController {
         params.put("balance", String.format("%.2f", Main.balanceInUSD));
         params.put("loggedIn", req.session().attribute("user_id") != null);
         params.put("cartItems", cartItems);
+        params.put("orderStatus", "PAID");
 
         return new ModelAndView(params, "success");
     }

@@ -8,8 +8,10 @@
     <meta name="author" content="Codecool" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!--Font type-->
+    <!-- Font types -->
     <link href="https://fonts.googleapis.com/css?family=Stoke" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=PT+Sans+Caption:400,700' rel='stylesheet' type='text/css'>
+
 
     <!-- Latest compiled and minified Jquery -->
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"
@@ -30,6 +32,7 @@
 
     <link rel="stylesheet" type="text/css" th:href="@{~/css/custom.css}" />
     <link rel="stylesheet" type="text/css" th:href="@{~/css/style.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{~/css/progressbar.css}" />
 
     <!-- Title formatted as title-pattern specifies -->
     <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">4loop Shop</title>
@@ -51,29 +54,54 @@
 
         <div class="container">
             <div class="row">
-                <th:block>
-                    <span class="col-xs-8 text-left">
-                        <!-- NAVBAR -->
-                        <a class="btn" th:href="@{~/}">Products</a>
-                        <th:block th:with="loggedIn=${loggedIn}">
-                            <th:block th:if="${loggedIn}">
-                                <a class="btn" th:href="@{~/cart}">Cart(<span id="cart-item-count">[[${cartItems}]]</span>)</a>
-                                <a th:href="@{~/history}" class="btn">History</a>
-                                <a th:href="@{~/profile}" class="btn">Profile</a>
-                                <form th:action="@{~/logout}" method="POST" class="btn">
-                                    <input type="submit" value="Logout">
-                                </form>
-                            </th:block>
-                            <th:block th:unless="${loggedIn}">
-                                <a th:href="@{~/register}" class="btn">Register</a>
-                                <a th:href="@{~/login}" class="btn">Login</a>
-                            </th:block>
-                        </th:block>
-                    </span>
+                <!-- NAV BAR / PROGRESS BAR -->
+                <th:block th:if="${orderStatus} eq 'PAID'">
+                    <div th:replace="fragments/progressbar :: paid"></div>
                 </th:block>
+
+
+                <th:block th:if="${orderStatus} eq 'CHECKEDOUT'">
+                    <div th:replace="fragments/progressbar :: checkedout"></div>
+                </th:block>
+
+                <th:block th:if="${orderStatus} eq 'REVIEWED'">
+                    <div th:replace="fragments/progressbar :: reviewed"></div>
+                </th:block>
+
+                <th:block th:if="${orderStatus} eq 'NEW' or ${orderStatus} == null">
+
+                    <th:block th:if="${loggedIn}">
+                        <div class="col-xs-6 left text-left">
+                            <a class="btn" th:href="@{~/}">Products</a>
+                            <a th:href="@{~/history}" class="btn">History</a>
+                        </div>
+                        <div class="col-xs-6 right text-right">
+                            <a class="btn" th:href="@{~/cart}">Cart(<span id="cart-item-count">[[${cartItems}]]</span>)</a>
+                            <a th:href="@{~/profile}" class="btn">Profile</a>
+                            <form th:action="@{~/logout}" method="POST" class="btn">
+                                <input type="submit" value="Logout">
+                            </form>
+                        </div>
+                    </th:block>
+                    <th:block th:unless="${loggedIn}">
+                        <div class="col-xs-6 left text-left">
+                            <a class="btn" th:href="@{~/}">Products</a>
+                        </div>
+                        <div class="col-xs-6 right text-right">
+                            <a th:href="@{~/register}" class="btn">Register</a>
+                            <a th:href="@{~/login}" class="btn">Login</a>
+                        </div>
+                    </th:block>
+
+                </th:block>
+
+
+                <!-- This could be re-enabled if needed:
                 <div th:if="${loggedIn}" class="col-xs-4 text-right">
                     <p class="balance">Balance: <span th:text="${balance}">95200.00</span> USD</p>
                 </div>
+                -->
+
             </div>
         </div>
 

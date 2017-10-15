@@ -210,3 +210,16 @@ h1 {
 #proceed-to-checkout {
     display: inline;
 }
+
+.form-control {
+    width: 450px;
+    margin: 5px auto;
+}
+
+h2 {
+    margin-bottom: 35px;
+}
+
+.order-title-acc {
+    cursor: pointer;
+}

@@ -6,7 +6,6 @@ import com.codecool.shop.order.Order;
 import com.codecool.shop.order.Status;
 import com.codecool.shop.utility.Log;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -90,6 +89,7 @@ public class OrderDaoMem implements OrderDao {
 
     @Override
     public void setStatus(Order order) {
+        // Logic done already on called side
     }
 
     @Override
@@ -106,6 +106,7 @@ public class OrderDaoMem implements OrderDao {
                 order.getItems().remove(lineItem);
             }
         }
+        order.updateTotal();
     }
 
     @Override
@@ -115,7 +116,7 @@ public class OrderDaoMem implements OrderDao {
 
     @Override
     public void saveCheckoutInfo(Order order) {
-
+        // Logic done already on called side
     }
 
 }

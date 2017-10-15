@@ -23,6 +23,7 @@ public class AccountController {
         Map<String, Object> params = new HashMap<>();
         params.put("user", new HashMap<>()); // required to be passed in to register.html
         params.put("loggedIn", req.session().attribute("user_id") != null);
+        params.put("orderStatus", null);
 
         return new ModelAndView(params, "register");
     }
@@ -31,6 +32,7 @@ public class AccountController {
 
         Map<String, Object> params = new HashMap<>();
         params.put("loggedIn", req.session().attribute("user_id") != null);
+        params.put("orderStatus", null);
 
         return new ModelAndView(params, "login");
     }
@@ -47,6 +49,7 @@ public class AccountController {
         params.put("balance", Main.balanceInUSD);
         params.put("loggedIn", req.session().attribute("user_id") != null);
         params.put("cartItems", order != null ? order.countCartItems() : 0);
+        params.put("orderStatus", order != null ? order.getStatus().toString() : null);
 
         return new ModelAndView(params, "history");
     }
@@ -61,6 +64,7 @@ public class AccountController {
         params.put("balance", Main.balanceInUSD);
         params.put("loggedIn", req.session().attribute("user_id") != null);
         params.put("cartItems", order != null ? order.countCartItems() : 0);
+        params.put("orderStatus", order != null ? order.getStatus().toString() : null);
         if (req.queryParams("edited") != null) {
             params.put("success", new ArrayList<>(Arrays.asList("Profile successfully edited.")));
         }
@@ -79,6 +83,7 @@ public class AccountController {
             params.put("errors", errorMessages);
             params.put("user", inputData);
             params.put("loggedIn", req.session().attribute("user_id") != null);
+            params.put("orderStatus", null);
             return new ModelAndView(params, "register");
         }
 
@@ -90,6 +95,7 @@ public class AccountController {
             params.put("errors", new ArrayList<>(Arrays.asList("Cannot save account, try again later.")));
             params.put("user", inputData);
             params.put("loggedIn", req.session().attribute("user_id") != null);
+            params.put("orderStatus", null);
             return new ModelAndView(params, "register");
         }
 
@@ -115,6 +121,7 @@ public class AccountController {
             Map<String, Object> params = new HashMap<>();
             params.put("errors", new ArrayList<>(Arrays.asList("Invalid credentials.")));
             params.put("loggedIn", req.session().attribute("user_id") != null);
+            params.put("orderStatus", null);
             return new ModelAndView(params, "login");
         }
 
@@ -146,6 +153,7 @@ public class AccountController {
             params.put("user", profileInput);
             params.put("loggedIn", req.session().attribute("user_id") != null);
             params.put("cartItems", order != null ? order.countCartItems() : 0);
+            params.put("orderStatus", order != null ? order.getStatus().toString() : null);
 
             return new ModelAndView(params, "profile");
         }

@@ -12,7 +12,7 @@
     <div layout:fragment="content" class="container">
         <div class="well well-sm">
             <div id="inner-box">
-                <strong id="review-label">Review your cart</strong>
+                <strong id="review-label">Cart Review</strong>
                 <table th:if="${#lists.size(items) > 0}" class="table table-hover" id="review-table">
                     <thead>
                         <tr>
@@ -20,19 +20,19 @@
                             <th class="center">Image</th>
                             <th class="center">Product</th>
                             <th class="center">Quantity</th>
-                            <th class="center price-width">Price</th>
-                            <th class="center subtotal-width">SubTotal</th>
+                            <th class="right price-width">Price</th>
+                            <th class="right subtotal-width">SubTotal</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr th:each="item : ${items}" th:object="${item}" th:attr="id=*{'line-item-' + productId}">
-                            <td>
+                            <td class="center">
                                 <img class="remove-img" th:attr="data-product-id=*{productId}" src="/accessories/remove.png" alt="DEL" />
                             </td>
                             <td class="center">
                                 <img class="cart-img" src="http://placehold.it/400x250/000/fff" th:attr="src='/img/' + *{productImage}" alt="IMG" />
                             </td>
-                            <td th:text="*{productName}">Light Sabre from Star Wars</td>
+                            <td th:text="*{productName}" class="center">Light Sabre from Star Wars</td>
                             <td class="center">
                                 <form action="/change-quantity" method="post">
                                     <input class="review-quantity center" name="quantity-mod" type="number" min="0" max="99" value="1" th:attr="value=*{quantity}, data-product-id=*{productId}">
