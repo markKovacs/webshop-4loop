@@ -178,4 +178,3 @@ src/main/logs/*
 src/main/orders/*
 
 # End of https://www.gitignore.io/api/java,maven,java-web,intellij,intellij+iml,intellij+all
-/src/main/java/com/codecool/shop/Config.java
