@@ -1,4 +1,4 @@
-package com.codecool.shop.dao.implementation;
+package com.codecool.shop.dao.implementation.memory;
 
 
 import com.codecool.shop.dao.ProductCategoryDao;
@@ -9,11 +9,11 @@ import java.util.List;
 
 public class ProductCategoryDaoMem implements ProductCategoryDao {
 
-    private List<ProductCategory> DATA = new ArrayList<>();
     private static ProductCategoryDaoMem instance = null;
 
-    /* A private Constructor prevents any other class from instantiating.
-     */
+    private List<ProductCategory> DATA = new ArrayList<>();
+    private int categorySequence = 0;
+
     private ProductCategoryDaoMem() {
     }
 
@@ -26,7 +26,7 @@ public class ProductCategoryDaoMem implements ProductCategoryDao {
 
     @Override
     public void add(ProductCategory category) {
-        category.setId(DATA.size() + 1);
+        category.setId(++categorySequence);
         DATA.add(category);
     }
 
@@ -43,5 +43,10 @@ public class ProductCategoryDaoMem implements ProductCategoryDao {
     @Override
     public List<ProductCategory> getAll() {
         return DATA;
+    }
+
+    @Override
+    public void removeAll() {
+        getAll().clear();
     }
 }

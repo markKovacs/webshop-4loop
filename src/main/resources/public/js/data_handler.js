@@ -3,29 +3,63 @@ var app = app || {};
 
 app.dataHandler = {
 
-    // Only for example , to be deleted.
-    createNewCard: function (boardId, cardTitle, boardTitle) {
-        // Create new card in the given board and save it.
+    addToCart: function (productId, quantity) {
+
         $.ajax({
-            url: '/api/new_card',
+            url: '/api/add-to-cart',
             method: 'POST',
             dataType: 'json',
             data: {
-                title: cardTitle,
-                board_id: boardId
+                product_id: productId,
+                quantity: quantity
             },
             success: function(response) {
-                if (response === 'data_error') {
-                    app.cards.flashDataErrorMessage();
-                } else {
-                    app.cards.insertNewCard(response.id, cardTitle, response.card_order, boardTitle, boardId);
-                    app.cards.resetForm(cardTitle);
-                }
+                app.productLogic.handleAddToCartSuccess(response, productId);
             },
             error: function() {
-                window.location.replace('/login?error=timedout');
+                app.productLogic.handleAddToCartError(productId);
             }
         });
+
+    },
+
+    setProductQuantity: function (productId, quantity) {
+
+        $.ajax({
+            url: '/api/change-product-quantity',
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                product_id: productId,
+                quantity: quantity
+            },
+            success: function(response) {
+                app.productLogic.handleChangeProductQuantitySuccess(response, productId);
+            },
+            error: function() {
+                app.productLogic.handleChangeProductQuantityError();
+            }
+        });
+
+    },
+
+    removeLineItem: function (productId) {
+
+        $.ajax({
+            url: '/api/remove-line-item',
+            method: 'POST',
+            dataType: 'json',
+            data: {
+                product_id: productId
+            },
+            success: function(response) {
+                app.productLogic.handleRemoveLineItemSuccess(response, productId);
+            },
+            error: function() {
+                app.productLogic.handleRemoveLineItemError();
+            }
+        });
+
     }
 
 };

@@ -12,4 +12,6 @@ public interface ProductCategoryDao {
 
     List<ProductCategory> getAll();
 
+    void removeAll();
+
 }

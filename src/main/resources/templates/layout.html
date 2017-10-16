@@ -8,6 +8,11 @@
     <meta name="author" content="Codecool" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+    <!-- Font types -->
+    <link href="https://fonts.googleapis.com/css?family=Stoke" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=PT+Sans+Caption:400,700' rel='stylesheet' type='text/css'>
+
+
     <!-- Latest compiled and minified Jquery -->
     <script src="https://code.jquery.com/jquery-3.1.1.min.js"
             integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous" defer></script>
@@ -26,11 +31,14 @@
             crossorigin="anonymous" defer></script>
 
     <link rel="stylesheet" type="text/css" th:href="@{~/css/custom.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{~/css/style.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{~/css/progressbar.css}" />
 
     <!-- Title formatted as title-pattern specifies -->
     <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">4loop Shop</title>
 
     <!-- JavaScript files -->
+    <script th:src="@{~/js/utils.js}" defer></script>
     <script th:src="@{~/js/data_handler.js}" defer></script>
     <script th:src="@{~/js/product.js}" defer></script>
     <script th:src="@{~/js/main.js}" defer></script>
@@ -42,11 +50,60 @@
     <!-- HEADER -->
     <header class="jumbotron text-center">
 
-        <h1>Codecool Shop</h1>
+        <h1>Original Relics Shop</h1>
 
-        <!-- NAVBAR -->
-        <a th:href="@{~/}">Products</a>
-        <a th:href="@{~/cart}">Cart</a>
+        <div class="container">
+            <div class="row">
+                <!-- NAV BAR / PROGRESS BAR -->
+                <th:block th:if="${orderStatus} eq 'PAID'">
+                    <div th:replace="fragments/progressbar :: paid"></div>
+                </th:block>
+
+
+                <th:block th:if="${orderStatus} eq 'CHECKEDOUT'">
+                    <div th:replace="fragments/progressbar :: checkedout"></div>
+                </th:block>
+
+                <th:block th:if="${orderStatus} eq 'REVIEWED'">
+                    <div th:replace="fragments/progressbar :: reviewed"></div>
+                </th:block>
+
+                <th:block th:if="${orderStatus} eq 'NEW' or ${orderStatus} == null">
+
+                    <th:block th:if="${loggedIn}">
+                        <div class="col-xs-6 left text-left">
+                            <a class="btn" th:href="@{~/}">Products</a>
+                            <a th:href="@{~/history}" class="btn">History</a>
+                        </div>
+                        <div class="col-xs-6 right text-right">
+                            <a class="btn" th:href="@{~/cart}">Cart(<span id="cart-item-count">[[${cartItems}]]</span>)</a>
+                            <a th:href="@{~/profile}" class="btn">Profile</a>
+                            <form th:action="@{~/logout}" method="POST" class="btn">
+                                <input type="submit" value="Logout">
+                            </form>
+                        </div>
+                    </th:block>
+                    <th:block th:unless="${loggedIn}">
+                        <div class="col-xs-6 left text-left">
+                            <a class="btn" th:href="@{~/}">Products</a>
+                        </div>
+                        <div class="col-xs-6 right text-right">
+                            <a th:href="@{~/register}" class="btn">Register</a>
+                            <a th:href="@{~/login}" class="btn">Login</a>
+                        </div>
+                    </th:block>
+
+                </th:block>
+
+
+                <!-- This could be re-enabled if needed:
+                <div th:if="${loggedIn}" class="col-xs-4 text-right">
+                    <p class="balance">Balance: <span th:text="${balance}">95200.00</span> USD</p>
+                </div>
+                -->
+
+            </div>
+        </div>
 
     </header>
 
@@ -54,13 +111,16 @@
     <div class="container" layout:fragment="content"></div>
 
     <!-- FOOTER -->
-    <footer>
+    <footer class="text-center">
         <div class="panel panel-default">
             <div class="panel-body">
-                &copy; 2016 Codecool Budapest
+                &copy; 2017 Codecool Budapest
             </div>
         </div>
     </footer>
+
+    <!-- TOAST MESSAGE -->
+    <div id="toast">Placeholder toast message.</div>
 
 </body>
 

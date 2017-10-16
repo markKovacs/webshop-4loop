@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html layout:decorate="~{layout}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Bank Payment</title>
+</head>
+
+<body>
+
+<div layout:fragment="content" class="container">
+
+    <div class="well well-sm">
+
+        <div class="container center-content">
+            <h2 class="text-center"><strong>Credit Card Payment</strong></h2>
+
+            <div class="row">
+                <div class="col-xs-offset-2 col-xs-8 text-center">
+
+                    <div th:if="${errors}" id="error-messages" class="alert alert-danger">
+                        <p>You have the following errors:</p>
+                        <div th:each="error : ${errors}" class="narrow">
+                            <p th:text="${error}">Error message number one.</p>
+                        </div>
+                    </div>
+
+                    <form th:action="@{~/payment/bank}" method="POST">
+
+                        <div>
+                            <label for="card-holder">Card Holder: </label>
+                            <input th:value="${payment.cardholder}" id="card-holder" type="text" name="card-holder" class="name-input" placeholder="Full Name" required>
+                        </div>
+                        <div>
+                            <label for="card-number">Card Number: </label>
+                            <input th:value="${payment.cardnumberone}" id="card-number" type="text" name="card-number-1" class="four-num" placeholder="XXXX" maxlength="4" minlength="4" required>
+                            <span>-</span>
+                            <input th:value="${payment.cardnumbertwo}" type="text" name="card-number-2" class="four-num" placeholder="XXXX" maxlength="4" minlength="4" required>
+                            <span>-</span>
+                            <input th:value="${payment.cardnumberthree}" type="text" name="card-number-3" class="four-num" placeholder="XXXX" maxlength="4" minlength="4" required>
+                            <span>-</span>
+                            <input th:value="${payment.cardnumberfour}" type="text" name="card-number-4" class="four-num" placeholder="XXXX" maxlength="4" minlength="4" required>
+                        </div>
+                        <div>
+                            <label for="cvc">CVC: </label>
+                            <input th:value="${payment.cvc}" id="cvc" type="text" name="cvc" class="three-num" placeholder="XXX" required maxlength="3" minlength="3">
+                            <label for="exp-year">Expiration year: </label>
+                            <input th:value="${payment.expyear}" id="exp-year" type="number" name="exp-year" min="2017" max="9999" placeholder="YYYY" class="four-num" required>
+                            <span>/</span>
+                            <label for="exp-month">Expiration month: </label>
+                            <input th:value="${payment.expmonth}" id="exp-month" type="number" name="exp-month" placeholder="MM" class="two-num" min="1" max="12" required>
+                        </div>
+                        <div class="text-center">
+                            <a class="btn btn-default" th:href="@{~/payment}">Back</a>
+                            <input class="btn btn-success" type="submit" value="Submit">
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

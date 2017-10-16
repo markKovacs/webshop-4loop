@@ -10,11 +10,60 @@
 <body>
 
     <div layout:fragment="content" class="container">
-
         <div class="well well-sm">
-            <strong>Review content</strong>
+            <div id="inner-box">
+                <strong id="review-label">Cart Review</strong>
+                <table th:if="${#lists.size(items) > 0}" class="table table-hover" id="review-table">
+                    <thead>
+                        <tr>
+                            <th class="center">Remove</th>
+                            <th class="center">Image</th>
+                            <th class="center">Product</th>
+                            <th class="center">Quantity</th>
+                            <th class="right price-width">Price</th>
+                            <th class="right subtotal-width">SubTotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="item : ${items}" th:object="${item}" th:attr="id=*{'line-item-' + productId}">
+                            <td class="center">
+                                <img class="remove-img" th:attr="data-product-id=*{productId}" src="/accessories/remove.png" alt="DEL" />
+                            </td>
+                            <td class="center">
+                                <img class="cart-img" src="http://placehold.it/400x250/000/fff" th:attr="src='/img/' + *{productImage}" alt="IMG" />
+                            </td>
+                            <td th:text="*{productName}" class="center">Light Sabre from Star Wars</td>
+                            <td class="center">
+                                <form action="/change-quantity" method="post">
+                                    <input class="review-quantity center" name="quantity-mod" type="number" min="0" max="99" value="1" th:attr="value=*{quantity}, data-product-id=*{productId}">
+                                </form>
+                            </td>
+                            <td class="right price-width" th:text="*{#numbers.formatDecimal(actualPrice, 0, 'COMMA', 2, 'POINT')} + ' USD'">200 USD</td>
+                            <td th:attr="id=${'subtotal-' + item.productId}" class="right subtotal-width" th:text="*{#numbers.formatDecimal(subTotalPrice, 0, 'COMMA', 2, 'POINT') + ' USD'}">8400 USD</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td class="total center">Total</td>
+                            <td id="total-total" class="right subtotal-width total" th:text="${grandTotal + ' USD'}">11111111 USD</td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <div th:if="${#lists.size(items) == 0}">
+                    <span id="empty-cart-label">Your cart is empty!</span>
+                </div>
+                <div>
+                    <a href="/" class="btn btn-default">Continue Shopping</a>
+                    <form id="proceed-to-checkout" th:if="${#lists.size(items) > 0}" action="/cart" method="POST">
+                        <input class="btn btn-success push-right" type="submit" value="Proceed to Checkout">
+                    </form>
+                </div>
+            </div>
         </div>
-
     </div>
 
 </body>

@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html layout:decorate="~{layout}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.w3.org/1999/xhtml">
+
+<head>
+    <title>Order History</title>
+</head>
+
+<body>
+
+<div layout:fragment="content" class="container">
+
+    <div class="row well well-sm">
+        <div class="col-xs-12">
+            <strong>Order History</strong>
+        </div>
+    </div>
+
+    <div id="history" class="row list-group">
+
+        <div class="col-xs-12 text-center">
+
+            <div id="orders">
+
+            <th:block th:if="${orders != null && orders.size() > 0}" th:each="order : ${orders}" th:object="${order}">
+
+                <div class="panel-group order" id="accordion">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title order-title row order-title-acc" data-toggle="collapse" data-parent="#accordion" th:href="*{'#collapse-' + id}">
+                                <span class="col-xs-4 left text-left" th:text="*{'Order ID #' + id}">Order #123</span>
+                                <span class="col-xs-8 right" th:text="*{'Closed: ' + getClosedDateString()}">Closed: 10/15/2017 12:02:38</span>
+                            </h4>
+                        </div>
+                        <div th:attr="id=*{'collapse-' + id}" class="panel-collapse collapse">
+                            <table class="table table-hover">
+                                <thead>
+                                <tr>
+                                    <th class="text-center">Image</th>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="item : *{items}">
+                                    <td class="left">
+                                        <img class="cart-img" th:attr="src='/img/' + ${item.productImage}" alt="IMG" src="http://placehold.it/400x250/000/fff" />
+                                    </td>
+                                    <td th:text="${item.productName}">Light Sabre from Star Wars</td>
+                                    <td th:text="${item.quantity}">67</td>
+                                    <td class="right price-width" th:text="${#numbers.formatDecimal(item.actualPrice, 0, 'COMMA', 2, 'POINT') + ' ' + item.currency}">200 USD</td>
+                                    <td class="right subtotal-width" th:text="${#numbers.formatDecimal(item.subTotalPrice, 0, 'COMMA', 2, 'POINT') + ' ' + item.currency}">8400 USD</td>
+                                </tr>
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="total center">Total:</td>
+                                    <td id="total-total" class="right subtotal-width total" th:text="*{#numbers.formatDecimal(totalPrice, 0, 'COMMA', 2, 'POINT') + ' USD'}">95000 USD</td>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </th:block>
+
+            <th:block th:if="${orders == null || orders.size() < 1}">
+
+                <p>There are no orders in history.</p>
+
+            </th:block>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

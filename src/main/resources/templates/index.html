@@ -10,24 +10,44 @@
 <body>
 
     <div layout:fragment="content" class="container">
-        <div class="well well-sm">
-            <strong th:text="${category.name}">Category Title</strong>
+        <div class="well well-sm text-center">
+
+            <form id="list-by-category" action="/" method="GET" class="inline-form">
+                <label for="category-selection">Choose a category:</label>
+                <select id="category-selection" name="category-id">
+                    <option th:each="category : ${allCategories}" th:attr="value=${category.id}" th:text="${category.name}">Categories</option>
+                </select>
+                <input type="submit" value="Select" class="select-cat-sup" />
+            </form>
+
+            <form id="list-by-supplier" action="/" method="GET" class="inline-form">
+                <label for="supplier-selection">Choose a supplier:</label>
+                <select id="supplier-selection" name="supplier-id">
+                    <option th:each="supplier : ${allSuppliers}" th:attr="value=${supplier.id}" th:text="${supplier.name}">Suppliers</option>
+                </select>
+                <input type="submit" value="Select" class="select-cat-sup" />
+            </form>
+
         </div>
 
+        <div class="well well-sm">
+            <strong th:text="${actualSelection}">Category Title or Supplier Name</strong>
+        </div>
         <div id="products" class="row list-group">
 
             <div class="item col-xs-4 col-lg-4" th:each="prod,iterStat : ${products}">
                 <div class="thumbnail">
-                    <img class="group list-group-image" src="http://placehold.it/400x250/000/fff" th:attr="src='/img/product_' + ${prod.id} + '.jpg'" alt="" />
+                    <img class="group list-group-image" src="http://placehold.it/400x250/000/fff" th:attr="src='/img/' + ${prod.imageFileName}" alt="" />
                     <div class="caption">
                         <h4 class="group inner list-group-item-heading" th:text="${prod.name}">Product name</h4>
-                        <p class="group inner list-group-item-text" th:text="${prod.description}">Product description... </p>
+                        <p class="group inner list-group-item-text" th:text="${#strings.substring(prod.description, 0, 25) + '...'}">Product description... </p>
                         <div class="row">
                             <div class="col-xs-12 col-md-6">
                                 <p class="lead" th:text="${prod.getPrice()}">100 USD</p>
                             </div>
-                            <div class="col-xs-12 col-md-6">
-                                <a class="btn btn-success" href="#">Add to cart</a>
+                            <div th:if="${loggedIn}" class="col-xs-12 col-md-6" th:id="${'product-id-' + prod.id}">
+                                <input type="number" min="1" max="99" class="quantity" value="1">
+                                <a class="btn btn-success add-to-cart" th:attr="data-product-id=${prod.id}">Add to cart</a>
                             </div>
                         </div>
                     </div>
