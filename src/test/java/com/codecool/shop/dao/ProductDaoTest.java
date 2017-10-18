@@ -1,22 +1,23 @@
-package com.codecool.shop.dao.implementation.memory;
+package com.codecool.shop.dao;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.codecool.shop.Config;
-import com.codecool.shop.dao.DaoFactory;
-import com.codecool.shop.dao.ProductDao;
 import com.codecool.shop.model.Product;
 import com.codecool.shop.model.ProductCategory;
 import com.codecool.shop.model.Supplier;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.Currency;
-import static org.junit.jupiter.api.Assertions.*;
 
 public class ProductDaoTest {
 
-    private ProductDao dao;
+    private ProductDao productDao;
     private ProductCategory productCategory;
     private Supplier supplier;
     private Product product;
+    private ProductCategoryDao productCategoryDao;
+    private SupplierDao supplierDao;
 
     /**
      * Methods to test:
@@ -28,25 +29,35 @@ public class ProductDaoTest {
      * List<Product> getBy(ProductCategory productCategory);
      */
 
-    // TODO - FURTHER TEST IDEAS
-    // TODO - > adding the same ProductCategory multiple times should not be allowed
-    // TODO - > adding Product to DAO that is null
-    // TODO - > creating more products and test getBy in cases it should not findByID products
-
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         Config.USE_PRODUCTION_DB = false;
-        dao = DaoFactory.getProductDao();
-        dao.removeAll();
+
+        productDao = DaoFactory.getProductDao();
+        productCategoryDao = DaoFactory.getProductCategoryDao();
+        supplierDao = DaoFactory.getSupplierDao();
+
+        productDao.removeAll();
+        supplierDao.removeAll();
+        productCategoryDao.removeAll();
+
         productCategory = new ProductCategory("Some name", "Some department", "Some description");
+        int idOfProdCat = productCategoryDao.add(productCategory);
+        productCategory.setId(idOfProdCat);
+
         supplier = new Supplier("Something", "Something");
+        int idOfSupp = supplierDao.add(supplier);
+        supplier.setId(idOfSupp);
+
         product = new Product("Product name", 5f, "USD", "masdassd", productCategory, supplier, "filename");
-        dao.add(product);
+        int idOfProd = productDao.add(product);
+        product.setId(idOfProd);
     }
 
     @Test
     void testFind() {
         int id = product.getId();
+        System.out.println("testFind: product id - " + id);
         String name = product.getName();
         String desc = product.getDescription();
         float defaultPrice = product.getDefaultPrice();
@@ -55,7 +66,9 @@ public class ProductDaoTest {
         ProductCategory productCategoryOfProduct = product.getProductCategory();
         String fileName = product.getImageFileName();
 
-        Product foundProduct = dao.find(id);
+        System.out.println(id);
+        Product foundProduct = productDao.find(id);
+        System.out.println(foundProduct);
 
         assertAll("add-and-findByID",
                 () -> {
@@ -65,8 +78,8 @@ public class ProductDaoTest {
                             () -> assertEquals(desc, foundProduct.getDescription()),
                             () -> assertEquals(defaultPrice, foundProduct.getDefaultPrice()),
                             () -> assertEquals(currency, foundProduct.getDefaultCurrency()),
-                            () -> assertEquals(supplierOfProduct, foundProduct.getSupplier()),
-                            () -> assertEquals(productCategoryOfProduct, foundProduct.getProductCategory()),
+                            () -> assertEquals(supplierOfProduct.getId(), foundProduct.getSupplier().getId()),
+                            () -> assertEquals(productCategoryOfProduct.getId(), foundProduct.getProductCategory().getId()),
                             () -> assertEquals(fileName, foundProduct.getImageFileName())
                     );
                 }
@@ -75,16 +88,16 @@ public class ProductDaoTest {
 
     @Test
     void testNegativeNumberAsIndexReturnsNull() {
-        Product foundProduct = dao.find(-1);
+        Product foundProduct = productDao.find(-1);
         assertNull(foundProduct);
     }
 
     @Test
     void testRemove() {
         int id = product.getId();
-        Product foundProductBeforeRemove = dao.find(id);
-        dao.remove(id);
-        Product foundProductAfterRemove = dao.find(id);
+        Product foundProductBeforeRemove = productDao.find(id);
+        productDao.remove(id);
+        Product foundProductAfterRemove = productDao.find(id);
 
         assertAll("removeOrder",
                 () -> assertNull(foundProductAfterRemove),
@@ -94,21 +107,21 @@ public class ProductDaoTest {
 
     @Test
     void testGetAll() {
-        assertEquals(product, dao.getAll().get(0));
-        assertEquals(1, dao.getAll().size());
+        assertEquals(product.getId(), productDao.getAll().get(0).getId());
+        assertEquals(1, productDao.getAll().size());
     }
 
 
     @Test
     void testGetBySupplier() {
-        assertEquals(product, dao.getBy(supplier).get(0));
-        assertEquals(1, dao.getBy(supplier).size());
+        assertEquals(product.getId(), productDao.getBy(supplier).get(0).getId());
+        assertEquals(1, productDao.getBy(supplier).size());
     }
 
     @Test
     void testGetByProductCategory() {
-        assertEquals(product, dao.getBy(productCategory).get(0));
-        assertEquals(1, dao.getBy(productCategory).size());
+        assertEquals(product.getId(), productDao.getBy(productCategory).get(0).getId());
+        assertEquals(1, productDao.getBy(productCategory).size());
     }
 
 }

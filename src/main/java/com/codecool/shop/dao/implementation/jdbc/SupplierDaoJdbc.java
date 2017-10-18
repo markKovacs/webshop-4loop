@@ -13,25 +13,30 @@ import java.util.List;
 public class SupplierDaoJdbc implements SupplierDao {
 
     @Override
-    public void add(Supplier supplier) {
+    public int add(Supplier supplier) {
 
-        String query = "INSERT INTO suppliers (name, description) VALUES (?, ?);";
+        String query = "INSERT INTO suppliers (name, description) " +
+                "       VALUES (?, ?) " +
+                "       RETURNING id;";
 
         try (DB db = new DB();
              PreparedStatement stmt = db.getPreparedStatement(query)
         ) {
             stmt.setString(1, supplier.getName());
             stmt.setString(2, supplier.getDescription());
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows > 0){
-                System.out.println("New supplier added to database.");
-            } else {
-                System.out.println("New supplier addition failed.");
+
+            stmt.execute();
+
+            ResultSet rs = stmt.getResultSet();
+            if (rs.next()) {
+                return rs.getInt(1);
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
+        return -1;
     }
 
     @Override
@@ -106,7 +111,7 @@ public class SupplierDaoJdbc implements SupplierDao {
     @Override
     public void removeAll() {
         try (DB db = new DB();
-             PreparedStatement stmt = db.getPreparedStatement("DELETE FROM suppliers;")
+             PreparedStatement stmt = db.getPreparedStatement("TRUNCATE TABLE suppliers CASCADE;")
         ){
             int affectedRows = stmt.executeUpdate();
             if (affectedRows > 0){

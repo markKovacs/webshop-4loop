@@ -123,7 +123,7 @@ CREATE TABLE lineitems (
 
 CREATE TABLE orders (
     id integer NOT NULL,
-    user_id integer NOT NULL,
+    user_id integer,
     closed_date timestamp without time zone,
     status order_status,
     deleted smallint DEFAULT 0 NOT NULL,
@@ -197,8 +197,8 @@ CREATE TABLE products (
     id integer NOT NULL,
     name character varying(100) NOT NULL,
     description character varying(300),
-    category_id integer NOT NULL,
-    supplier_id integer NOT NULL,
+    category_id integer,
+    supplier_id integer,
     price numeric(10,2) NOT NULL,
     currency character varying(3) NOT NULL,
     image_filename character varying(100),
@@ -373,7 +373,6 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regcl
 -- Name: categories_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('categories_id_seq', 1, false);
 
 
 --
@@ -398,7 +397,6 @@ SELECT pg_catalog.setval('categories_id_seq', 1, false);
 -- Name: orders_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('orders_id_seq', 30, true);
 
 
 --
@@ -407,7 +405,6 @@ SELECT pg_catalog.setval('orders_id_seq', 30, true);
 -- Name: orders_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('orders_user_id_seq', 1, false);
 
 
 --
@@ -422,7 +419,6 @@ SELECT pg_catalog.setval('orders_user_id_seq', 1, false);
 -- Name: products_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('products_id_seq', 1, false);
 
 
 --
@@ -437,7 +433,6 @@ SELECT pg_catalog.setval('products_id_seq', 1, false);
 -- Name: suppliers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('suppliers_id_seq', 1, false);
 
 
 --
@@ -454,7 +449,6 @@ SELECT pg_catalog.setval('suppliers_id_seq', 1, false);
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('users_id_seq', 2, true);
 
 
 --
@@ -548,7 +542,7 @@ CREATE TRIGGER update_users_modtime BEFORE UPDATE ON users FOR EACH ROW EXECUTE 
 --
 
 ALTER TABLE ONLY lineitems
-    ADD CONSTRAINT lineitems_order_id_fk FOREIGN KEY (order_id) REFERENCES orders(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+    ADD CONSTRAINT lineitems_order_id_fk FOREIGN KEY (order_id) REFERENCES orders(id) ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -557,7 +551,7 @@ ALTER TABLE ONLY lineitems
 --
 
 ALTER TABLE ONLY lineitems
-    ADD CONSTRAINT lineitems_product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+    ADD CONSTRAINT lineitems_product_id_fk FOREIGN KEY (product_id) REFERENCES products(id) ON UPDATE CASCADE ON DELETE CASCADE ;
 
 
 --
@@ -566,7 +560,7 @@ ALTER TABLE ONLY lineitems
 --
 
 ALTER TABLE ONLY orders
-    ADD CONSTRAINT orders_user_id_fk FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+    ADD CONSTRAINT orders_user_id_fk FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE SET NULL ;
 
 
 --
@@ -575,7 +569,7 @@ ALTER TABLE ONLY orders
 --
 
 ALTER TABLE ONLY products
-    ADD CONSTRAINT products_category_id_fk FOREIGN KEY (category_id) REFERENCES categories(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+    ADD CONSTRAINT products_category_id_fk FOREIGN KEY (category_id) REFERENCES categories(id) ON UPDATE CASCADE ON DELETE SET NULL ;
 
 
 --
@@ -584,7 +578,7 @@ ALTER TABLE ONLY products
 --
 
 ALTER TABLE ONLY products
-    ADD CONSTRAINT products_supplier_id_fk FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+    ADD CONSTRAINT products_supplier_id_fk FOREIGN KEY (supplier_id) REFERENCES suppliers(id) ON UPDATE CASCADE ON DELETE SET NULL ;
 
 
 -- Completed on 2017-10-13 00:58:01 CEST

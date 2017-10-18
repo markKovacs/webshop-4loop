@@ -25,9 +25,10 @@ public class ProductCategoryDaoMem implements ProductCategoryDao {
     }
 
     @Override
-    public void add(ProductCategory category) {
+    public int add(ProductCategory category) {
         category.setId(++categorySequence);
         DATA.add(category);
+        return category.getId();
     }
 
     @Override
