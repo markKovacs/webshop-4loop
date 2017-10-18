@@ -14,23 +14,32 @@ import java.util.List;
 public class ProductCategoryDaoJdbc implements ProductCategoryDao {
 
     @Override
-    public void add(ProductCategory category) {
+    public int add(ProductCategory category) {
+
+        int insertedId = -1;
+
+        String query = "INSERT INTO categories (name, department, description) " +
+                "       VALUES (?, ?, ?) " +
+                "       RETURNING id;";
+
         try (DB db = new DB();
-             PreparedStatement stmt = db.getPreparedStatement("INSERT INTO categories (name, department, description) VALUES (?, ?, ?);")
+             PreparedStatement stmt = db.getPreparedStatement(query)
         ){
             stmt.setString(1, category.getName());
             stmt.setString(2, category.getDepartment());
             stmt.setString(3, category.getDescription());
 
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows > 0){
-                System.out.println("New category added to database.");
-            } else {
-                System.out.println("New category addition failed.");
+            stmt.execute();
+            ResultSet lastInserted = stmt.getResultSet();
+            if (lastInserted.next()) {
+                insertedId = lastInserted.getInt(1);
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        System.out.println("INSERTED ID: " + insertedId);
+        return insertedId;
     }
 
     @Override
@@ -44,7 +53,8 @@ public class ProductCategoryDaoJdbc implements ProductCategoryDao {
                 ProductCategory category = new ProductCategory(
                         resultSet.getString("name"),
                         resultSet.getString("department"),
-                        resultSet.getString("description"));
+                        resultSet.getString("description")
+                );
                 category.setId(id);
                 return category;
             }
@@ -100,7 +110,7 @@ public class ProductCategoryDaoJdbc implements ProductCategoryDao {
     @Override
     public void removeAll() {
         try (DB db = new DB();
-             PreparedStatement stmt = db.getPreparedStatement("DELETE FROM categories;")
+             PreparedStatement stmt = db.getPreparedStatement("TRUNCATE TABLE categories CASCADE;")
         ){
             int affectedRows = stmt.executeUpdate();
             if (affectedRows > 0){

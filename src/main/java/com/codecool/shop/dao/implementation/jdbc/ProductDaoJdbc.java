@@ -15,11 +15,12 @@ import java.util.List;
 public class ProductDaoJdbc implements ProductDao {
 
     @Override
-    public void add(Product product) {
+    public int add(Product product) {
 
         String query = "INSERT INTO products (name, description, category_id," +
-                        "supplier_id, price, currency, image_filename) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?);";
+                "       supplier_id, price, currency, image_filename) " +
+                "       VALUES (?, ?, ?, ?, ?, ?, ?) " +
+                "       RETURNING id;";
 
         try (DB db = new DB();
              PreparedStatement stmt = db.getPreparedStatement(query)
@@ -32,15 +33,18 @@ public class ProductDaoJdbc implements ProductDao {
             stmt.setString(6, product.getDefaultCurrency().toString());
             stmt.setString(7, product.getImageFileName());
 
-            int affectedRows = stmt.executeUpdate();
-            if (affectedRows > 0){
-                System.out.println("New product added to database.");
-            } else {
-                System.out.println("New product addition failed.");
+            stmt.execute();
+
+            ResultSet rs = stmt.getResultSet();
+            if (rs.next()) {
+                return rs.getInt(1);
             }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        return -1;
     }
 
     @Override
@@ -265,7 +269,7 @@ public class ProductDaoJdbc implements ProductDao {
     @Override
     public void removeAll() {
         try (DB db = new DB();
-             PreparedStatement stmt = db.getPreparedStatement("DELETE FROM products;")
+             PreparedStatement stmt = db.getPreparedStatement("TRUNCATE TABLE products CASCADE;")
         ){
             int affectedRows = stmt.executeUpdate();
             if (affectedRows > 0){

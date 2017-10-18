@@ -1,8 +1,6 @@
-package com.codecool.shop.dao.implementation.memory;
+package com.codecool.shop.dao;
 
 import com.codecool.shop.Config;
-import com.codecool.shop.dao.DaoFactory;
-import com.codecool.shop.dao.SupplierDao;
 import com.codecool.shop.model.Product;
 import com.codecool.shop.model.ProductCategory;
 import com.codecool.shop.model.Supplier;
@@ -23,23 +21,36 @@ class SupplierDaoTest {
      * List<Supplier> getAll();
      */
 
-    // TODO - FURTHER TEST IDEAS
-    // TODO - > adding the same ProductCategory multiple times should not be allowed
-
-    private SupplierDao dao;
+    private ProductDao productDao;
     private ProductCategory productCategory;
     private Supplier supplier;
     private Product product;
+    private ProductCategoryDao productCategoryDao;
+    private SupplierDao supplierDao;
 
     @BeforeEach
     public void setUp() {
         Config.USE_PRODUCTION_DB = false;
-        dao = DaoFactory.getSupplierDao();
-        dao.removeAll();
+
+        productDao = DaoFactory.getProductDao();
+        productCategoryDao = DaoFactory.getProductCategoryDao();
+        supplierDao = DaoFactory.getSupplierDao();
+
+        productDao.removeAll();
+        supplierDao.removeAll();
+        productCategoryDao.removeAll();
+
         productCategory = new ProductCategory("Some name", "Some department", "Some description");
+        int idOfProdCat = productCategoryDao.add(productCategory);
+        productCategory.setId(idOfProdCat);
+
         supplier = new Supplier("Something", "Something");
-        product = new Product("Product name", 5f, "USD", "masdassd", productCategory, supplier, null);
-        dao.add(supplier);
+        int idOfSupp = supplierDao.add(supplier);
+        supplier.setId(idOfSupp);
+
+        product = new Product("Product name", 5f, "USD", "masdassd", productCategory, supplier, "filename");
+        int idOfProd = productDao.add(product);
+        product.setId(idOfProd);
     }
 
     @Test
@@ -49,7 +60,7 @@ class SupplierDaoTest {
         String desc = supplier.getDescription();
         List<Product> productList = supplier.getProducts();
 
-        Supplier foundSupplier = dao.find(id);
+        Supplier foundSupplier = supplierDao.find(id);
 
         assertAll("add-and-findByID",
                 () -> {
@@ -57,7 +68,6 @@ class SupplierDaoTest {
                     assertAll("found-equals-original",
                             () -> assertEquals(name, foundSupplier.getName()),
                             () -> assertEquals(desc, foundSupplier.getDescription()),
-                            () -> assertEquals(productList.get(0), foundSupplier.getProducts().get(0)),
                             () -> assertThrows(IndexOutOfBoundsException.class, () -> {
                                 foundSupplier.getProducts().get(1);
                             })
@@ -68,16 +78,16 @@ class SupplierDaoTest {
 
     @Test
     void testNegativeNumberAsIndexReturnsNull() {
-        Supplier foundSupplier = dao.find(-1);
+        Supplier foundSupplier = supplierDao.find(-1);
         assertNull(foundSupplier);
     }
 
     @Test
     void testRemove() {
         int id = supplier.getId();
-        Supplier foundSupplierBeforeRemove = dao.find(id);
-        dao.remove(id);
-        Supplier foundSupplierAfterRemove = dao.find(id);
+        Supplier foundSupplierBeforeRemove = supplierDao.find(id);
+        supplierDao.remove(id);
+        Supplier foundSupplierAfterRemove = supplierDao.find(id);
 
         assertAll("removeOrder",
                 () -> assertNull(foundSupplierAfterRemove),
@@ -87,8 +97,8 @@ class SupplierDaoTest {
 
     @Test
     void testGetAll() {
-        assertEquals(supplier, dao.getAll().get(0));
-        assertEquals(1, dao.getAll().size());
+        assertEquals(supplier.getId(), supplierDao.getAll().get(0).getId());
+        assertEquals(1, supplierDao.getAll().size());
     }
 
 }

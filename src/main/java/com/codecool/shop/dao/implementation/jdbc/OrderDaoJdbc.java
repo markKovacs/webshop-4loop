@@ -14,7 +14,6 @@ import java.util.*;
 
 public class OrderDaoJdbc implements OrderDao {
 
-
     @Override
     public Order createNewOrder(int userId) {
 

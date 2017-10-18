@@ -1,6 +1,7 @@
 package com.codecool.shop.controller;
 
 import com.codecool.shop.Main;
+import com.codecool.shop.ThymeleafTemplateEngine;
 import com.codecool.shop.dao.DaoFactory;
 import com.codecool.shop.model.Product;
 import com.codecool.shop.order.InputField;
@@ -15,6 +16,8 @@ import com.google.gson.Gson;
 import spark.ModelAndView;
 import spark.Request;
 import spark.Response;
+import spark.Route;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -113,8 +116,6 @@ public class OrderController {
         // Sub and total needs re-calc to respond (not optimal queries to be used here but works)
         order = DaoFactory.getOrderDao().findOpenByUserId(userId);
         lineItem = DaoFactory.getOrderDao().findLineItemInCart(productId, order);
-
-        // TODO: check if all items are zero, then do not allow processing
 
         Map<String, Float> newPrices = new HashMap<>();
         newPrices.put("total", order.getTotalPrice());
