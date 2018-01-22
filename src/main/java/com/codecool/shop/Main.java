@@ -29,7 +29,7 @@ public class Main {
         // SERVER SETTINGS
         exception(Exception.class, (e, req, res) -> e.printStackTrace());
         staticFileLocation("/public");
-        port(8888);
+        port(9999);
 
         // ENABLE DEBUG SCREEN
         enableDebugScreen();
