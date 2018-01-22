@@ -59,7 +59,6 @@
                     <div th:replace="fragments/progressbar :: paid"></div>
                 </th:block>
 
-
                 <th:block th:if="${orderStatus} eq 'CHECKEDOUT'">
                     <div th:replace="fragments/progressbar :: checkedout"></div>
                 </th:block>
@@ -94,7 +93,6 @@
                     </th:block>
 
                 </th:block>
-
 
                 <!-- This could be re-enabled if needed:
                 <div th:if="${loggedIn}" class="col-xs-4 text-right">
